@@ -1,0 +1,41 @@
+html {
+    background-color: #00539F;
+    box-sizing: border-box;
+}
+
+header img {
+    width: 100px;
+    float: left;
+}
+
+main {
+    text-align: center;
+}
+
+.userCard {
+    width: 500px;
+    background-color: antiquewhite;
+    margin: 20px auto;
+    border: black solid 3px;
+}
+
+.userCard img{
+    border: #00539F solid 1px;
+    border-radius: 10px;
+    width: 300px;
+    margin: 0 auto;
+    display: block;
+    
+}
+
+.historyCard {
+    /* same as userCard for now */
+    width: 500px;
+    background-color: antiquewhite;
+    margin: 20px auto;
+    border: black solid 3px;
+}
+
+.historyCard ul {
+    text-align: left;
+}
