@@ -38,9 +38,17 @@
     </main>
 
     <!-- popup to login -->
-    <dialog id="login">
+    <dialog id="login" autofocus>
         <div class="exit" onclick="closeLogin()"></div>
-        <h1>hello there!</h1>
+        <h1>Make your bio</h1>
+        <h2>or, edit your existing bio</h2>
+        <form id="login-form">
+            <label for="email">Your email:</label><br>
+            <input required type="email" id="email" name="email" placeholder="tfloat@velvetknights.org"><br>
+            <input type="submit" value="Submit">
+        </form>
+        <p id="check"></p>
+        <h2>You'll get an email containing a unique login URL</h2>
     </dialog>
 
 <script src="javascript.js"></script>

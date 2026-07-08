@@ -63,15 +63,15 @@ async function sendEmail(email, token){
     }
 }
 
-export function requestLogin(email){
+export default async function handler(req, res){
+    const { email } = req.body;
+
     let token = crypto.randomBytes(32).toString('hex');
-    let hash = crypto.createHash('sha256');
-    hash.update(token);
-    let hashedToken = hash.digest('hex');
-    console.log("Hashed token: ");
-    console.log(hashedToken);
+    let hashedToken = crypto.createHash('sha256').update(token).digest('hex');
 
     storeData(hashedToken, email);
 
     sendEmail(email, token);
+
+    res.status(200).json({ success: true });
 }

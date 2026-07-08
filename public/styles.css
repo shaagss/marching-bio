@@ -33,11 +33,18 @@ button, input[type="submit"], input[type="reset"] {
 
 /* google fonts */
 
-.work-sans-title, h1, h2, h3, h4, h5, h6 {
+.work-sans-title, h1 {
   font-family: "Work Sans", sans-serif;
   font-optical-sizing: auto;
   font-weight: 630;
   font-style: normal;
+}
+
+.work-sans-miniTitle, h2, h3, h4, h5, h6 {
+    font-family: "Work Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
 }
 
 .work-sans {
@@ -122,6 +129,17 @@ dialog {
     background-color: #ffffff;
     outline: none;
     border: none;
+    position: relative;
+    padding: 10px;
+    width: 300px;
+    border-radius: 10px;
+}
+
+dialog::backdrop {
+  /* Darken the background */
+  background-color: #00000033;
+  /* Apply the blur effect */
+  backdrop-filter: blur(2px); 
 }
 
 .exit {
@@ -129,8 +147,23 @@ dialog {
     cursor: pointer;
     font-size: 30px;   
     color: #333333;
+    position: absolute;
+    top: 0;
+    right: 8px;
 }
 
 .exit::before {
     content: "\00d7";
+}
+
+input[type="submit"] {
+    margin-top: 20px;
+    padding: 4px 4px;
+    font-size: 20px;
+    border: black solid 2px;
+    border-radius: 8px;
+}
+
+dialog h2 {
+    font-size: 20px;
 }
