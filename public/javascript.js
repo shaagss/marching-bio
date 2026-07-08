@@ -18,16 +18,16 @@ document.getElementById('login-form').addEventListener('submit', function(event)
 });
 
 async function requestLogin(email) {
-  const response = await fetch('/api/request-login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email })
-  });
+    const response = await fetch('/api/request-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+    });
 
-  if (response.ok) {
-    document.getElementById('check').textContent = 'Check your email!';
-    document.getElementById('login-form').style.display = 'none';
-  } else {
-    document.getElementById('check').textContent = 'Something went wrong. Try again.';
-  }
+    if (response.ok) {
+        document.getElementById('check').textContent = 'Check your email!';
+        document.getElementById('login-form').style.display = 'none';
+    } else {
+        document.getElementById('check').textContent = 'Something went wrong. Try again.';
+    }
 }

@@ -18,7 +18,6 @@ const pool = new Pool({
 async function storeData(hashedToken, email){
     const client = await pool.connect();
     try {
-        console.log('Connection esatblished');
         const expiredTime = new Date();
         expiredTime.setMinutes(expiredTime.getMinutes() + 15);
 
@@ -27,10 +26,7 @@ async function storeData(hashedToken, email){
             VALUES ($1, $2, $3, $4);`;
         const qValues = [hashedToken, email, expiredTime, false];
 
-        await client.query(qText, qValues);
-
-        console.log('Successfully added');
-        
+        await client.query(qText, qValues);        
     }
     catch (err){
         console.error(err);
@@ -69,9 +65,9 @@ export default async function handler(req, res){
     let token = crypto.randomBytes(32).toString('hex');
     let hashedToken = crypto.createHash('sha256').update(token).digest('hex');
 
-    storeData(hashedToken, email);
+    await storeData(hashedToken, email);
 
-    sendEmail(email, token);
+    await sendEmail(email, token);
 
     res.status(200).json({ success: true });
 }
