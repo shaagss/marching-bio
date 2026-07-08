@@ -1,0 +1,55 @@
+/* main content */
+
+header {
+    top: 0;
+    left: 0;
+    right: 0;
+    position: absolute;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 50px;
+    height: 70px;
+}
+
+header img {
+    width: 100px;
+}
+
+header p {
+    color: red;
+}
+
+main {
+    text-align: center;
+}
+
+.userCard {
+    width: 500px;
+    background-color: antiquewhite;
+    margin: 20px auto;
+    border: black solid 3px;
+}
+
+.userCard img{
+    border: #00539F solid 1px;
+    border-radius: 10px;
+    width: 300px;
+    margin: 0 auto;
+    display: block;
+    
+}
+
+
+.historyCard {
+    /* same as userCard for now */
+    width: 500px;
+    background-color: antiquewhite;
+    margin: 20px auto;
+    border: black solid 3px;
+}
+
+.historyCard ul {
+    text-align: left;
+}

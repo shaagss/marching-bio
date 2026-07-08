@@ -1,41 +1,136 @@
-html {
-    background-color: #00539F;
+* {
     box-sizing: border-box;
+}
+
+html {
+    background-color: #5098dc;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+a, 
+a:link, 
+a:visited, 
+a:hover, 
+a:active {
+    text-decoration: none;
+    color: inherit;
+}
+
+button, input[type="submit"], input[type="reset"] {
+	background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+}
+
+/* google fonts */
+
+.work-sans-title, h1, h2, h3, h4, h5, h6 {
+  font-family: "Work Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 630;
+  font-style: normal;
+}
+
+.work-sans {
+  font-family: "Work Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 450;
+  font-style: normal;
+}
+
+/* main content */
+
+.title {
+    position: fixed;
+    width: 100%;
+    pointer-events: none;
+}
+
+.title h1 {
+    margin: 10px;
+    display: inline-block;
+    background-color: #5098dc;
+    padding: 5px 9px;
+    border-radius: 10px;
+    pointer-events: auto;
+}
+
+header {
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-around;
+    align-items: center;
+    height: 70px;
 }
 
 header img {
     width: 100px;
-    position: absolute;
+}
+
+header h1 {
+    color: #5098dc;
+}
+
+header .make {
+    border-radius: 30px;
+    background-color: #125ba0;
+    padding: 7px 10px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+header .make p {
+    padding: 0;
+    margin: 0;
+    color: red;
 }
 
 main {
-    text-align: center;
+    display: flex;
+    flex-flow: column nowrap;
 }
 
-.userCard {
-    width: 500px;
+.block {
+    height: 500px;
+}
+
+.b1 {
     background-color: antiquewhite;
-    margin: 20px auto;
-    border: black solid 3px;
 }
 
-.userCard img{
-    border: #00539F solid 1px;
-    border-radius: 10px;
-    width: 300px;
-    margin: 0 auto;
-    display: block;
-    
+.b2 {
+    background-color: #6cc58e;
 }
 
-.historyCard {
-    /* same as userCard for now */
-    width: 500px;
-    background-color: antiquewhite;
-    margin: 20px auto;
-    border: black solid 3px;
+.b3 {
+    background-color: #5098dc;
 }
 
-.historyCard ul {
-    text-align: left;
+dialog {
+    background-color: #ffffff;
+    outline: none;
+    border: none;
+}
+
+.exit {
+    display: inline-block;
+    cursor: pointer;
+    font-size: 30px;   
+    color: #333333;
+}
+
+.exit::before {
+    content: "\00d7";
 }

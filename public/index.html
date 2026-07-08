@@ -3,38 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User's Marching Bio</title>
+    <title>Document</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="work-sans">
+    <div class="title">
+        <h1>marching.bio</h1>
+    </div>
     <header>
          <img src="https://semantic-web.com/wp-content/uploads/underpin-pan-european-data-space-for-holistic-asset-management-in-critical-manufacturing-industries-3.png" alt="marching bio logo">
+         <h1>marching.bio</h1>
+         <span class="make" onclick="openLogin()"><p>Make your own!</p></span>
     </header>
-
     <main>
-        <div class="userCard">
-            <h1>User's name</h1>
-            <img src="https://img.magnific.com/free-vector/yellow-drum-illustration_24908-81974.jpg" alt="User's profile picture">
-            <h2>Current group</h2>
+        <div class="block b1">
+            <p>a <a href="/public/test-profile.html">link</a> in bio for the marching arts</p>
+            <p>share <em>all</em> of your expierience, in <em>one</em> link</p>
         </div>
-        <!-- start with just DCI -->
-        <div class="historyCard">
-            <h1>History</h1>
-            <p>---2026---</p>
-            <ul>
-                <li>Redcoats</li>
-                <li>Redcoats</li>
-                <li>...</li>
-                <li>Green Devils B</li>
-            </ul>
-            <p>---2021---</p>
+
+        <div class="block b2">
+            <p>a link in bio for the marching arts</p>
+            <p>share <em>all</em> of your expierience, in <em>one</em> link</p>
         </div>
+
+        <div class="block b3">
+            <p>a link in bio for the marching arts</p>
+            <p>share <em>all</em> of your expierience, in <em>one</em> link</p>
+        </div>
+
     </main>
 
-    <footer>
-        <p>Make your own <a href="https://marching.bio">marching bio</a></p>
-    </footer>
+    <!-- popup to login -->
+    <dialog id="login">
+        <div class="exit" onclick="closeLogin()"></div>
+        <h1>hello there!</h1>
+    </dialog>
 
-    
+<script src="javascript.js"></script>
 </body>
 </html>
