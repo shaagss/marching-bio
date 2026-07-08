@@ -5,7 +5,7 @@ html {
 
 header img {
     width: 100px;
-    float: left;
+    position: absolute;
 }
 
 main {
