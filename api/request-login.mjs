@@ -43,13 +43,13 @@ async function sendEmail(email, token){
     try{
         let htmlContent = await fs.readFile(EMAIL_TEMPLATE_PATH, 'utf-8');
         htmlContent = htmlContent
-            .replace('{{email}}', email)
-            .replace('{{token}}', token);
+            .replaceAll('{{email}}', email)
+            .replaceAll('{{token}}', token);
 
         const {data, error} = await resend.emails.send({
-            from: 'Marching Bio <noreply@verify.marching.bio>',
+            from: 'marching.bio <noreply@verify.marching.bio>',
             to: [email],
-            subject: 'Hello World',
+            subject: 'Login to marching.bio',
             html: htmlContent
         });
 
