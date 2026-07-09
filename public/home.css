@@ -1,0 +1,148 @@
+/* main content */
+
+.title {
+    position: fixed;
+    width: 100%;
+    pointer-events: none;
+}
+
+.title h1 {
+    margin: 20px;
+    display: inline-block;
+    background-color: #5098dc;
+    padding: 5px 9px;
+    border-radius: 10px;
+    pointer-events: auto;
+    font-size: clamp(1.2rem, 7vw, 2rem);
+}
+
+header {
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    height: 70px;
+    padding: 40px 0;
+    gap: 20px;
+}
+
+header img {
+    width: 90px;
+    z-index: 2;
+}
+
+header h1 {
+    color: #5098dc;
+    font-size: clamp(1.2rem, 7vw, 2rem);
+    
+}
+
+header .make {
+    border-radius: 4px;
+    background-color: #125ba0;
+    width: min(18%, 120px);
+    padding: 4px;
+    font-size: 15px;
+    cursor: pointer;
+    z-index: 2;
+    color: red;
+    font-size: 15px;
+    transition: background-color 0.1s ease, color 0.1s ease;
+}
+
+header .make:active {
+    background-color: #0d4375;
+    color: maroon;
+}
+
+main {
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.block {
+    height: 500px;
+}
+
+.b1 {
+    background-color: antiquewhite;
+}
+
+.b2 {
+    background-color: #6cc58e;
+}
+
+.b3 {
+    background-color: #5098dc;
+}
+
+dialog {
+    background-color: #ffffff;
+    outline: none;
+    border: none;
+    position: relative;
+    padding: 30px 10px;
+    width: min(77%, 300px);
+    border-radius: 10px;
+    height: 400px;
+    margin: auto;
+}
+
+dialog[open] {
+    display: flex;
+    flex-flow: column nowrap;
+
+}
+
+dialog::backdrop {
+    background-color: #00000033;
+    backdrop-filter: blur(2px); 
+}
+
+dialog form {
+    margin: 30px;
+    font-size: x-large;
+}
+
+.exit {
+    display: inline-block;
+    cursor: pointer;
+    font-size: 30px;   
+    color: #333333;
+    position: absolute;
+    top: 0;
+    right: 8px;
+}
+
+.exit::before {
+    content: "\00d7";
+}
+
+input[type="email"] {
+    padding: 4px;
+    font-size: 15px;
+    width: min(100%, 400px);
+}
+
+input[type="submit"] {
+    margin-top: 20px;
+    padding: 4px;
+    font-size: 20px;
+    border: black solid 2px;
+    border-radius: 8px;
+}
+
+#check {
+    margin: auto;
+}
+
+dialog h2 {
+    font-size: 20px;
+}
+
+dialog .end {
+    margin-top: auto;
+}

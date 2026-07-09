@@ -30,4 +30,12 @@ async function requestLogin(email) {
     } else {
         document.getElementById('check').textContent = 'Something went wrong. Try again.';
     }
+    
+    // if(email === 'fail@fail.com'){
+    //     document.getElementById('check').textContent = 'Something went wrong. Try again.';
+    // }
+    // else {
+    //     document.getElementById('check').textContent = 'Check your email!';
+    //     document.getElementById('login-form').style.display = 'none';
+    // }
 }
