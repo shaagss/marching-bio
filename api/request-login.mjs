@@ -4,6 +4,7 @@ import { Resend } from 'resend';
 import crypto from 'crypto';
 import fs from 'node:fs/promises';
 
+const STUPID_KEY = process.env.STUPID_KEY;
 const EMAIL_TEMPLATE_PATH = new URL('./login-email.html', import.meta.url);
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -60,8 +61,13 @@ async function sendEmail(email, token){
 }
 
 export default async function handler(req, res){
-    const { email } = req.body;
+    const { email, key } = req.body;
 
+    if(key !== STUPID_KEY){
+        res.status(423).json({ success: false });
+        return;
+    }
+    
     let token = crypto.randomBytes(32).toString('hex');
     let hashedToken = crypto.createHash('sha256').update(token).digest('hex');
 
