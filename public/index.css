@@ -9,7 +9,6 @@
 .title h1 {
     margin: 20px;
     display: inline-block;
-    background-color: #5098dc;
     padding: 5px 9px;
     border-radius: 10px;
     pointer-events: auto;
@@ -24,19 +23,18 @@ header {
     flex-flow: row nowrap;
     justify-content: center;
     align-items: center;
-    height: 70px;
-    padding: 40px 0;
-    gap: 20px;
+    height: 7rem;
+    gap: min(5%, 15rem);
 }
 
 header img {
-    width: 90px;
+    width: 9rem;
     z-index: 2;
 }
 
 header h1 {
-    color: #5098dc;
-    font-size: clamp(1.2rem, 7vw, 2rem);
+    /* color: #5098dc; */
+    font-size: min(7vw, 3.5rem);
     
 }
 
@@ -49,7 +47,7 @@ header .make {
     cursor: pointer;
     z-index: 2;
     color: red;
-    font-size: 15px;
+    font-size: min(3.3vw, 1.7rem);
     transition: background-color 0.1s ease, color 0.1s ease;
 }
 
@@ -61,33 +59,43 @@ header .make:active {
 main {
     display: flex;
     flex-flow: column nowrap;
+    font-size: 2rem;
 }
 
 .block {
-    height: 500px;
+    min-height: 500px;
 }
 
-.b1 {
+.container {
+    width: 95%;
+    max-width: 80rem;
+    margin: 0 auto;
+}
+
+.tan {
     background-color: antiquewhite;
 }
 
-.b2 {
+.green {
     background-color: #6cc58e;
 }
 
-.b3 {
+.blue {
     background-color: #5098dc;
 }
 
-dialog {
+.white {
     background-color: #ffffff;
+}
+
+dialog {
     outline: none;
     border: none;
     position: relative;
     padding: 30px 10px;
-    width: min(77%, 300px);
+    width: min(77%, 30rem);
     border-radius: 10px;
-    height: 400px;
+    min-height: 400px;
     margin: auto;
 }
 
@@ -103,7 +111,7 @@ dialog::backdrop {
 }
 
 dialog form {
-    margin: 30px;
+    margin: 30px 0;
     font-size: x-large;
 }
 
@@ -124,7 +132,7 @@ dialog form {
 input[type="email"] {
     padding: 4px;
     font-size: 15px;
-    width: min(100%, 400px);
+    width: min(90%, 400px);
 }
 
 input[type="submit"] {
