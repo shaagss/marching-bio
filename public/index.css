@@ -4,15 +4,16 @@
     position: fixed;
     width: 100%;
     pointer-events: none;
+    z-index: 9;
 }
 
-.title h1 {
-    margin: 20px;
+.title p {
+    margin-top: 1rem;
     display: inline-block;
     padding: 5px 9px;
     border-radius: 10px;
     pointer-events: auto;
-    font-size: clamp(1.2rem, 7vw, 2rem);
+    /* font-size: clamp(1.2rem, 7vw, 2rem); */
 }
 
 header {
@@ -24,18 +25,14 @@ header {
     justify-content: center;
     align-items: center;
     height: 7rem;
-    gap: min(5%, 15rem);
+    gap: clamp(5%, 20% - 8rem, 20rem);
+    z-index: 10;
+    position: relative;
 }
 
 header img {
     width: 9rem;
     z-index: 2;
-}
-
-header h1 {
-    /* color: #5098dc; */
-    font-size: min(7vw, 3.5rem);
-    
 }
 
 header .make {
@@ -67,9 +64,15 @@ main {
 }
 
 .container {
+    padding: 5rem 0;
     width: 95%;
-    max-width: 80rem;
+    max-width: 120rem;
     margin: 0 auto;
+    display: flex;
+    flex-flow: row-reverse wrap;
+    justify-content: space-around;
+    align-items: center;
+    /* background-color: orange; */
 }
 
 .tan {
@@ -86,6 +89,43 @@ main {
 
 .white {
     background-color: #ffffff;
+}
+
+h1 {
+    z-index: 2;
+}
+
+.triphoto {
+    position: relative;
+    display: inline-block;
+    --rotation: 8deg;
+    --offset: 70%;
+}
+
+.center {
+    z-index: 3;
+    position: relative;
+    width: min(75%, 55vw);
+    margin: 0 auto;
+}
+
+.left, .right {
+    position: absolute;
+    opacity: 40%;
+    /* opacity: 0%; */
+    z-index: 1;
+    bottom: 5%;
+    width: min(60%, 44vw);
+}
+
+.left {
+    right: var(--offset);
+    rotate: calc(var(--rotation) * -1);
+}
+
+.right {
+    left: var(--offset);
+    rotate: var(--rotation);
 }
 
 dialog {

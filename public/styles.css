@@ -7,10 +7,12 @@
 html {
     background-color: #5098dc;
     font-size: 62.5%; 
+    overflow-x: hidden;
 }
 
 body {
     text-align: center;
+    overflow-x: hidden;
 }
 
 a, 
@@ -35,12 +37,12 @@ button, input[type="submit"], input[type="reset"] {
 img {
     max-width: 100%;
     height: auto;
-    /* display: block;  check if needed?*/ 
+    display: block; 
 }
 
 /* google fonts */
 
-.work-sans-title, h1 {
+.work-sans-title, h1, .toptitle {
   font-family: "Work Sans", sans-serif;
   font-optical-sizing: auto;
   font-weight: 630;
@@ -59,4 +61,10 @@ img {
   font-optical-sizing: auto;
   font-weight: 450;
   font-style: normal;
+}
+
+/* top stuff */
+
+.toptitle {
+    font-size: 3.2rem;
 }
