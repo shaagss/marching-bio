@@ -1,30 +1,66 @@
-async function getGroups(circuit, theClass, instrument = null) {
-    const params = new URLSearchParams({ circuit, theClass });
+// document.getElementById('group-form').addEventListener('submit', function(event) {
+//     event.preventDefault();
 
-    if (instrument) {
-        params.append('instrument', instrument);
+//     const circuit = document.querySelector('input[name="circuit"]:checked').value;
+//     const theClass = document.querySelector('input[name="class"]:checked').value;
+//     const instrument = document.querySelector('input[name="instrument"]:checked')?.value || null;
+//     console.log(circuit, theClass, instrument);
+//     getGroups(circuit, theClass, instrument);
+    
+// });
+
+//old stuff to look at^^^
+
+let allGroups = [];
+let groupSelect;
+
+async function loadGroups() {
+    const response = await fetch('/api/groups');
+
+    if (!response.ok) {
+        console.error('Failed to load groups:', response.status);
+        return;
     }
 
-    const response = await fetch(`/api/groups?${params.toString()}`);
-    const data = await response.json()
-    const groupsParent = document.getElementById('groups');
-    groupsParent.replaceChildren()
-
-    data.forEach((row) => {
-        console.log(row);
-        const group = document.createElement('p');
-        group.textContent = row.name;
-        groupsParent.appendChild(group);
-    })
+    allGroups = await response.json();
+    initGroupSelect();
 }
 
-document.getElementById('group-form').addEventListener('submit', function(event) {
-    event.preventDefault();
+function initGroupSelect() {
+    groupSelect = new TomSelect('#group-select', {
+        valueField: 'id',
+        labelField: 'name',
+        searchField: 'name',
+        options: [],
+        placeholder: 'Select a circuit and class first',
+    });
+    groupSelect.disable();
+}
 
-    const circuit = document.querySelector('input[name="circuit"]:checked').value;
-    const theClass = document.querySelector('input[name="class"]:checked').value;
-    const instrument = document.querySelector('input[name="instrument"]:checked')?.value || null;
-    console.log(circuit, theClass, instrument);
-    getGroups(circuit, theClass, instrument);
-    
-});
+function getSelectedRadio(name) {
+    const checked = document.querySelector(`input[name="${name}"]:checked`);
+    return checked ? checked.value : null;
+}
+
+function updateGroupOptions() {
+    const circuit = getSelectedRadio('circuit');
+    const theClass = getSelectedRadio('class');
+
+    groupSelect.clear();
+    groupSelect.clearOptions();
+
+    if (!circuit || !theClass) {
+        groupSelect.disable();
+        return;
+    }
+
+    const filtered = allGroups.filter(g => g.circuit === circuit && g.class === theClass);
+
+    groupSelect.addOptions(filtered);
+    groupSelect.enable();
+}
+
+document.querySelectorAll('input[name="circuit"], input[name="class"]')
+    .forEach(radio => radio.addEventListener('change', updateGroupOptions));
+
+loadGroups();

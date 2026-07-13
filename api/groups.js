@@ -1,7 +1,6 @@
-import { getGroups } from '../lib/db.js';
+import { getAllGroups } from '../lib/db.js';
 
 export default async function handler(req, res) {
-    const { circuit, theClass, instrument } = req.query;
-    const rows = await getGroups(circuit, theClass, instrument);
+    const rows = await getAllGroups();
     res.status(200).json(rows);
 }
