@@ -1,5 +1,3 @@
-console.log("JavaScript file is successfully connected!");
-
 const dialog = document.getElementById('login');
 
 function openLogin() {
