@@ -135,7 +135,7 @@ dialog {
     padding: 30px 10px;
     width: min(77%, 30rem);
     border-radius: 10px;
-    min-height: 400px;
+    min-height: 40rem;
     margin: auto;
 }
 
@@ -158,7 +158,7 @@ dialog form {
 .exit {
     display: inline-block;
     cursor: pointer;
-    font-size: 30px;   
+    font-size: 3rem;   
     color: #333333;
     position: absolute;
     top: 0;
@@ -171,20 +171,21 @@ dialog form {
 
 input[type="email"] {
     padding: 4px;
-    font-size: 15px;
+    font-size: 1.5rem;
     width: min(90%, 400px);
 }
 
 input[type="submit"] {
     margin-top: 20px;
     padding: 4px;
-    font-size: 20px;
+    font-size: 2rem;
     border: black solid 2px;
     border-radius: 8px;
 }
 
 #check {
     margin: auto;
+    font-size: 2rem;
 }
 
 dialog h2 {

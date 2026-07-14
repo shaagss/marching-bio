@@ -1,16 +1,4 @@
-// document.getElementById('filter-groups').addEventListener('submit', function(event) {
-//     event.preventDefault();
-
-//     const circuit = document.querySelector('input[name="circuit"]:checked').value;
-//     const theClass = document.querySelector('input[name="class"]:checked').value;
-//     const instrument = document.querySelector('input[name="instrument"]:checked')?.value || null;
-//     console.log(circuit, theClass, instrument);
-//     getGroups(circuit, theClass, instrument);
-    
-// });
-
-//old stuff to look at^^^
-
+//---Grabs all groups from DB---
 let allGroups = [];
 let groupSelect;
 
@@ -63,24 +51,35 @@ function updateGroupOptions() {
 document.querySelectorAll('input[name="circuit"], input[name="class"]')
     .forEach(radio => radio.addEventListener('change', updateGroupOptions));
 
-loadGroups();
+loadGroups(); //DONT DO AUTOMATICALLY
 
-// to add to DB
+//---Adds to DB---
+const conf = document.querySelector('#conf');
 
 document.getElementById('add-exp').addEventListener('submit', function(event) {
     event.preventDefault();
+    conf.textContent = `Loading...`;
 
     const group = document.getElementById('group-select').value;
     const year = document.getElementById('year-marched').value;
     const key = document.getElementById('key').value;
 
-    console.log(group, year, key);
     addExpr(group, year, key);
 });
 
 function getUserEmail() {
     return 'plzenteryt@gmail.com'
     //change this obviously
+}
+
+function addStatusElements(groupId, year, success){
+    if(success === true){
+        const groupName = document.querySelector(`option[value="${groupId}"`).textContent;
+        conf.textContent = `Successfully added ${groupName} ${year} to your experience`;
+    }
+    else{
+        conf.textContent = `ERROR: Please try again`;
+    }
 }
 
 async function addExpr(group, year, key) {
@@ -92,12 +91,5 @@ async function addExpr(group, year, key) {
         body: JSON.stringify({ email, group, year, key })
     });
 
-    if (response.ok) {
-        // document.getElementById('check').textContent = 'Check your email!';
-        // document.getElementById('login-form').style.display = 'none';
-        console.log('its ok');
-    } else {
-        // document.getElementById('check').textContent = 'Something went wrong. Try again.';
-    }
-    
+    addStatusElements(group, year, response.ok);
 }

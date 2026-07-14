@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import { Pool } from 'pg';
+import { getSessionEmail } from '../lib/auth.js';
 
 const STUPID_KEY = process.env.STUPID_KEY;
 
@@ -84,7 +85,8 @@ async function updateRow(email, expr, client){
 }
 
 export default async function handler(req, res){
-    const { email, group, year, key } = req.body;
+    const email = getSessionEmail(req);
+    const { group, year, key } = req.body;
 
     if(key !== STUPID_KEY){
         res.status(423).json({ success: false });

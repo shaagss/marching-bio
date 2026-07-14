@@ -25,16 +25,10 @@ async function requestLogin(email, key) {
 
     if (response.ok) {
         document.getElementById('check').textContent = 'Check your email!';
+        document.getElementById('check').style.color = 'black';
         document.getElementById('login-form').style.display = 'none';
     } else {
         document.getElementById('check').textContent = 'Something went wrong. Try again.';
+        document.getElementById('check').style.color = 'red';
     }
-
-    // if(email === 'fail@fail.com'){
-    //     document.getElementById('check').textContent = 'Something went wrong. Try again.';
-    // }
-    // else {
-    //     document.getElementById('check').textContent = 'Check your email!';
-    //     document.getElementById('login-form').style.display = 'none';
-    // }
 }
