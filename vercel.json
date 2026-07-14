@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/:code([0-9a-f]{4,6})", "destination": "/profile.html" }
+  ]
+}
