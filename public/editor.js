@@ -1,4 +1,4 @@
-// document.getElementById('group-form').addEventListener('submit', function(event) {
+// document.getElementById('filter-groups').addEventListener('submit', function(event) {
 //     event.preventDefault();
 
 //     const circuit = document.querySelector('input[name="circuit"]:checked').value;
@@ -15,7 +15,7 @@ let allGroups = [];
 let groupSelect;
 
 async function loadGroups() {
-    const response = await fetch('/api/groups');
+    const response = await fetch('/api/get-groups');
 
     if (!response.ok) {
         console.error('Failed to load groups:', response.status);
@@ -64,3 +64,40 @@ document.querySelectorAll('input[name="circuit"], input[name="class"]')
     .forEach(radio => radio.addEventListener('change', updateGroupOptions));
 
 loadGroups();
+
+// to add to DB
+
+document.getElementById('add-exp').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const group = document.getElementById('group-select').value;
+    const year = document.getElementById('year-marched').value;
+    const key = document.getElementById('key').value;
+
+    console.log(group, year, key);
+    addExpr(group, year, key);
+});
+
+function getUserEmail() {
+    return 'plzenteryt@gmail.com'
+    //change this obviously
+}
+
+async function addExpr(group, year, key) {
+    const email = getUserEmail();
+
+    const response = await fetch('/api/add-expr', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, group, year, key })
+    });
+
+    if (response.ok) {
+        // document.getElementById('check').textContent = 'Check your email!';
+        // document.getElementById('login-form').style.display = 'none';
+        console.log('its ok');
+    } else {
+        // document.getElementById('check').textContent = 'Something went wrong. Try again.';
+    }
+    
+}

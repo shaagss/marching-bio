@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
     <!-- stylesheets -->
-    <!-- <link rel="stylesheet" href="styles.css"> -->
+    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="editor.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css">
 
@@ -19,7 +19,7 @@
 <body>
     <h1>heres the list i hope</h1>
 
-    <form id="group-form">
+    <form id="filter-groups">
         <label for="dci">DCI</label>
         <input required type="radio" id="dci" name="circuit" value="DCI">
         <label for="wgi">WGI</label>
@@ -30,7 +30,21 @@
         <label for="open">Open</label>
         <input type="radio" id="open" name="class" value="Open"><br><br>
     </form>
-    <select id="group-select"></select>
+    <hr><br>
+    <form id="add-exp">
+        <label for="group-select">Group:</label><br>
+        <select id="group-select" class="work-sans"></select><br><br>
+
+        <label for="year-marched">Year marched:</label><br>
+        <input id="year-marched" name="year-marched" type="number"><br><br>
+
+        <!-- key to prevent beta abuse -->
+        <label for="key">Key:</label><br>
+        <input required type="password" id="key" name="key"><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+    
     
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
     <script src="editor.js" ></script>
