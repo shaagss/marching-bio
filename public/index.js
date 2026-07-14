@@ -1,4 +1,24 @@
 const dialog = document.getElementById('login');
+document.getElementById('make-btn').style.pointerEvents = 'none';
+
+let isLoggedIn = false;
+
+async function checkAuthStatus() {
+    const response = await fetch('/api/me');
+    const data = await response.json();
+    isLoggedIn = data.loggedIn;
+    document.getElementById('make-btn').style.pointerEvents = 'auto';
+}
+
+document.getElementById('make-btn').addEventListener('click', () => {
+    if (isLoggedIn) {
+        window.location.href = '/edit-bio.html';
+    } else {
+        openLogin();
+    }
+});
+
+checkAuthStatus();
 
 function openLogin() {
     dialog.showModal();
