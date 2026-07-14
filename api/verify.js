@@ -13,7 +13,7 @@ const pool = new Pool({
     }
 });
 
-async function getData(token){
+async function getTokenData(token){
     const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
 
     const client = await pool.connect();
@@ -48,23 +48,64 @@ function checkData(data) {
     }
 }
 
+async function maybeCreateProfile(email, client){
+    const existing = await client.query(
+        `SELECT code
+        FROM profiles
+        WHERE email = $1`,
+        [email]
+    );
+
+    if (existing.rows.length > 0) {
+        return existing.rows[0].code; 
+    }
+
+    //Here they dont have a profile
+    const countResult = await client.query(`
+        SELECT COUNT(*)
+        FROM profiles`);
+    const count = parseInt(countResult.rows[0].count);
+    const byteLength = count < 65536 ? 2 : 3; // 4 digits, then 6
+    const maxAttempts = 10;
+
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+        const code = crypto.randomBytes(byteLength).toString('hex');
+
+        try {
+            await client.query(
+                `INSERT INTO profiles (code, email)
+                VALUES ($1, $2)`,
+                [code, email]
+            );
+            return code; 
+        }
+        catch (err) {
+            if (err.code === '23505') {//already exists error code
+                continue;
+            }
+            throw err; 
+        }
+    }
+
+    throw new Error('Failed to generate a profile code after 10 attempts');
+}
+
 export default async function handler(req, res) {
     const { token } = req.query;
-
+    
     if(!token){
-        console.log('No token');
         return res.status(400).json({ error: 'Token is required' });
     }
 
-    const [ data ] = await getData(token);
-    if(!data){
+    const [ tokenData ] = await getTokenData(token);
+    if(!tokenData){
         return res.status(400).json({ error: 'Invalid token' });
     }
-    if(checkData(data) === false){
+    if(checkData(tokenData) === false){
         return res.status(400).json({ error: 'Expired token' });
     }
     
-    const email = data.email;
+    const email = tokenData.email;
     const sessionToken = jwt.sign(
         {email: email},
         process.env.JWT_SECRET,
@@ -77,6 +118,8 @@ export default async function handler(req, res) {
         WHERE token_hash = $1`,
         [crypto.createHash('sha256').update(token).digest('hex')]
     );
+
+    await maybeCreateProfile(email, pool);
 
     res.setHeader('Set-Cookie', serializeCookie('session', sessionToken, {
         httpOnly: true,
