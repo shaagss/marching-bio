@@ -38,8 +38,11 @@ async function getTokenData(token){
 
 function checkData(data) {
     //returns true if valid
-    const currentTime = new Date();
+    if(data === undefined){
+        return false;
+    }
 
+    const currentTime = new Date();
     if(data.used || data.expires_at <= currentTime){
         return false;
     }
@@ -48,7 +51,7 @@ function checkData(data) {
     }
 }
 
-async function maybeCreateProfile(email, client){
+async function maybeCreateProfile(email, name, client){
     const existing = await client.query(
         `SELECT code
         FROM profiles
@@ -73,9 +76,9 @@ async function maybeCreateProfile(email, client){
 
         try {
             await client.query(
-                `INSERT INTO profiles (code, email)
-                VALUES ($1, $2)`,
-                [code, email]
+                `INSERT INTO profiles (code, email, name)
+                VALUES ($1, $2, $3)`,
+                [code, email, name]
             );
             return code; 
         }
@@ -94,18 +97,22 @@ export default async function handler(req, res) {
     const { token } = req.query;
     
     if(!token){
-        return res.status(400).json({ error: 'Token is required' });
+        // return res.status(400).json({ error: 'Token is required' });
+        return res.redirect(302, '/');
     }
 
     const [ tokenData ] = await getTokenData(token);
     if(!tokenData){
-        return res.status(400).json({ error: 'Invalid token' });
+        // return res.status(400).json({ error: 'Invalid token' });
+        return res.redirect(302, '/');
     }
     if(checkData(tokenData) === false){
-        return res.status(400).json({ error: 'Expired token' });
+        // return res.status(400).json({ error: 'Expired token' });
+        return res.redirect(302, '/editor');
     }
     
     const email = tokenData.email;
+    const name = tokenData.name;
     const sessionToken = jwt.sign(
         {email: email},
         process.env.JWT_SECRET,
@@ -119,7 +126,7 @@ export default async function handler(req, res) {
         [crypto.createHash('sha256').update(token).digest('hex')]
     );
 
-    await maybeCreateProfile(email, pool);
+    await maybeCreateProfile(email, name, pool);
 
     res.setHeader('Set-Cookie', serializeCookie('session', sessionToken, {
         httpOnly: true,
@@ -129,5 +136,5 @@ export default async function handler(req, res) {
         path: '/',
     }));
 
-    res.redirect(302, '/edit-bio.html');
+    res.redirect(302, '/editor');
 }

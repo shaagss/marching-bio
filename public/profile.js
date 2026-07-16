@@ -4,7 +4,7 @@ async function loadProfile() {
     const response = await fetch(`/api/profile?code=${code}`);
 
     if (!response.ok) {
-        window.location.href = '/';
+        window.location.href = '/404';
         return;
     }
 

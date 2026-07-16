@@ -102,4 +102,11 @@ async function addExpr(group, year, key) {
     });
 
     addStatusElements(group, year, response.ok);
+    // await updatePreviewExpr();
+}
+
+//Pulls DB to update expr preview on page
+
+async function updatePreviewExpr(){
+
 }

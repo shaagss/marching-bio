@@ -38,7 +38,7 @@
 
         <div class="block green">
             <div class="container">
-                <h2>share <em>all</em> of your <a href="/editor.html">experience</a>, in <em>one</em> link</h2>
+                <h2>share <em>all</em> of your <a href="/editor">experience</a>, in <em>one</em> link</h2>
             </div>
         </div>
 
@@ -57,12 +57,23 @@
         <h1>Make your bio</h1>
         <h2>or, edit your existing bio</h2>
         <form id="login-form">
-            <label for="email">Your email:</label><br>
-            <input required type="email" id="email" name="email" placeholder="tfloat@velvetknights.org"><br>
-            <!-- key to prevent beta abuse -->
-            <label for="key">Key:</label><br>
-            <input required type="password" id="key" name="key"><br>
-            <input type="submit" value="Submit">
+            <div class="form-duo">
+                <label for="email">Email:</label>
+                <input required type="email" id="email" name="email" placeholder="tfloat@velvetknights.org">
+            </div>
+            <div class="form-duo" id="name-duo">
+                <label for="name" >Name:</label>
+                <input required type="name" id="name" name="name" placeholder="Tom Float">
+            </div>
+            <div class="form-duo">
+                <!-- key to prevent beta abuse -->
+                <label for="key">Key:</label>
+                <input required type="password" id="key" name="key">
+            </div>
+            <div id="form-duo">
+                <input type="submit" value="Submit">
+                <p id="form-swap">Alerady joined?</p>
+            </div>
         </form>
         <p id="check"></p>
         <h2 class="end">You'll get an email with a link to access your profile</h2>

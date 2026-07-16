@@ -16,16 +16,16 @@ const pool = new Pool({
     }
 });
 
-async function storeData(hashedToken, email){
+async function storeData(hashedToken, email, name){
     const client = await pool.connect();
     try {
         const expiredTime = new Date();
         expiredTime.setMinutes(expiredTime.getMinutes() + 15);
 
         const qText = `
-            INSERT INTO login_tokens (token_hash, email, expires_at, used)
-            VALUES ($1, $2, $3, $4);`;
-        const qValues = [hashedToken, email, expiredTime, false];
+            INSERT INTO login_tokens (token_hash, email, name, expires_at, used)
+            VALUES ($1, $2, $3, $4, $5);`;
+        const qValues = [hashedToken, email, name, expiredTime, false];
 
         await client.query(qText, qValues);        
     }
@@ -61,7 +61,7 @@ async function sendEmail(email, token){
 }
 
 export default async function handler(req, res){
-    const { email, key } = req.body;
+    const { email, name, key } = req.body;
 
     if(key !== STUPID_KEY){
         res.status(423).json({ success: false });
@@ -71,7 +71,7 @@ export default async function handler(req, res){
     let token = crypto.randomBytes(32).toString('hex');
     let hashedToken = crypto.createHash('sha256').update(token).digest('hex');
 
-    await storeData(hashedToken, email);
+    await storeData(hashedToken, email, name);
 
     await sendEmail(email, token);
 
