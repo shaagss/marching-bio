@@ -51,11 +51,13 @@ function getSelectedRadio(name) {
 function updateGroupOptions() {
     const circuit = getSelectedRadio('circuit');
     const theClass = getSelectedRadio('class');
+    const instrument = getSelectedRadio('instrument');
 
-    groupSelect.clear();
+    // groupSelect.clear();
     groupSelect.clearOptions();
 
-    if (!circuit || !theClass) {
+    if ( (!circuit || !theClass) ||
+        (circuit === 'WGI' && !instrument) ) {
         groupSelect.disable();
         return;
     }
@@ -66,9 +68,34 @@ function updateGroupOptions() {
     groupSelect.enable();
 }
 
-document.querySelectorAll('input[name="circuit"], input[name="class"]')
-    .forEach(radio => radio.addEventListener('change', updateGroupOptions));
+document.querySelectorAll('input[name="class"], input[name="instrument"]')
+    .forEach(radio => {
+        radio.addEventListener('change', updateGroupOptions)
+    });
 
+const classOptions = {
+    DCI: ["World", "Open", "All-Age", "International"],
+    WGI: ["World", "Open", "A"]
+};
+
+document.querySelectorAll('input[name="circuit"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+        const circuit = radio.value;
+        
+        const instrumentSection = document.getElementById('instrument-section');
+        document.querySelectorAll('input[name="instrument"]').forEach(radio => radio.checked = false);
+        instrumentSection.hidden = !(circuit === 'WGI');
+
+        const classSection = document.getElementById('class-section');
+        classSection.hidden = false;
+        document.querySelectorAll('input[name="class"]').forEach(radio => {
+            radio.checked = false;
+            radio.parentElement.hidden = !(classOptions[circuit].includes(radio.value));
+        });
+
+        updateGroupOptions()
+    });
+});
 
 //---Adds to DB---
 const conf = document.querySelector('#conf');
