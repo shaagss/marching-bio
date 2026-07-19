@@ -9,7 +9,7 @@ async function checkAuth() {
     }
     document.querySelector('h1').textContent = "You're in";
     document.getElementById('email').textContent = data.email;
-    document.getElementById('editor').hidden = false;
+    document.querySelector('body').hidden = false;
     loadGroups();
     //use to load profile data
 }
@@ -38,9 +38,11 @@ function initGroupSelect() {
         labelField: 'name',
         searchField: 'name',
         options: [],
-        placeholder: 'Select a circuit and class first',
+        placeholder: 'Select all options first',
     });
     groupSelect.disable();
+
+    document.getElementById('editor').classList.remove('invisible');
 }
 
 function getSelectedRadio(name) {
@@ -92,6 +94,8 @@ document.querySelectorAll('input[name="circuit"]').forEach(radio => {
             radio.checked = false;
             radio.parentElement.hidden = !(classOptions[circuit].includes(radio.value));
         });
+
+        const selectorLabel = document.getElementById('select-label').textContent = (circuit === 'DCI') ? 'Corps:' : 'Group:';
 
         updateGroupOptions()
     });

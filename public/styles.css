@@ -68,3 +68,7 @@ img {
 .toptitle {
     font-size: 3.2rem;
 }
+
+.invisible {
+    visibility: hidden;
+}

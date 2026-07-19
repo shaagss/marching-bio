@@ -120,12 +120,16 @@ h1 {
 
 .left {
     right: var(--offset);
-    rotate: calc(var(--rotation) * -1);
+    /* rotate: calc(var(--rotation) * -1); */
 }
 
 .right {
     left: var(--offset);
-    rotate: var(--rotation);
+    /* rotate: var(--rotation); */
+}
+
+.left, .right, .center {
+    border-radius: 5px;
 }
 
 dialog {

@@ -16,51 +16,57 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css">
 
 </head>
-<body class="work-sans">
+<body class="work-sans" hidden>
     <h1></h1>
     <p id="email"></p>
 
-    <div id="editor" hidden>
-    <h1>heres the list i hope</h1>
+    <div class="page-divider">
+        <div id="editor" class="invisible">
+            <form id="filter-groups">
+                <fieldset>
+                    <legend id="circuit-legend">Circuit</legend>
+                    <div class="options">
+                        <label><input type="radio" name="circuit" value="DCI"> DCI</label>
+                        <label><input type="radio" name="circuit" value="WGI"> WGI</label>
+                    </div>
+                </fieldset>
+                <fieldset id="instrument-section" hidden>
+                    <legend>Instrument</legend>
+                    <div class="options">
+                        <label><input type="radio" name="instrument" value="guard"> Guard</label>
+                        <label><input type="radio" name="instrument" value="percussion"> Percussion</label>
+                        <label><input type="radio" name="instrument" value="winds"> Winds</label>
+                    </div>
+                </fieldset>
+                <fieldset id="class-section" hidden>
+                    <legend>Class</legend>
+                    <div class="options">
+                        <label><input type="radio" name="class" value="World"> World</label>
+                        <label><input type="radio" name="class" value="Open"> Open</label>
+                        <label><input type="radio" name="class" value="All-Age"> All-Age</label>
+                        <label><input type="radio" name="class" value="International"> International</label>
+                        <label><input type="radio" name="class" value="A"> A</label>
+                    </div>
+                </fieldset>
+            </form>
+            <form id="add-exp">
+                <label for="group-select" id="select-label">Corps:</label><br>
+                <select id="group-select" class="work-sans"></select><br><br>
+                <div class="centered">
+                    <label for="year-marched">Year marched:</label>
+                    <input id="year-marched" class="work-sans" name="year-marched" type="number" placeholder="1972"><br><br>
+                    <!-- key to prevent beta abuse -->
+                    <label for="key">Key:</label><br>
+                    <input required type="password" id="key" name="key"><br><br>
+                    <input type="submit" value="Submit">
+                </div>
+            </form>
+            <p id="conf"></p>
+        </div>
 
-    <form id="filter-groups">
-        <fieldset>
-            <legend>Circuit</legend>
-            <label><input type="radio" name="circuit" value="DCI"> DCI</label>
-            <label><input type="radio" name="circuit" value="WGI"> WGI</label>
-        </fieldset>
-
-        <fieldset id="instrument-section" hidden>
-            <legend>Instrument</legend>
-            <label><input type="radio" name="instrument" value="guard"> Guard</label>
-            <label><input type="radio" name="instrument" value="percussion"> Percussion</label>
-            <label><input type="radio" name="instrument" value="winds"> Winds</label>
-        </fieldset>
-
-        <fieldset id="class-section" hidden>
-            <legend>Class</legend>
-            <label><input type="radio" name="class" value="World"> World</label>
-            <label><input type="radio" name="class" value="Open"> Open</label>
-            <label><input type="radio" name="class" value="All-Age"> All-Age</label>
-            <label><input type="radio" name="class" value="International"> International</label>
-            <label><input type="radio" name="class" value="A"> A</label>
-        </fieldset>
-    </form>
-    <form id="add-exp">
-        <label for="group-select">Group:</label><br>
-        <select id="group-select" class="work-sans"></select><br><br>
-
-        <label for="year-marched">Year marched:</label><br>
-        <input id="year-marched" name="year-marched" type="number"><br><br>
-
-        <!-- key to prevent beta abuse -->
-        <label for="key">Key:</label><br>
-        <input required type="password" id="key" name="key"><br><br>
-
-        <input type="submit" value="Submit">
-    </form>
-    <p id="conf"></p>
-    
+        <div id="preview">
+            <h1>preview here</h1>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>

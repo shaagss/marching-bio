@@ -6,3 +6,88 @@ body {
     text-align: left;
     overflow-x: visible;
 }
+
+#add-exp {
+    margin-top: 1rem;
+}
+
+.centered {
+    text-align: center;
+}
+
+.page-divider {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+    gap: 1.2rem;
+    padding: 0 1rem;
+}
+
+#editor, #preview {
+    border-radius: 6px;
+    padding: 1.5rem;
+    /* width: 65rem; */
+    /* width: min(65rem, 90%); could work */
+    /* width: min(50rem, 90%); */
+    /* width to be min of a relative, and a hardset max */
+    /* how to control how much it shrinks before it wraps? could be a flex feature */
+    
+    /* what ai says v */
+    /* flex-basis: 50rem;  */
+    /* min-width: 10rem;   */
+    flex-shrink: 1;   
+}
+
+#editor {
+    flex: 0 1 35rem;
+}
+
+#filter-groups fieldset {
+    border: black 2px solid;
+    border-radius: 6px;
+}
+
+#filter-groups #circuit-legend, #select-label {
+    font-size: 3rem;
+}
+
+#filter-groups legend {
+    font-size: 2.2rem;
+}
+
+#filter-groups .options {
+    padding: .5em .8em;
+}
+
+#filter-groups input {
+    margin-left: 1em;
+}
+
+#filter-groups label {
+    font-size: 1.7rem;
+    white-space: nowrap;
+}
+
+label[for="year-marched"], #year-marched {
+    font-size: 1.8rem;
+}
+
+#add-exp input[id="year-marched"] {
+    width: 20%;
+}
+
+#add-exp input[type="submit"] {
+    padding: .3em;
+    font-size: 1.6rem;
+    border: black solid 2px;
+    border-radius: 8px;
+    background-color: #ffffff;
+}
+
+#preview {
+    /* min-width: none; */
+    flex: 0 1 55rem;
+    background-color: tan;
+    min-height: 30rem;
+    border: 2px black solid;
+}
