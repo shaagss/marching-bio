@@ -42,7 +42,7 @@ body {
     flex: 0 1 35rem;
 }
 
-#filter-groups fieldset {
+fieldset {
     border: black 2px solid;
     border-radius: 6px;
 }
@@ -55,7 +55,7 @@ body {
     font-size: 2.2rem;
 }
 
-#filter-groups .options {
+.options {
     padding: .5em .8em;
 }
 

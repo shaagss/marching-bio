@@ -50,6 +50,9 @@ function getSelectedRadio(name) {
     return checked ? checked.value : null;
 }
 
+const yearInput = document.getElementById('year-marched');
+const expSubmit = document.getElementById('exp-submit');
+
 function updateGroupOptions() {
     const circuit = getSelectedRadio('circuit');
     const theClass = getSelectedRadio('class');
@@ -61,13 +64,21 @@ function updateGroupOptions() {
     if ( (!circuit || !theClass) ||
         (circuit === 'WGI' && !instrument) ) {
         groupSelect.disable();
+        groupSelect.settings.placeholder = 'Select all options first';
+        groupSelect.control_input.placeholder = 'Select all options first';
+        yearInput.disabled = true;
+        expSubmit.disabled = true;
         return;
     }
 
-    const filtered = allGroups.filter(g => g.circuit === circuit && g.class === theClass);
+    const filtered = allGroups.filter(g => g.circuit === circuit && g.class === theClass && g.instrument === instrument );
 
     groupSelect.addOptions(filtered);
     groupSelect.enable();
+    groupSelect.settings.placeholder = 'Velvet Knights';
+    groupSelect.control_input.placeholder = 'Velvet Knights';
+    yearInput.disabled = false;
+    expSubmit.disabled = false;
 }
 
 document.querySelectorAll('input[name="class"], input[name="instrument"]')

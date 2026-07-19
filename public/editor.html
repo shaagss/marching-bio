@@ -50,16 +50,21 @@
                 </fieldset>
             </form>
             <form id="add-exp">
-                <label for="group-select" id="select-label">Corps:</label><br>
-                <select id="group-select" class="work-sans"></select><br><br>
-                <div class="centered">
-                    <label for="year-marched">Year marched:</label>
-                    <input id="year-marched" class="work-sans" name="year-marched" type="number" placeholder="1972"><br><br>
-                    <!-- key to prevent beta abuse -->
-                    <label for="key">Key:</label><br>
-                    <input required type="password" id="key" name="key"><br><br>
-                    <input type="submit" value="Submit">
-                </div>
+                <fieldset>
+                    <legend id="select-label">Corps</legend>
+                    <div class="options">
+                        <label for="group-select" hidden>Corps</label><br>
+                        <select required id="group-select" class="work-sans"></select><br><br>
+                        <div class="centered">
+                            <label for="year-marched">Year marched:</label>
+                            <input disabled required id="year-marched" class="work-sans" name="year-marched" type="number" placeholder="1972"><br><br>
+                            <!-- key to prevent beta abuse -->
+                            <label for="key">Key:</label><br>
+                            <input required type="password" id="key" name="key"><br><br>
+                            <input disabled id="exp-submit" type="submit" value="Submit">
+                        </div>
+                    </div>
+                </fieldset>
             </form>
             <p id="conf"></p>
         </div>
