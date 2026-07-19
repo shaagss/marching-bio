@@ -68,6 +68,10 @@ fieldset {
     white-space: nowrap;
 }
 
+#conf {
+    font-size: 1.7rem;
+}
+
 label[for="year-marched"], #year-marched {
     font-size: 1.8rem;
 }

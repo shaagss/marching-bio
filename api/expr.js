@@ -11,36 +11,18 @@ const pool = new Pool({
     }
 });
 
+// ---for POST method---
+
 async function checkData(email, group, year){
     const client = await pool.connect();
     try {
-        //on editor load, should check if user exists.
-        //if not, make new user with {} expr and new URL code
-        //now, its given user exists and has {} value.
-
-        //expr is dict where key is year, and value is dict of
-        //keys dci and wgi.
-
-        const qText = `
-                    SELECT expr
-                    FROM profiles
-                    WHERE email = $1
-                    `
-        const qValues = [email]
-        // const qText = `
-        //     INSERT INTO profiles (token_hash, email, expires_at, used)
-        //     VALUES ($1, $2, $3, $4);`;
-        // const qValues = [hashedToken, email, expiredTime, false];
-        const data = await client.query(qText, qValues);  
-        const userExpr = data.rows[0].expr
+        const userExpr = await getExprFromDB(email, client);
         if(Object.hasOwn(userExpr, year) === false){
-            // userExpr[year] = {"DCI": null, "WGI": null}
             userExpr[year] = {}
         }
         const circuit = await getGroupCircuit(group, client)
         userExpr[year][circuit] = group;
         await updateRow(email, userExpr, client);
-        
     }
     catch (err){
         console.error(err);
@@ -84,7 +66,32 @@ async function updateRow(email, expr, client){
     }
 }
 
+// ---for GET method---
+
+async function getExprFromDB(email, client){    
+    const qText = `
+                SELECT expr
+                FROM profiles
+                WHERE email = $1
+                `
+    const qValues = [email]
+    const data = await client.query(qText, qValues);  
+    return data.rows[0].expr;
+}
+
+// ---Starting point---
+
 export default async function handler(req, res){
+    if (req.method === 'GET') {
+        getExpr(req, res);
+    } else if (req.method === 'POST') {
+        addExpr(req, res);
+    } else {
+        res.status(405).json({ error: 'Method not allowed' });
+    }
+}
+
+async function addExpr(req, res){
     const email = getSessionEmail(req);
     const { group, year, key } = req.body;
 
@@ -94,6 +101,13 @@ export default async function handler(req, res){
     }
     
     await checkData(email, group, year);
-
     res.status(200).json({ success: true });
+}
+
+async function getExpr(req, res){
+    const email = getSessionEmail(req);
+    const client = await pool.connect();
+    const expr = await getExprFromDB(email, client);
+
+    res.status(200).json(expr);
 }

@@ -91,8 +91,13 @@ main {
     background-color: #ffffff;
 }
 
-h1 {
+.text-box-one {
+    max-width: 37rem;
     z-index: 2;
+}
+
+.margin-top-sml {
+    margin-top: .8em;
 }
 
 .triphoto {

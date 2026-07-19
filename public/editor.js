@@ -10,8 +10,8 @@ async function checkAuth() {
     document.querySelector('h1').textContent = "You're in";
     document.getElementById('email').textContent = data.email;
     document.querySelector('body').hidden = false;
-    loadGroups();
-    //use to load profile data
+    await loadGroups();
+    await updatePreviewExpr();
 }
 
 checkAuth();
@@ -130,6 +130,8 @@ function addStatusElements(groupId, year, success){
     if(success === true){
         const groupName = document.querySelector(`option[value="${groupId}"`).textContent;
         conf.textContent = `Successfully added ${groupName} ${year} to your experience`;
+        groupSelect.clear();
+        document.getElementById('year-marched').value = '';
     }
     else{
         conf.textContent = `ERROR: Please try again`;
@@ -137,18 +139,51 @@ function addStatusElements(groupId, year, success){
 }
 
 async function addExpr(group, year, key) {
-    const response = await fetch('/api/add-expr', {
+    const response = await fetch('/api/expr', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ group, year, key })
     });
 
     addStatusElements(group, year, response.ok);
-    // await updatePreviewExpr();
+    await updatePreviewExpr();
 }
 
 //Pulls DB to update expr preview on page
 
 async function updatePreviewExpr(){
+    const response = await fetch(`/api/expr`);
 
+    if (!response.ok) {
+        console.error('Failed to load profile:', response.status);
+        return;
+    }
+
+    const expr = await response.json();
+    exprToHtml(expr);
+}
+
+function exprToHtml(expr) {
+    const preview = document.getElementById('preview-expr');
+    preview.replaceChildren();
+
+    for (const [key, value] of Object.entries(expr)){
+        const yearCont = document.createElement('div')
+        yearCont.classList.add('year-cont');
+
+        const year = document.createElement('h3');
+        year.textContent = key;
+        yearCont.append(year);
+
+        const circuits = ['WGI', 'DCI'];
+        for(const circuit of circuits){
+            if(value.hasOwnProperty(circuit) === true){
+                const p = document.createElement('p');
+                p.textContent = `${circuit}: ${value[circuit]}`;
+                yearCont.append(p);
+            }
+        }
+
+        preview.append(yearCont);
+    }
 }
