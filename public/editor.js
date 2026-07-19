@@ -1,3 +1,5 @@
+import { exprToHtml } from './helpers.js';
+
 //---Checks cookie for access---
 async function checkAuth() {
     const response = await fetch('/api/me');
@@ -7,8 +9,16 @@ async function checkAuth() {
         window.location.href = '/';
         return;
     }
-    document.querySelector('h1').textContent = "You're in";
-    document.getElementById('email').textContent = data.email;
+
+    const profileRes = await fetch(`/api/existing-profile?email=${data.email}`);
+    const profileData = await profileRes.json()
+
+    document.getElementById('user-info').textContent = `${profileData.name} (${profileData.email})`;
+    const anchor = document.getElementById('profile-link');
+    const anchorLink = `marching.bio/${profileData.code}`;
+    anchor.textContent = anchorLink;
+    anchor.href = `https://${anchorLink}`;
+
     document.querySelector('body').hidden = false;
     await loadGroups();
     await updatePreviewExpr();
@@ -160,30 +170,5 @@ async function updatePreviewExpr(){
     }
 
     const expr = await response.json();
-    exprToHtml(expr);
-}
-
-function exprToHtml(expr) {
-    const preview = document.getElementById('preview-expr');
-    preview.replaceChildren();
-
-    for (const [key, value] of Object.entries(expr)){
-        const yearCont = document.createElement('div')
-        yearCont.classList.add('year-cont');
-
-        const year = document.createElement('h3');
-        year.textContent = key;
-        yearCont.append(year);
-
-        const circuits = ['WGI', 'DCI'];
-        for(const circuit of circuits){
-            if(value.hasOwnProperty(circuit) === true){
-                const p = document.createElement('p');
-                p.textContent = `${circuit}: ${value[circuit]}`;
-                yearCont.append(p);
-            }
-        }
-
-        preview.append(yearCont);
-    }
+    exprToHtml(expr, 'preview-expr');
 }

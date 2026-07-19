@@ -7,6 +7,16 @@ body {
     overflow-x: visible;
 }
 
+header {
+    margin: 1em 2em;
+    font-size: 1.6rem;
+}
+
+#profile-link {
+    text-decoration: underline;
+    color: blue;
+}
+
 #add-exp {
     margin-top: 1rem;
 }
@@ -91,7 +101,16 @@ label[for="year-marched"], #year-marched {
 #preview {
     /* min-width: none; */
     flex: 0 1 55rem;
-    background-color: tan;
+    background-color: antiquewhite;
     min-height: 30rem;
     border: 2px black solid;
+    font-size: 2rem;
+}
+
+.year-cont, .groups-cont {
+    margin-left: 1.2em;
+}
+
+.year-cont {
+    margin-bottom: .5em;
 }

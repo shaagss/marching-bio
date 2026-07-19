@@ -72,3 +72,7 @@ img {
 .invisible {
     visibility: hidden;
 }
+
+.inline {
+    display: inline;
+}

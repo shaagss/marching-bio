@@ -7,6 +7,9 @@ export default async function handler(req, res) {
     if (!profile) {
         return res.status(404).json({ error: 'Not found' });
     }
-
-    return res.status(200).json(profile);
+    
+    let pubProfile = {};
+    pubProfile.name = profile.name;
+    pubProfile.expr = profile.expr;
+    return res.status(200).json(pubProfile);
 }

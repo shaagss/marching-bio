@@ -49,7 +49,7 @@ function closeLogin() {
 }
 
 async function profileExists(email){
-    const response = await fetch(`/api/existing-profile`);
+    const response = await fetch(`/api/existing-profile?email=${email}`);
     if(await response.json() === null){
         return false;
     }

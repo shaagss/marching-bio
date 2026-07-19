@@ -17,14 +17,18 @@
 
 </head>
 <body class="work-sans" hidden>
-    <h1></h1>
-    <p id="email"></p>
+    <header>
+        <h1>marching.bio editor</h1>
+        <h2 id="user-info"></h2>
+        <p>Your profile is at <a id="profile-link" href=""></a></p>
+    </header>
 
     <div class="page-divider">
         <div id="editor" class="invisible">
             <form id="filter-groups">
                 <fieldset>
                     <legend id="circuit-legend">Circuit</legend>
+                    <p>*Limited WGI options</p>
                     <div class="options">
                         <label><input type="radio" name="circuit" value="DCI"> DCI</label>
                         <label><input type="radio" name="circuit" value="WGI"> WGI</label>
@@ -76,6 +80,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
-    <script src="editor.js"></script>
+    <script type="module" src="editor.js"></script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile</title>
+    <title>marching.bio</title>
 
     <!-- google fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,11 +12,37 @@
 
     <!-- stylesheets -->
     <link rel="stylesheet" href="styles.css">
-
+    <link rel="stylesheet" href="profile.css">
 </head>
-<body>
-    <h1 id="name"></h1>
+<body class="work-sans" hidden>
+    <header>
+         <a href="/"><img src="https://semantic-web.com/wp-content/uploads/underpin-pan-european-data-space-for-holistic-asset-management-in-critical-manufacturing-industries-3.png" alt="marching bio logo"></a>
+    </header>
 
-    <script src="profile.js"></script>
+    <main>
+        <div class="userCard">
+            <h1 id="name"></h1>
+            <img src="https://img.magnific.com/free-vector/yellow-drum-illustration_24908-81974.jpg" alt="User's profile picture">
+            <!-- <h2>Current group</h2> -->
+        </div>
+        <div class="historyCard">
+            <h1>Experience</h1>
+            <div id="experience"></div>
+            <!-- <p>---2026---</p>
+            <ul>
+                <li>Redcoats</li>
+                <li>Redcoats</li>
+                <li>...</li>
+                <li>Green Devils B</li>
+            </ul>
+            <p>---2021---</p> -->
+        </div>
+    </main>
+
+    <footer>
+        <p>Make your own <a href="/">marching bio</a></p>
+    </footer>
+
+    <script type="module" src="profile.js"></script>
 </body>
 </html>
