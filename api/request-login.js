@@ -35,7 +35,6 @@ async function storeData(hashedToken, email, name){
     }
     finally {
         client.release();
-        pool.end();
     }
 }
 
