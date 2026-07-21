@@ -105,3 +105,4 @@ loginForm.addEventListener('submit', event => {
     
     requestLogin(email, name, key);
 });
+
