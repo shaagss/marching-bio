@@ -1,10 +1,14 @@
 import { exprToHtml } from './helpers.js';
 
+const profileName = document.getElementById('name');
+
+loadProfile();
+
+// ---Get users profile---
 async function loadProfile() {
     const code = window.location.pathname.slice(1);
 
     const response = await fetch(`/api/profile?code=${code}`);
-
     if (!response.ok) {
         window.location.href = '/404';
         return;
@@ -16,13 +20,11 @@ async function loadProfile() {
     
     if(profile.name === null){
         document.title = profile.name + 'user - marching.bio'
-        document.getElementById('name').textContent = "Valid profile, no name";
+        profileName.textContent = "Invalid name";
     }
     else{
         document.title = profile.name + ' - marching.bio'
-        document.getElementById('name').textContent = profile.name;
+        profileName.textContent = profile.name;
     }
     
 }
-
-loadProfile();

@@ -1,8 +1,9 @@
 import 'dotenv/config';
 import { Pool } from 'pg';
-import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
-import { serializeCookie } from '../lib/cookies.js';
+import crypto from 'crypto';
+import { makeCookie } from '../lib/cookies.js';
+import { hashToken } from '../lib/tokens.js';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -13,18 +14,17 @@ const pool = new Pool({
     }
 });
 
+// ---
 async function getTokenData(token){
-    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+    const hashedToken = hashToken(token);
 
     const client = await pool.connect();
     try {
-        const qText = `
+        const data = await client.query(`
             SELECT *
             FROM login_tokens
-            WHERE token_hash = $1;`;
-        const qValues = [hashedToken];
-
-        const data = await client.query(qText, qValues); 
+            WHERE token_hash = $1;`,
+            [hashedToken]); 
         return data.rows;
     }
     catch (err){
@@ -37,41 +37,40 @@ async function getTokenData(token){
 }
 
 function checkData(data) {
-    //returns true if valid
     if(data === undefined){
         return false;
     }
 
     const currentTime = new Date();
-    if(data.used || data.expires_at <= currentTime){
-        return false;
-    }
-    else {
-        return true;
-    }
+    return !(data.used || data.expires_at <= currentTime);
 }
 
-async function maybeCreateProfile(email, name, client){
+async function checkProfileExists(email, name, pool){
     const existing = await client.query(
         `SELECT code
         FROM profiles
         WHERE email = $1`,
         [email]
     );
-
+    
     if (existing.rows.length > 0) {
         return existing.rows[0].code; 
     }
+    else {
+        await createProfile(email, name, pool);
+    }
+}
 
-    //Here they dont have a profile
+async function createProfile(email, name, client){
+    // Check how many profiles exist, for length of code
     const countResult = await client.query(`
         SELECT COUNT(*)
         FROM profiles`);
     const count = parseInt(countResult.rows[0].count);
     const byteLength = count < 65536 ? 2 : 3; // 4 digits, then 6
-    const maxAttempts = 10;
-
-    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    
+    // Try 10 times to make a code
+    for (let attempt = 0; attempt < 10; ++attempt) {
         const code = crypto.randomBytes(byteLength).toString('hex');
 
         try {
@@ -80,10 +79,9 @@ async function maybeCreateProfile(email, name, client){
                 VALUES ($1, $2, $3)`,
                 [code, email, name]
             );
-            return code; 
         }
         catch (err) {
-            if (err.code === '23505') {//already exists error code
+            if (err.code === '23505') {// Already exists error code
                 continue;
             }
             throw err; 
@@ -106,13 +104,12 @@ export default async function handler(req, res) {
         // return res.status(400).json({ error: 'Invalid token' });
         return res.redirect(302, '/');
     }
-    if(checkData(tokenData) === false){
+    if( !(checkData(tokenData)) ){
         // return res.status(400).json({ error: 'Expired token' });
         return res.redirect(302, '/editor');
     }
     
-    const email = tokenData.email;
-    const name = tokenData.name;
+    const { email, name } = tokenData;
     const sessionToken = jwt.sign(
         {email: email},
         process.env.JWT_SECRET,
@@ -123,10 +120,10 @@ export default async function handler(req, res) {
         `UPDATE login_tokens
         SET used = true
         WHERE token_hash = $1`,
-        [crypto.createHash('sha256').update(token).digest('hex')]
+        [hashToken(token)]
     );
 
-    await maybeCreateProfile(email, name, pool);
+    await checkProfileExists(email, name, pool);
 
     res.setHeader('Set-Cookie', serializeCookie('session', sessionToken, {
         httpOnly: true,

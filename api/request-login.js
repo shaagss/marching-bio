@@ -1,8 +1,8 @@
 import 'dotenv/config';
 import { Pool } from 'pg';
 import { Resend } from 'resend';
-import crypto from 'crypto';
 import fs from 'node:fs/promises';
+import { generateToken, hashToken } from '../lib/tokens.js';
 
 const STUPID_KEY = process.env.STUPID_KEY;
 const EMAIL_TEMPLATE_PATH = new URL('./login-email.html', import.meta.url);
@@ -16,7 +16,7 @@ const pool = new Pool({
     }
 });
 
-async function storeData(hashedToken, email, name){
+async function storeNewToken(hashedToken, email, name){
     const client = await pool.connect();
     try {
         const expiredTime = new Date();
@@ -26,12 +26,10 @@ async function storeData(hashedToken, email, name){
             INSERT INTO login_tokens (token_hash, email, name, expires_at, used)
             VALUES ($1, $2, $3, $4, $5);`;
         const qValues = [hashedToken, email, name, expiredTime, false];
-
         await client.query(qText, qValues);        
     }
     catch (err){
         console.error(err);
-        return [];
     }
     finally {
         client.release();
@@ -51,8 +49,6 @@ async function sendEmail(email, token){
             subject: 'Login to marching.bio',
             html: htmlContent
         });
-
-        return {data, error};
     }
     catch (err){
         console.error(err);
@@ -61,16 +57,15 @@ async function sendEmail(email, token){
 
 export default async function handler(req, res){
     const { email, name, key } = req.body;
-
     if(key !== STUPID_KEY){
         res.status(423).json({ success: false });
         return;
     }
     
-    let token = crypto.randomBytes(32).toString('hex');
-    let hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+    let token = generateToken()
+    let hashedToken = hashToken(token);
 
-    await storeData(hashedToken, email, name);
+    await storeNewToken(hashedToken, email, name);
 
     await sendEmail(email, token);
 

@@ -53,6 +53,10 @@ header .make:active {
     color: maroon;
 }
 
+#make-btn {
+    pointer-events: none;
+}
+
 main {
     display: flex;
     flex-flow: column nowrap;

@@ -1,7 +1,9 @@
 export function exprToHtml(expr, parentId) {
+    // Get parent and clear children
     const parent = document.getElementById(parentId);
     parent.replaceChildren();
 
+    // Make div containing entire year, then just the groups. Fill them
     for (const [key, value] of Object.entries(expr)){
         const yearCont = document.createElement('div')
         yearCont.classList.add('year-cont');

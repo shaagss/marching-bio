@@ -11,8 +11,7 @@ const pool = new Pool({
     }
 });
 
-// ---for POST method---
-
+// ---POST method---
 async function checkData(email, group, year){
     const client = await pool.connect();
     try {
@@ -39,10 +38,10 @@ async function getGroupCircuit(groupId, client){
                     SELECT circuit
                     FROM groups
                     WHERE id = $1
-                    `
-        const qValues = [groupId]
+                    `;
+        const qValues = [groupId];
         const data = await client.query(qText, qValues);  
-        const group = data.rows[0]
+        const group = data.rows[0];
         return group.circuit;
     }
     catch (err){
@@ -57,8 +56,8 @@ async function updateRow(email, expr, client){
                     UPDATE profiles
                     SET expr = $1
                     WHERE email = $2
-                    `
-        const qValues = [expr, email]
+                    `;
+        const qValues = [expr, email];
         await client.query(qText, qValues);  
     }
     catch (err){
@@ -66,27 +65,27 @@ async function updateRow(email, expr, client){
     }
 }
 
-// ---for GET method---
-
+// ---GET method---
 async function getExprFromDB(email, client){    
     const qText = `
                 SELECT expr
                 FROM profiles
                 WHERE email = $1
-                `
-    const qValues = [email]
+                `;
+    const qValues = [email];
     const data = await client.query(qText, qValues);  
     return data.rows[0].expr;
 }
 
 // ---Starting point---
-
 export default async function handler(req, res){
-    if (req.method === 'GET') {
+    if ( req.method === 'GET' ) {
         getExpr(req, res);
-    } else if (req.method === 'POST') {
+    }
+    else if ( req.method === 'POST' ) {
         addExpr(req, res);
-    } else {
+    }
+    else {
         res.status(405).json({ error: 'Method not allowed' });
     }
 }
