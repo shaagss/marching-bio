@@ -237,6 +237,8 @@ function resetEditorForms(){
 
     groupSelect.clear();
     document.getElementById('year-marched').value = '';
+    yearInput.disabled = true;
+    groupSelect.disable();
 
     editor.hidden = true;
 }
