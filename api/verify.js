@@ -57,7 +57,7 @@ async function checkProfileExists(email, name, pool){
         return existing.rows[0].code; 
     }
     else {
-        await createProfile(email, name, pool);
+        return await createProfile(email, name, pool);
     }
 }
 
@@ -79,6 +79,7 @@ async function createProfile(email, name, client){
                 VALUES ($1, $2, $3)`,
                 [code, email, name]
             );
+            return code;
         }
         catch (err) {
             if (err.code === '23505') {// Already exists error code
