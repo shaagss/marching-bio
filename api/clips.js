@@ -12,16 +12,21 @@ const pool = new Pool({
 });
 
 // ---POST method---
-async function checkExprFormat(email, group, year){
+async function checkClipsFormat(email, group, year, videoData){
     const client = await pool.connect();
     try {
-        const userExpr = await getExprFromDB(email, client);
-        if(Object.hasOwn(userExpr, year) === false){
-            userExpr[year] = {}
+        const userClips = await getClipsFromDB(email, client);
+        if(Object.hasOwn(userClips, year) === false){
+            userClips[year] = {}
         }
+
         const circuit = await getGroupCircuit(group, client)
-        userExpr[year][circuit] = group;
-        await updateRow(email, userExpr, client);
+        if(Object.hasOwn(userClips[year], circuit) === false){
+            userClips[year][circuit] = [];
+        }
+
+        userClips[year][circuit].push(videoData);
+        await updateRow(email, userClips, client);
     }
     catch (err){
         console.error(err);
@@ -50,14 +55,14 @@ async function getGroupCircuit(groupId, client){
     }
 }
 
-async function updateRow(email, expr, client){
+async function updateRow(email, clips, client){
     try{
         const qText = `
                     UPDATE profiles
-                    SET expr = $1
+                    SET clips = $1
                     WHERE email = $2
                     `;
-        const qValues = [expr, email];
+        const qValues = [clips, email];
         await client.query(qText, qValues);  
     }
     catch (err){
@@ -66,9 +71,9 @@ async function updateRow(email, expr, client){
 }
 
 // ---GET method---
-async function getExprFromDB(email, client){    
+async function getClipsFromDB(email, client){    
     const qText = `
-                SELECT expr
+                SELECT clips
                 FROM profiles
                 WHERE email = $1
                 `;
@@ -80,33 +85,33 @@ async function getExprFromDB(email, client){
 // ---Starting point---
 export default async function handler(req, res){
     if ( req.method === 'GET' ) {
-        getExpr(req, res);
+        getClips(req, res);
     }
     else if ( req.method === 'POST' ) {
-        addExpr(req, res);
+        addClips(req, res);
     }
     else {
         res.status(405).json({ error: 'Method not allowed' });
     }
 }
 
-async function addExpr(req, res){
+async function addClips(req, res){
     const email = getSessionEmail(req);
-    const { group, year, key } = req.body;
+    const { group, year, videoData, key } = req.body;
 
     if(key !== STUPID_KEY){
         res.status(423).json({ success: false });
         return;
     }
     
-    await checkExprFormat(email, group, year);
+    await checkClipsFormat(email, group, year, videoData);
     res.status(200).json({ success: true });
 }
 
-async function getExpr(req, res){
+async function getClips(req, res){
     const email = getSessionEmail(req);
     const client = await pool.connect();
-    const expr = await getExprFromDB(email, client);
+    const clips = await getClipsFromDB(email, client);
 
     res.status(200).json(expr);
 }

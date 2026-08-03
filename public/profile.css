@@ -36,6 +36,13 @@ header img {
     text-align: left;
 }
 
+.clip-toggle {
+    background-color: black;
+    color: white;
+    border: 2px red solid;
+    margin: 1rem;
+}
+
 footer {
     padding: 10px 0;
     border-top: blue dashed 2px;

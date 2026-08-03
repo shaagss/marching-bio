@@ -10,5 +10,6 @@ export default async function handler(req, res) {
     let pubProfile = {};
     pubProfile.name = profile.name;
     pubProfile.expr = profile.expr;
+    pubProfile.clips = profile.clips
     return res.status(200).json(pubProfile);
 }

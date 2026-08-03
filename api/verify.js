@@ -46,7 +46,7 @@ function checkData(data) {
 }
 
 async function checkProfileExists(email, name, pool){
-    const existing = await client.query(
+    const existing = await pool.query(
         `SELECT code
         FROM profiles
         WHERE email = $1`,
@@ -125,7 +125,7 @@ export default async function handler(req, res) {
 
     await checkProfileExists(email, name, pool);
 
-    res.setHeader('Set-Cookie', serializeCookie('session', sessionToken, {
+    res.setHeader('Set-Cookie', makeCookie('session', sessionToken, {
         httpOnly: true,
         secure: true,
         sameSite: 'lax',

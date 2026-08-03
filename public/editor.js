@@ -27,9 +27,9 @@ async function checkAuth() {
 
     document.getElementById('user-info').textContent = `${profileData.name} (${profileData.email})`;
     const profileAnchor = document.getElementById('profile-link');
-    const profileAnchorLink = `marching.bio/${profileData.code}`;
-    profileAnchor.textContent = profileAnchorLink;
-    profileAnchor.href = 'https://' + profileAnchorLink;
+    const profileAnchorLink = '/' + profileData.code;
+    profileAnchor.textContent = 'marching.bio' + profileAnchorLink;
+    profileAnchor.href = profileAnchorLink;
 
     document.querySelector('body').hidden = false;
     await loadGroups();
