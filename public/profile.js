@@ -36,6 +36,7 @@ async function loadProfile() {
     
 }
 
+// ---Listen for clip button presses---
 experience.addEventListener('click', async (event) => {
     const button = event.target.closest('.clip-toggle');
     if (!button) return; // click was on something else inside #experience, ignore it
@@ -47,7 +48,7 @@ experience.addEventListener('click', async (event) => {
     if (activePlayer) {
         activePlayer.destroy();
         activePlayer = null;
-        activeButton.textContent = 'Show clip';
+        activeButton.textContent = 'Show clip #' + activeButton.dataset.count;
         activeContainerId = null;
         activeButton = null;
     }
@@ -65,7 +66,6 @@ experience.addEventListener('click', async (event) => {
         end: parseInt(button.dataset.end)
     });
     activePlayer.playVideo();
-    console.log('done');
     activeContainerId = containerId;
     activeButton = button;
 });

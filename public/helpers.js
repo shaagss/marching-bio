@@ -1,3 +1,4 @@
+
 export function exprToHtml(expr, clips, parentId) {
     // Get parent and clear children
     const parent = document.getElementById(parentId);
@@ -13,16 +14,22 @@ export function exprToHtml(expr, clips, parentId) {
 
         const yearHead = document.createElement('h3');
         yearHead.textContent = year;
+        yearHead.dataset.year = year;
         yearCont.append(yearHead, groupsCont);
 
         const circuits = ['WGI', 'DCI'];
         for(const circuit of circuits){
             if(Object.hasOwn(groups, circuit) === true){
+                const thisGroupCont = document.createElement('div');
+                thisGroupCont.classList.add(circuit + '-cont')
+                groupsCont.append(thisGroupCont);
+
                 const p = document.createElement('p');
                 p.textContent = `${circuit}: ${groups[circuit]}`;
-                groupsCont.append(p);
+                p.dataset.group = groups[circuit];
+                thisGroupCont.append(p);
                 if(Object.hasOwn(clips, year) && Object.hasOwn(clips[year], circuit)){
-                    addClipButton(clips[year][circuit], groupsCont);
+                    addClipButton(clips[year][circuit], thisGroupCont);
                 }
             }
         }
@@ -35,10 +42,13 @@ export function exprToHtml(expr, clips, parentId) {
 }
 
 function addClipButton(clips, groupsCont){
+    let count = 1;
     for(const clip of clips){
         let button = document.createElement('button');
         button.classList.add('clip-toggle');
-        button.textContent = clip.videoId; //'Show clip'
+        button.textContent = `Show clip #` + count;
+        button.dataset.count = count;
+        count++;
         button.dataset.videoId = clip.videoId;
         button.dataset.start = clip.start;
         button.dataset.end = clip.end;

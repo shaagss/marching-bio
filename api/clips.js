@@ -12,7 +12,7 @@ const pool = new Pool({
 });
 
 // ---POST method---
-async function checkClipsFormat(email, group, year, videoData){
+async function checkClipsFormat(email, year, group, videoId, startTime, endTime){
     const client = await pool.connect();
     try {
         const userClips = await getClipsFromDB(email, client);
@@ -24,7 +24,11 @@ async function checkClipsFormat(email, group, year, videoData){
         if(Object.hasOwn(userClips[year], circuit) === false){
             userClips[year][circuit] = [];
         }
-
+        const videoData = {
+            'videoId': videoId,
+            'start': startTime,
+            'end': endTime
+        }
         userClips[year][circuit].push(videoData);
         await updateRow(email, userClips, client);
     }
@@ -79,7 +83,7 @@ async function getClipsFromDB(email, client){
                 `;
     const qValues = [email];
     const data = await client.query(qText, qValues);  
-    return data.rows[0].expr;
+    return data.rows[0].clips;
 }
 
 // ---Starting point---
@@ -97,14 +101,9 @@ export default async function handler(req, res){
 
 async function addClips(req, res){
     const email = getSessionEmail(req);
-    const { group, year, videoData, key } = req.body;
-
-    if(key !== STUPID_KEY){
-        res.status(423).json({ success: false });
-        return;
-    }
+    const { year, group, videoId, startTime, endTime } = req.body;
     
-    await checkClipsFormat(email, group, year, videoData);
+    await checkClipsFormat(email, year, group, videoId, startTime, endTime);
     res.status(200).json({ success: true });
 }
 
@@ -113,5 +112,5 @@ async function getClips(req, res){
     const client = await pool.connect();
     const clips = await getClipsFromDB(email, client);
 
-    res.status(200).json(expr);
+    res.status(200).json(clips);
 }

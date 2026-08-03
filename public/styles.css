@@ -73,6 +73,10 @@ img {
     visibility: hidden;
 }
 
+.italic {
+    font-style: italic;
+}
+
 .inline {
     display: inline;
 }

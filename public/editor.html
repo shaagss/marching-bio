@@ -24,7 +24,8 @@
     </header>
 
     <div class="page-divider">
-        <div id="editor" class="invisible">
+        <div id="editor" class="invisible" hidden>
+            <button id="exit-add-group">Nvm</button>
             <form id="filter-groups">
                 <fieldset>
                     <legend id="circuit-legend">Circuit</legend>
@@ -70,16 +71,19 @@
                     </div>
                 </fieldset>
             </form>
-            <p id="status"></p>
         </div>
-
+        
         <div id="preview">
+            <p id="status"></p>
             <h2>Preview</h2>
-            <div id="preview-expr"></div>
+            <div id="preview-expr">
+                <p class="italic">Loading...</p>
+            </div>
         </div>
     </div>
-
+    
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
     <script type="module" src="editor.js"></script>
+    <script src="ytPlayer.js"></script>
 </body>
 </html>

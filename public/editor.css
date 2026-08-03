@@ -114,3 +114,26 @@ label[for="year-marched"], #year-marched {
 .year-cont {
     margin-bottom: .5em;
 }
+
+.groups-cont, .WGI-cont, .DCI-cont {
+    border: black 1px dashed;
+}
+
+.WGI-cont, .DCI-cont {
+    margin: .5rem;
+}
+
+button {
+    background-color: white;
+    border: 2px red solid;
+    margin: 1rem;
+    padding: .3rem;
+    border-radius: 8px;
+}
+
+.clip-toggle {
+    background-color: black;
+    color: white;
+    border: 2px red solid;
+    margin: 1rem;
+}
