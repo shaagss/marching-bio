@@ -1,8 +1,9 @@
-import { exprToHtml } from './helpers.js';
+import { exprToHtml, exprToList } from './helpers.js';
 
 const yearInput = document.getElementById('year-marched');
 const expSubmit = document.getElementById('exp-submit');
 const editor = document.getElementById('editor');
+const deleter = document.getElementById('deleter');
 const status = document.getElementById('status')
 
 let allGroups = [];
@@ -16,6 +17,7 @@ const classOptions = {
 let activePlayer = null;
 let activeContainerId = null;
 let activeButton = null;
+let activeDelButton = null;
 
 checkAuth();
 
@@ -40,6 +42,7 @@ async function checkAuth() {
     document.querySelector('body').hidden = false;
     await loadGroups();
     await updatePreviewExpr();
+    groupButtons();
 }
 
 // ---Sets up groups from DB---
@@ -84,29 +87,46 @@ async function updatePreviewExpr(){
     const clips = await clipsRes.json();
 
     exprToHtml(expr, clips, 'preview-expr');
-    addGroupButton();
+    updateDeleteGroup(expr);
     addClipButtons();
 }
 
-function addGroupButton(){
-    const parent = document.getElementById('preview-expr');
-
-    let button = document.createElement('button');
-    button.textContent = 'Add group';
-    button.id = 'add-group';
+function groupButtons(){
+    const plusButton = document.createElement('button');
+    plusButton.textContent = 'Add group';
+    plusButton.id = 'add-group';
         
-    parent.appendChild(button);
+    document.getElementById('preview-expr').insertAdjacentElement('beforebegin', plusButton);
+
+    let trashButton = document.createElement('button');
+    trashButton.textContent = '🗑️';
+    trashButton.id = 'delete-group';
+
+    document.getElementById('preview-expr').insertAdjacentElement('beforebegin', trashButton);
 }
 
 function addClipButtons() {
     const allGroups = document.querySelectorAll('.WGI-cont, .DCI-cont');
     allGroups.forEach( element => {
         let button = document.createElement('button');
-        button.textContent = 'Add clip';
+        button.textContent = '+🎥';
         button.classList.add('add-clip');
             
         element.appendChild(button);
     })
+}
+
+function delClipButton(){
+    const button = document.createElement('button');
+    button.textContent = '🗑️';
+    button.id = 'delete-clip';
+
+    activeButton.insertAdjacentElement('afterend', button);
+    activeDelButton = button;
+}
+
+function updateDeleteGroup(expr){
+    exprToList(expr, 'delete-select', 'Select group to delete');
 }
 
 // ---Check what user submitted---
@@ -120,7 +140,6 @@ function updateGroupOptions() {
     const theClass = getSelectedRadio('class');
     const division = getSelectedRadio('division');
 
-    // groupSelect.clear();
     groupSelect.clearOptions();
 
     // If either no circut or class selected, OR
@@ -189,23 +208,82 @@ async function addExpr(group, year) {
     updatePreviewExpr();
 }
 
-function addStatusElements(groupId, year){
+function addStatusElements(groupId, year, deleted = false){
     const groupName = document.querySelector(`option[value="${groupId}"`).textContent;
-    status.textContent = `Successfully added ${groupName} ${year} to your experience`;
-    
+
+    if(deleted){
+        status.textContent = `Successfully deleted ${groupName} ${year} from your profile`;
+        resetDeleter();
+    }
+    else{
+        status.textContent = `Successfully added ${groupName} ${year} to your experience`;
+        resetEditorForms();
+    }
+}    
+
+function resetEditorForms(){
+    document.getElementById('filter-groups').reset();
+
+    const divisionSection = document.getElementById('division-section');
+    document.querySelectorAll('input[name="division"]').forEach(radio => radio.checked = false);
+    divisionSection.hidden = true;
+
+    const classSection = document.getElementById('class-section');
+    classSection.hidden = true;
+    document.querySelectorAll('input[name="class"]').forEach(radio => {
+        radio.checked = false;
+        radio.parentElement.hidden = true;
+    });
+
     groupSelect.clear();
     document.getElementById('year-marched').value = '';
+
     editor.hidden = true;
-}    
+}
+
 
 document.getElementById('add-exp').addEventListener('submit', event => {
     event.preventDefault();
     status.textContent = `Loading...`;
-
+    
     const group = document.getElementById('group-select').value;
     const year = document.getElementById('year-marched').value;
     addExpr(group, year);
-});    
+});   
+
+// ---Deletes expr from profile---
+async function deleteExpr(group, year) {
+    const response = await fetch('/api/expr', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ group, year })
+    });
+    if( !response.ok ){
+        status.textContent = `ERROR: Please try again`;
+        return;
+    }
+
+    addStatusElements(group, year, true);
+    updatePreviewExpr();
+}
+
+function resetDeleter(){
+    document.getElementById('delete-group-form').reset();
+    document.getElementById('delete-select').value = '';
+    deleter.hidden = true;
+}
+
+document.getElementById('delete-group-form').addEventListener('submit', event => {
+    event.preventDefault();
+    status.textContent = `Loading...`;
+
+    const select = document.getElementById('delete-select');
+    const selectedOption = select.options[select.selectedIndex];
+
+    const group = selectedOption.value;
+    const year = selectedOption.dataset.year;
+    deleteExpr(group, year);
+});   
 
 // ---Adds clip to profile---
 async function addClip(year, group, videoId, startTime, endTime) {
@@ -218,6 +296,8 @@ async function addClip(year, group, videoId, startTime, endTime) {
         document.getElementById('clip-status').textContent = `ERROR: Please try again`;
         return;
     }
+
+    activeClipCont = false;
 
     updatePreviewExpr();
 }
@@ -287,11 +367,33 @@ document.getElementById('preview-expr').addEventListener('submit', async event =
     addClip(year, group, videoId, startTime, endTime);
 });
 
+// ---Deletes clip from profile---
+async function deleteClip(year, group, videoId, startTime, endTime) {
+    const response = await fetch('/api/clips', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ year, group, videoId, startTime, endTime })
+    });
+    if (!response.ok) {
+        status.textContent = `ERROR: Please try again`;
+        return;
+    }
+
+    activePlayer?.destroy();
+    activePlayer = null;
+    activeContainerId = null;
+    activeButton = null;
+    activeDelButton = null;
+
+    status.textContent = `Successfully deleted clip`;
+    updatePreviewExpr();
+}
+
 // ---Toggles for expr and clips adder forms---
 
 function addSingleClipButton(groupCont) {
         let newClipButton = document.createElement('button');
-        newClipButton.textContent = 'Add clip';
+        newClipButton.textContent = '+🎥';
         newClipButton.classList.add('add-clip');
         groupCont.appendChild(newClipButton);
 }
@@ -300,7 +402,16 @@ document.getElementById('preview').addEventListener('click', async (event) => {
     // Add group button
     let button = event.target.closest('#add-group');
     if(button){
+        resetDeleter();
         editor.hidden = false;
+        return
+    }
+
+    // Delete group button
+    button = event.target.closest('#delete-group');
+    if(button){
+        resetEditorForms();
+        deleter.hidden = false;
         return
     }
 
@@ -315,7 +426,7 @@ document.getElementById('preview').addEventListener('click', async (event) => {
 
         button.insertAdjacentHTML('afterend', `
             <div id="add-clip-cont">
-                <button id="exit-add-clip">Nvm</button>
+                <button id="exit-add-clip">XX</button>
                 <p id="clip-status"></p>
                 <form id="add-clip">
                     <fieldset>
@@ -348,13 +459,34 @@ document.getElementById('preview').addEventListener('click', async (event) => {
         return;
     }
 
+    // Delete clip
+    button = event.target.closest('#delete-clip');
+    if(button){
+        const videoId = activeButton.dataset.videoId;
+        const startTime = parseInt(activeButton.dataset.start);
+        const endTime = parseInt(activeButton.dataset.end);
+
+        const groupsCont = activeButton.closest('.WGI-cont, .DCI-cont');
+        const group = groupsCont.firstElementChild.dataset.group;
+        const year = groupsCont.parentElement.parentElement.firstElementChild.dataset.year;
+
+        deleteClip(year, group, videoId, startTime, endTime);
+        return;
+    }
+
     return;
 });
 
 // Exit add group
 document.getElementById('exit-add-group').addEventListener('click', (event) => {
-    editor.hidden = true;
+    resetEditorForms();
 });
+
+//Exit delete group
+document.getElementById('exit-delete-group').addEventListener('click', (event) => {
+    resetDeleter();
+});
+
 
 // ---Listen for clip button presses---
 document.getElementById('preview-expr').addEventListener('click', async (event) => {
@@ -368,17 +500,23 @@ document.getElementById('preview-expr').addEventListener('click', async (event) 
     if (activePlayer) {
         activePlayer.destroy();
         activePlayer = null;
-        activeButton.textContent = 'Show clip #' + activeButton.dataset.count;
+        activeButton.textContent = '🎥 #' + activeButton.dataset.count;
         activeContainerId = null;
         activeButton = null;
+        activeDelButton.remove();
     }
 
     if (clickedActiveOne) {
         return; // it was already open, so clicking it just closes it
     }
 
-    button.textContent = 'Hide clip';
+    button.textContent = 'Hide';
     await ensureYtApiLoaded();
+    
+    activeContainerId = containerId;
+    activeButton = button;
+
+    delClipButton();
 
     activePlayer = await createClipPlayer(containerId, {
         videoId: button.dataset.videoId,
@@ -386,6 +524,4 @@ document.getElementById('preview-expr').addEventListener('click', async (event) 
         end: parseInt(button.dataset.end)
     });
     activePlayer.playVideo();
-    activeContainerId = containerId;
-    activeButton = button;
 });

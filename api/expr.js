@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import { Pool } from 'pg';
 import { getSessionEmail } from '../lib/auth.js';
+import { getClipsFromDB, updateClipsRow } from '../lib/clips.js';
 
 
 const pool = new Pool({
@@ -11,7 +12,7 @@ const pool = new Pool({
 });
 
 // ---POST method---
-async function checkExprFormat(email, group, year){
+async function checkAddExprFormat(email, group, year){
     const client = await pool.connect();
     try {
         const userExpr = await getExprFromDB(email, client);
@@ -64,6 +65,44 @@ async function updateRow(email, expr, client){
     }
 }
 
+// ---DELETE method---
+async function checkDelExprFormat(email, group, year){
+    const client = await pool.connect();
+    try {
+        const userExpr = await getExprFromDB(email, client);
+        const circuit = await getGroupCircuit(group, client);
+
+        if(Object.hasOwn(userExpr, year) === false ||
+            Object.hasOwn(userExpr[year], circuit) === false){
+            throw new Error('That group/year entry does not exist for this user');
+        }
+
+        delete userExpr[year][circuit];
+        if (Object.keys(userExpr[year]).length === 0) {
+            delete userExpr[year]
+        }
+        await updateRow(email, userExpr, client);
+
+        // remove any clips tied to it
+        const userClips = await getClipsFromDB(email, client);
+        if (Object.hasOwn(userClips, year) && Object.hasOwn(userClips[year], circuit)) {
+            delete userClips[year][circuit];
+            if (Object.keys(userClips[year]).length === 0) {
+                delete userClips[year];
+            }
+            await updateClipsRow(email, userClips, client);
+        }
+    }
+    catch (err){
+        console.error(err);
+        return [];
+    }
+    finally {
+        client.release();
+    }
+}
+
+
 // ---GET method---
 async function getExprFromDB(email, client){    
     const qText = `
@@ -78,29 +117,39 @@ async function getExprFromDB(email, client){
 
 // ---Starting point---
 export default async function handler(req, res){
+    const email = getSessionEmail(req);
+
     if ( req.method === 'GET' ) {
-        getExpr(req, res);
+        getExpr(email, req, res);
     }
     else if ( req.method === 'POST' ) {
-        addExpr(req, res);
+        addExpr(email, req, res);
+    }
+    else if ( req.method === 'DELETE' ) {
+        delExpr(email, req, res);
     }
     else {
         res.status(405).json({ error: 'Method not allowed' });
     }
 }
 
-async function addExpr(req, res){
-    const email = getSessionEmail(req);
+async function addExpr(email, req, res){
     const { group, year } = req.body;
     
-    await checkExprFormat(email, group, year);
+    await checkAddExprFormat(email, group, year);
     res.status(200).json({ success: true });
 }
 
-async function getExpr(req, res){
-    const email = getSessionEmail(req);
+async function getExpr(email, req, res){
     const client = await pool.connect();
     const expr = await getExprFromDB(email, client);
 
     res.status(200).json(expr);
+}
+
+async function delExpr(email, req, res){
+    const { group, year } = req.body;
+    
+    await checkDelExprFormat(email, group, year);
+    res.status(200).json({ success: true });
 }

@@ -29,7 +29,7 @@ export function exprToHtml(expr, clips, parentId) {
                 p.dataset.group = groups[circuit];
                 thisGroupCont.append(p);
                 if(Object.hasOwn(clips, year) && Object.hasOwn(clips[year], circuit)){
-                    addClipButton(clips[year][circuit], thisGroupCont);
+                    addClipButton(clips[year][circuit], thisGroupCont, year, circuit);
                 }
             }
         }
@@ -41,12 +41,12 @@ export function exprToHtml(expr, clips, parentId) {
     }
 }
 
-function addClipButton(clips, groupsCont){
+function addClipButton(clips, groupsCont, year, circuit){
     let count = 1;
     for(const clip of clips){
         let button = document.createElement('button');
         button.classList.add('clip-toggle');
-        button.textContent = `Show clip #` + count;
+        button.textContent = `🎥 #` + count;
         button.dataset.count = count;
         count++;
         button.dataset.videoId = clip.videoId;
@@ -54,7 +54,7 @@ function addClipButton(clips, groupsCont){
         button.dataset.end = clip.end;
         
         const clipCont = document.createElement('div');
-        clipCont.id = `clip-${clip.videoId}`;
+        clipCont.id = `clip-${year}-${circuit}-${clip.videoId}-${clip.start}-${clip.end}`;
         clipCont.classList.add('clip-cont');
         
         button.setAttribute('aria-controls', clipCont.id);
@@ -64,4 +64,33 @@ function addClipButton(clips, groupsCont){
     }
 }
 
+export function exprToList(expr, selectId, defaultOptString){
+    const select = document.getElementById(selectId);
+    select.replaceChildren();
 
+    const defaultOpt = document.createElement('option');
+    defaultOpt.textContent = defaultOptString;
+    defaultOpt.value = '';
+    defaultOpt.disabled = true;
+    defaultOpt.selected = true;
+    select.append(defaultOpt);
+
+    for (const [year, groups] of Object.entries(expr)){
+        const yearHead = document.createElement('optgroup')
+        yearHead.label = year;
+
+        const circuits = ['WGI', 'DCI'];
+        for(const circuit of circuits){
+            if(Object.hasOwn(groups, circuit) === true){
+                const thisGroupOpt = document.createElement('option');
+                thisGroupOpt.textContent = groups[circuit];
+                thisGroupOpt.value = groups[circuit];
+                thisGroupOpt.dataset.year = year;
+
+                yearHead.append(thisGroupOpt);
+
+            }
+        }
+        select.append(yearHead);
+    }
+}

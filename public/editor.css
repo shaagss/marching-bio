@@ -115,9 +115,9 @@ label[for="year-marched"], #year-marched {
     margin-bottom: .5em;
 }
 
-.groups-cont, .WGI-cont, .DCI-cont {
+/* .groups-cont, .WGI-cont, .DCI-cont {
     border: black 1px dashed;
-}
+} */
 
 .WGI-cont, .DCI-cont {
     margin: .5rem;
