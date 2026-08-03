@@ -59,7 +59,7 @@ async function profileExists(email){
     return !(await response.json() === null);
 }
 
-async function requestLogin(email, name, key) {
+async function requestLogin(email, name) {
     statusText.textContent = '';
 
     // If it needs name but its empty - just in case
@@ -83,7 +83,7 @@ async function requestLogin(email, name, key) {
     const response = await fetch('/api/request-login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name, key })
+        body: JSON.stringify({ email, name })
     });
     
     if ( response.ok ) {
@@ -101,8 +101,7 @@ loginForm.addEventListener('submit', event => {
 
     const email = document.getElementById('email').value;
     const name = document.getElementById('name').value;
-    const key = document.getElementById('key').value;
     
-    requestLogin(email, name, key);
+    requestLogin(email, name);
 });
 

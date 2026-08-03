@@ -2,7 +2,6 @@ import 'dotenv/config';
 import { Pool } from 'pg';
 import { getSessionEmail } from '../lib/auth.js';
 
-const STUPID_KEY = process.env.STUPID_KEY;
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,

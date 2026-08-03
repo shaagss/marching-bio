@@ -174,11 +174,11 @@ document.querySelectorAll('input[name="circuit"]').forEach(radio => {
 });
 
 // ---Adds expr to profile---
-async function addExpr(group, year, key) {
+async function addExpr(group, year) {
     const response = await fetch('/api/expr', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ group, year, key })
+        body: JSON.stringify({ group, year })
     });
     if( !response.ok ){
         status.textContent = `ERROR: Please try again`;
@@ -204,8 +204,7 @@ document.getElementById('add-exp').addEventListener('submit', event => {
 
     const group = document.getElementById('group-select').value;
     const year = document.getElementById('year-marched').value;
-    const key = document.getElementById('key').value;
-    addExpr(group, year, key);
+    addExpr(group, year);
 });    
 
 // ---Adds clip to profile---

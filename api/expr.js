@@ -2,7 +2,6 @@ import 'dotenv/config';
 import { Pool } from 'pg';
 import { getSessionEmail } from '../lib/auth.js';
 
-const STUPID_KEY = process.env.STUPID_KEY;
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
@@ -92,12 +91,7 @@ export default async function handler(req, res){
 
 async function addExpr(req, res){
     const email = getSessionEmail(req);
-    const { group, year, key } = req.body;
-
-    if(key !== STUPID_KEY){
-        res.status(423).json({ success: false });
-        return;
-    }
+    const { group, year } = req.body;
     
     await checkExprFormat(email, group, year);
     res.status(200).json({ success: true });
