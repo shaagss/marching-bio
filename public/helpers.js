@@ -39,8 +39,9 @@ export async function exprToHtml(expr, clips, parentId) {
         // parent has year-cont,
         // which is the year and a div class groups-cont,
         // which has a div class WGI-cont and/or DCI-cont,
-        // which has the groups and may have a button class clip-toggle
-        // and a div class clip-cont
+        // which has the groups and may have a div class allClipButton-cont
+        // full of button class clip-toggle
+        // and after, some div class clip-cont
     }
 }
 

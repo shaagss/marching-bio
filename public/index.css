@@ -51,8 +51,8 @@ header img {
     width: 8rem;
     padding: 4px;
     border-radius: var(--radius-sm);
-    background-color: var(--color-primary-dark);
-    color: var(--color-accent);
+    background-color: var(--color-accent);
+    color: var(--color-primary-dark);
     font-size: min(3.3vw, 1.7rem);
     cursor: pointer;
 
@@ -63,8 +63,8 @@ header img {
 }
 
 .make:active {
-    background-color: aqua;
-    color: red;
+    background-color: var(--color-accent-dark);
+    color: var(--color-primary);
 }
 
 @keyframes hover-bob {
@@ -112,7 +112,7 @@ main {
 }
 
 .green {
-    background-color: #6cc58e;
+    background-color: var(--color-secondary);
 }
 
 .blue {

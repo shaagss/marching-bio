@@ -106,13 +106,20 @@ function groupButtons(){
 }
 
 function addClipButtons() {
+    // if it has a allClipButton-cont, add there.
+    // if not, then just in the normal cont
     const allGroups = document.querySelectorAll('.WGI-cont, .DCI-cont');
     allGroups.forEach( element => {
+        let apendee = element;
+        if(element.querySelector('.allClipButton-cont')){
+            apendee = element.querySelector('.allClipButton-cont');
+        } 
+
         let button = document.createElement('button');
         button.textContent = '+🎥';
         button.classList.add('add-clip');
             
-        element.appendChild(button);
+        apendee.appendChild(button);
     })
 }
 
@@ -121,7 +128,8 @@ function delClipButton(){
     button.textContent = '🗑️';
     button.id = 'delete-clip';
 
-    activeButton.insertAdjacentElement('afterend', button);
+    // activeButton.insertAdjacentElement('afterend', button);
+    activeButton.parentElement.parentElement.appendChild(button);
     activeDelButton = button;
 }
 

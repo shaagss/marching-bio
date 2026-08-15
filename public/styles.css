@@ -15,6 +15,7 @@
     --color-white: #ffffff;
 
     /* Font sizes */
+    --font-xs: 1.8rem;
     --font-sm: 2.5rem;
     --font-md: 4rem;
     --font-lg: 6rem;
@@ -159,23 +160,26 @@ img {
     color: black;
 }
 
-.WGI-cont, .DCI-cont {
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-}
-
 .WGI-cont {
-    border-bottom: 3px dashed var(--color-secondary);
+    --border: 3px dashed var(--color-secondary);
 }
 
 .DCI-cont {
-    border-bottom: 3px dashed var(--color-primary);
+    --border: 3px dashed var(--color-primary);
+}
+
+.WGI-cont, .DCI-cont {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: var(--border);
+    /* border-right: var(--border); */
 }
 
 .allClipButton-cont {
     display: flex;
     flex-flow: row wrap;
     justify-content: space-around;
+    align-items: center;
 }
 
 .clip-toggle {

@@ -108,9 +108,24 @@ label[for="year-marched"], #year-marched {
 /* Buttons */
 
 button {
-    background-color: var(--color-white);
     border: 2px solid var(--color-accent);
     margin: 1rem;
     padding: .3rem;
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-md);
+}
+
+.add-clip {
+    font-size: var(--font-xs);
+    background-color: inherit;
+    color: var(--color-black);
+    border-radius: var(--radius-md);
+    padding: .5rem;
+    border: 2px solid var(--color-accent);
+    margin: 1rem;
+
+    transition: transform var(--transition-fast);
+}
+
+.add-clip:active {
+    transform: scale(0.97);
 }
