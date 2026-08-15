@@ -1,5 +1,6 @@
 
-export function exprToHtml(expr, clips, parentId) {
+export async function exprToHtml(expr, clips, parentId) {
+    const groupDetails = await exprToGroupInfo(expr);
     // Get parent and clear children
     const parent = document.getElementById(parentId);
     parent.replaceChildren();
@@ -25,7 +26,7 @@ export function exprToHtml(expr, clips, parentId) {
                 groupsCont.append(thisGroupCont);
 
                 const p = document.createElement('p');
-                p.textContent = `${circuit}: ${groups[circuit]}`;
+                p.textContent = groupDetails[groups[circuit]].name;
                 p.dataset.group = groups[circuit];
                 thisGroupCont.append(p);
                 if(Object.hasOwn(clips, year) && Object.hasOwn(clips[year], circuit)){
@@ -37,11 +38,34 @@ export function exprToHtml(expr, clips, parentId) {
         parent.append(yearCont);
         // parent has year-cont,
         // which is the year and a div class groups-cont,
-        // which has the groups and a div class clip-videoId
+        // which has a div class WGI-cont and/or DCI-cont,
+        // which has the groups and may have a button class clip-toggle
+        // and a div class clip-cont
     }
 }
 
+async function exprToGroupInfo(expr){
+    // every group id is added to dictionary,
+    // and each value is a dict of details
+    // (name, photo_url, medals)
+    let allGroupIds = [];
+
+    for (const [year, circuits] of Object.entries(expr)){
+        for (const [circuit, groupId] of Object.entries(circuits)){
+            if( !allGroupIds.includes(groupId) ){
+                allGroupIds.push(groupId);
+            }
+        }
+    }
+    const response = await fetch(`/api/get-groups-details?ids=${allGroupIds.join(',')}`);
+    return response.json();
+}
+
 function addClipButton(clips, groupsCont, year, circuit){
+    const allClipButtonCont = document.createElement('div');
+    allClipButtonCont.classList.add('allClipButton-cont');
+    groupsCont.appendChild(allClipButtonCont);
+
     let count = 1;
     for(const clip of clips){
         let button = document.createElement('button');
@@ -53,13 +77,19 @@ function addClipButton(clips, groupsCont, year, circuit){
         button.dataset.start = clip.start;
         button.dataset.end = clip.end;
         
+        const baseId = `clip-${year}-${circuit}-${clip.videoId}-${clip.start}-${clip.end}`;
+
         const clipCont = document.createElement('div');
-        clipCont.id = `clip-${year}-${circuit}-${clip.videoId}-${clip.start}-${clip.end}`;
+        clipCont.id = baseId;
         clipCont.classList.add('clip-cont');
+
+        const playerTarget = document.createElement('div');
+        playerTarget.id = `player-${baseId}`;
+        clipCont.appendChild(playerTarget);
         
         button.setAttribute('aria-controls', clipCont.id);
         
-        groupsCont.appendChild(button);
+        allClipButtonCont.appendChild(button);
         groupsCont.append(clipCont);
     }
 }

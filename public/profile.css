@@ -1,8 +1,9 @@
-/* main content */
+/* profile.css - used on the public profile page */
+
+/* Header */
 
 header {
     position: absolute;
-    /* background-color: red; */
     top: 0;
     left: 0;
 }
@@ -11,45 +12,36 @@ header img {
     width: 100px;
 }
 
-.userCard, .historyCard {
-    width: min(90%, 500px);
-    background-color: antiquewhite;
-    margin: 20px auto;
-    border: black solid 3px;
-    padding: 20px 40px;
+/* Cards */
+
+.user-card h1 {
+    font-size: min(7vw, var(--font-md));
 }
 
-.historyCard {
-    height: 700px;
-}
-
-.userCard img{
-    border: #00539F solid 1px;
-    border-radius: 10px;
-    width: min(40%,300px);
+#user-photo {
+    width: min(80%, 30rem);
+    border: 2px solid var(--color-accent-dark);
+    border-radius: var(--radius-md);
     margin: 10px auto;
     display: block;
     
+    aspect-ratio: 1/1;
+    object-fit: cover;
 }
 
-.historyCard ul {
-    text-align: left;
+.user-card h2 {
+    font-size: min(13vw, var(--font-lg));
 }
 
-.clip-toggle {
-    background-color: black;
-    color: white;
-    border: 2px red solid;
-    margin: 1rem;
-}
+/* Footer */
 
 footer {
     padding: 10px 0;
-    border-top: blue dashed 2px;
+    border-top: 2px dashed blue;
 }
 
-footer a, 
-footer a:link, 
+footer a,
+footer a:link,
 footer a:visited {
     color: blue;
 }

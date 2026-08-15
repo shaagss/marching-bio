@@ -16,17 +16,20 @@
 </head>
 <body class="work-sans" hidden>
     <header>
-         <a href="/"><img src="https://semantic-web.com/wp-content/uploads/underpin-pan-european-data-space-for-holistic-asset-management-in-critical-manufacturing-industries-3.png" alt="marching bio logo"></a>
+         <!-- <a href="/"><img src="https://semantic-web.com/wp-content/uploads/underpin-pan-european-data-space-for-holistic-asset-management-in-critical-manufacturing-industries-3.png" alt="marching bio logo"></a> -->
     </header>
 
     <main>
-        <div class="userCard">
-            <h1 id="name"></h1>
-            <img src="https://img.magnific.com/free-vector/yellow-drum-illustration_24908-81974.jpg" alt="User's profile picture">
-            <!-- <h2>Current group</h2> -->
+        <div class="card user-card hidden" id="user-card">
+            <div>
+                <h1>marching.bio</h1>
+            </div>
+            <img id="user-photo" src="img/randomface.jpg" alt="User's profile picture">
+            <!-- get a tiny image of the most recent dci and wgi
+             in the bottom left and right corner -->
+            <h2 id="name"></h2>
         </div>
-        <div class="historyCard">
-            <h1>Experience</h1>
+        <div class="card expr-card hidden" id="expr-card">
             <div id="experience"></div>
         </div>
     </main>

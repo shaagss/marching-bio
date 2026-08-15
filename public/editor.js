@@ -86,7 +86,7 @@ async function updatePreviewExpr(){
     }
     const clips = await clipsRes.json();
 
-    exprToHtml(expr, clips, 'preview-expr');
+    await exprToHtml(expr, clips, 'experience');
     updateDeleteGroup(expr);
     addClipButtons();
 }
@@ -96,13 +96,13 @@ function groupButtons(){
     plusButton.textContent = 'Add group';
     plusButton.id = 'add-group';
         
-    document.getElementById('preview-expr').insertAdjacentElement('beforebegin', plusButton);
+    document.getElementById('experience').insertAdjacentElement('beforebegin', plusButton);
 
     let trashButton = document.createElement('button');
     trashButton.textContent = '🗑️';
     trashButton.id = 'delete-group';
 
-    document.getElementById('preview-expr').insertAdjacentElement('beforebegin', trashButton);
+    document.getElementById('experience').insertAdjacentElement('beforebegin', trashButton);
 }
 
 function addClipButtons() {
@@ -209,7 +209,7 @@ async function addExpr(group, year) {
 }
 
 function addStatusElements(groupId, year, deleted = false){
-    const groupName = document.querySelector(`option[value="${groupId}"`).textContent;
+    const groupName = document.querySelector(`option[value="${groupId}"]`).textContent;
 
     if(deleted){
         status.textContent = `Successfully deleted ${groupName} ${year} from your profile`;
@@ -337,7 +337,7 @@ function timestampToSeconds(timestamp) {
     return minute * 60 + second;
 }
 
-document.getElementById('preview-expr').addEventListener('submit', async event => {
+document.getElementById('experience').addEventListener('submit', async event => {
     if (!event.target.matches('#add-clip')) return;
     event.preventDefault();
     document.getElementById('clip-status').textContent = `Loading...`;
@@ -354,7 +354,7 @@ document.getElementById('preview-expr').addEventListener('submit', async event =
     let endTime = document.getElementById('end-time').value;
     endTime = timestampToSeconds(endTime);
 
-    if(!startTime || !endTime){
+    if(startTime === null || endTime === null){
         document.getElementById('clip-status').textContent = 'Invalid timestamp';
         return;
     }
@@ -400,7 +400,7 @@ function addSingleClipButton(groupCont) {
         groupCont.appendChild(newClipButton);
 }
 
-document.getElementById('preview').addEventListener('click', async (event) => {
+document.getElementById('expr-card').addEventListener('click', async (event) => {
     // Add group button
     let button = event.target.closest('#add-group');
     if(button){
@@ -491,11 +491,14 @@ document.getElementById('exit-delete-group').addEventListener('click', (event) =
 
 
 // ---Listen for clip button presses---
-document.getElementById('preview-expr').addEventListener('click', async (event) => {
+document.getElementById('experience').addEventListener('click', async (event) => {
     const button = event.target.closest('.clip-toggle');
     if (!button) return; 
 
     const containerId = button.getAttribute('aria-controls');
+    const container = document.getElementById(containerId);
+    const playerTargetId = `player-${containerId}`;
+
     // if this exact button's clip is already open, treat it as closing it
     const clickedActiveOne = (containerId === activeContainerId);
 
@@ -503,6 +506,12 @@ document.getElementById('preview-expr').addEventListener('click', async (event) 
         activePlayer.destroy();
         activePlayer = null;
         activeButton.textContent = '🎥 #' + activeButton.dataset.count;
+
+        // animate closed  
+        const prevContainer = document.getElementById(activeContainerId);
+        prevContainer.style.maxHeight = '0px';
+        prevContainer.classList.remove('expanded');
+
         activeContainerId = null;
         activeButton = null;
         activeDelButton.remove();
@@ -517,13 +526,30 @@ document.getElementById('preview-expr').addEventListener('click', async (event) 
     
     activeContainerId = containerId;
     activeButton = button;
-
     delClipButton();
 
-    activePlayer = await createClipPlayer(containerId, {
+    let playerTargetEl = document.getElementById(playerTargetId);
+    if(!playerTargetEl){
+        playerTargetEl = document.createElement('div');
+        playerTargetEl.id = playerTargetId;
+        container.appendChild(playerTargetEl);
+    }
+
+    activePlayer = await createClipPlayer(playerTargetId, {
         videoId: button.dataset.videoId,
         start: parseInt(button.dataset.start),
         end: parseInt(button.dataset.end)
     });
     activePlayer.playVideo();
+
+    //expand player cont
+    container.classList.add('expanded');
+
+    container.style.maxHeight = 'none';
+    const realHeight = container.scrollHeight;
+
+    container.style.maxHeight = '0px';
+    container.offsetHeight;
+
+    container.style.maxHeight = realHeight + 'px';
 });

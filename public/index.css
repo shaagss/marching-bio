@@ -1,4 +1,10 @@
-/* main content */
+/* index.css - homepage only */
+
+/* Fixed floating title */
+
+.toptitle {
+    font-size: 3.2rem;
+}
 
 .title {
     position: fixed;
@@ -8,26 +14,27 @@
 }
 
 .title p {
-    margin-top: 1rem;
     display: inline-block;
+    margin-top: 1rem;
     padding: 5px 9px;
-    border-radius: 10px;
+    border-radius: var(--radius-lg);
     pointer-events: auto;
-    /* font-size: clamp(1.2rem, 7vw, 2rem); */
 }
 
+/* Header / nav */
+
 header {
-    top: 0;
-    left: 0;
-    right: 0;
+    position: relative;
     display: flex;
     flex-flow: row nowrap;
     justify-content: center;
     align-items: center;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 7rem;
     gap: clamp(5%, 20% - 8rem, 20rem);
     z-index: 10;
-    position: relative;
 }
 
 header img {
@@ -35,27 +42,47 @@ header img {
     z-index: 2;
 }
 
-header .make {
-    border-radius: 4px;
-    background-color: #125ba0;
-    width: min(18%, 120px);
+.make {
+    position: fixed;
+    right: 2rem;
+    top: 10rem;
+    z-index: 11;
+    /* width: min(18%, 120px); */
+    width: 8rem;
     padding: 4px;
-    font-size: 15px;
-    cursor: pointer;
-    z-index: 2;
-    color: red;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-primary-dark);
+    color: var(--color-accent);
     font-size: min(3.3vw, 1.7rem);
-    transition: background-color 0.1s ease, color 0.1s ease;
+    cursor: pointer;
+
+    transition: background-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+
+    animation: hover-bob 3s ease-in-out infinite;
+    box-shadow: var(--shadow-md);
 }
 
-header .make:active {
-    background-color: #0d4375;
-    color: maroon;
+.make:active {
+    background-color: aqua;
+    color: red;
+}
+
+@keyframes hover-bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .make {
+        animation: none;
+    }
 }
 
 #make-btn {
     pointer-events: none;
 }
+
+/* Layout blocks */
 
 main {
     display: flex;
@@ -68,19 +95,20 @@ main {
 }
 
 .container {
-    padding: 5rem 0;
-    width: 95%;
-    max-width: 120rem;
-    margin: 0 auto;
     display: flex;
     flex-flow: row-reverse wrap;
     justify-content: space-around;
     align-items: center;
-    /* background-color: orange; */
+    width: 95%;
+    max-width: 120rem;
+    padding: 5rem 0;
+    margin: 0 auto;
 }
 
+/* Block background colors */
+
 .tan {
-    background-color: antiquewhite;
+    background-color: var(--color-cream);
 }
 
 .green {
@@ -88,11 +116,11 @@ main {
 }
 
 .blue {
-    background-color: #5098dc;
+    background-color: var(--color-primary);
 }
 
 .white {
-    background-color: #ffffff;
+    background-color: var(--color-white);
 }
 
 .text-box-one {
@@ -104,6 +132,8 @@ main {
     margin-top: .8em;
 }
 
+/* Photo triptych */
+
 .triphoto {
     position: relative;
     display: inline-block;
@@ -112,109 +142,53 @@ main {
 }
 
 .center {
-    z-index: 3;
     position: relative;
     width: min(75%, 55vw);
     margin: 0 auto;
+    z-index: 3;
 }
 
 .left, .right {
     position: absolute;
-    opacity: 40%;
-    /* opacity: 0%; */
-    z-index: 1;
-    bottom: 5%;
     width: min(60%, 44vw);
+    bottom: 5%;
+    opacity: 40%;
+    z-index: 1;
 }
 
 .left {
     right: var(--offset);
-    /* rotate: calc(var(--rotation) * -1); */
 }
 
 .right {
     left: var(--offset);
-    /* rotate: var(--rotation); */
 }
 
 .left, .right, .center {
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
 }
 
-/* Login form */
+/* Login dialog */
+
 dialog {
-    outline: none;
-    border: none;
     position: relative;
-    padding: 30px 10px;
     width: min(77%, 30rem);
-    border-radius: 10px;
     min-height: 40rem;
     margin: auto;
+    padding: 30px 10px;
+    border: none;
+    border-radius: var(--radius-lg);
+    outline: none;
 }
 
 dialog[open] {
     display: flex;
     flex-flow: column nowrap;
-
 }
 
 dialog::backdrop {
     background-color: #00000033;
-    backdrop-filter: blur(2px); 
-}
-
-#login-form {
-    margin: 3rem 0;
-    font-size: x-large;
-    display: flex;
-    flex-flow: column nowrap;
-    gap: 2rem;
-}
-
-.form-duo {
-  display: flex;
-  flex-flow: column nowrap;
-  align-items: center;
-}
-
-.exit {
-    display: inline-block;
-    cursor: pointer;
-    font-size: 3rem;   
-    color: #333333;
-    position: absolute;
-    top: 0;
-    right: 8px;
-}
-
-.exit::before {
-    content: "\00d7";
-}
-
-input[type="email"] {
-    padding: 4px;
-    font-size: 1.5rem;
-    width: min(90%, 400px);
-}
-
-#form-swap {
-    color: #5098dc;
-    cursor: pointer;
-    font-size: 1.3rem;
-    padding-top: 1em;
-}
-
-input[type="submit"] {
-    padding: .4em;
-    font-size: 2rem;
-    border: black solid 2px;
-    border-radius: 8px;
-}
-
-#check {
-    margin: auto;
-    font-size: 2rem;
+    backdrop-filter: blur(2px);
 }
 
 dialog h2 {
@@ -223,4 +197,57 @@ dialog h2 {
 
 dialog .end {
     margin-top: auto;
+}
+
+#login-form {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 2rem;
+    margin: 3rem 0;
+    font-size: x-large;
+}
+
+.form-duo {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+}
+
+.exit {
+    position: absolute;
+    top: 0;
+    right: 8px;
+    display: inline-block;
+    font-size: 3rem;
+    color: #333333;
+    cursor: pointer;
+}
+
+.exit::before {
+    content: "\00d7";
+}
+
+input[type="email"] {
+    width: min(90%, 400px);
+    padding: 4px;
+    font-size: 1.5rem;
+}
+
+input[type="submit"] {
+    padding: .4em;
+    border: 2px solid var(--color-black);
+    border-radius: var(--radius-lg);
+    font-size: 2rem;
+}
+
+#form-swap {
+    padding-top: 1em;
+    color: var(--color-primary);
+    cursor: pointer;
+    font-size: 1.3rem;
+}
+
+#check {
+    margin: auto;
+    font-size: 2rem;
 }

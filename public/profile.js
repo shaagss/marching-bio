@@ -21,10 +21,14 @@ async function loadProfile() {
 
     ensureYtApiLoaded();
     const { name, expr, clips } = await response.json();
-    exprToHtml(expr, clips, 'experience');
+    await exprToHtml(expr, clips, 'experience');
     
     document.querySelector('body').hidden = false;
-    
+    requestAnimationFrame(() => {
+        document.getElementById('user-card').classList.remove('hidden');
+        document.getElementById('expr-card').classList.remove('hidden');
+    });
+
     if(name === null){
         document.title = name + 'user - marching.bio'
         profileName.textContent = "Invalid name";
@@ -42,13 +46,22 @@ experience.addEventListener('click', async (event) => {
     if (!button) return; // click was on something else inside #experience, ignore it
 
     const containerId = button.getAttribute('aria-controls');
+    const container = document.getElementById(containerId);
+    const playerTargetId = `player-${containerId}`;
+
     // if this exact button's clip is already open, treat it as closing it
     const clickedActiveOne = (containerId === activeContainerId);
 
     if (activePlayer) {
         activePlayer.destroy();
         activePlayer = null;
-        activeButton.textContent = 'Show clip #' + activeButton.dataset.count;
+        activeButton.textContent = '🎥 #' + activeButton.dataset.count;
+        
+        // animate closed
+        const prevContainer = document.getElementById(activeContainerId);
+        prevContainer.style.maxHeight = '0px';
+        prevContainer.classList.remove('expanded');
+
         activeContainerId = null;
         activeButton = null;
     }
@@ -57,15 +70,34 @@ experience.addEventListener('click', async (event) => {
         return; // it was already open, so clicking it just closes it
     }
 
-    button.textContent = 'Hide clip';
+    button.textContent = 'Hide';
     await ensureYtApiLoaded();
 
-    activePlayer = await createClipPlayer(containerId, {
+    activeContainerId = containerId;
+    activeButton = button;
+
+    let playerTargetEl = document.getElementById(playerTargetId);
+    if(!playerTargetEl){
+        playerTargetEl = document.createElement('div');
+        playerTargetEl.id = playerTargetId;
+        container.appendChild(playerTargetEl);
+    }
+
+    activePlayer = await createClipPlayer(playerTargetId, {
         videoId: button.dataset.videoId,
         start: parseInt(button.dataset.start),
         end: parseInt(button.dataset.end)
     });
     activePlayer.playVideo();
-    activeContainerId = containerId;
-    activeButton = button;
+
+    //expand player cont
+    container.classList.add('expanded');
+
+    container.style.maxHeight = 'none';
+    const realHeight = container.scrollHeight;
+
+    container.style.maxHeight = '0px';
+    container.offsetHeight;
+
+    container.style.maxHeight = realHeight + 'px';
 });

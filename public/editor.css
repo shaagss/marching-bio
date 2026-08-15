@@ -1,3 +1,5 @@
+/* editor.css - editor page only */
+
 html {
     overflow-x: visible;
 }
@@ -6,6 +8,8 @@ body {
     text-align: left;
     overflow-x: visible;
 }
+
+/* Header */
 
 header {
     margin: 1em 2em;
@@ -17,13 +21,7 @@ header {
     color: blue;
 }
 
-#add-exp {
-    margin-top: 1rem;
-}
-
-.centered {
-    text-align: center;
-}
+/* Editor / preview layout */
 
 .page-divider {
     display: flex;
@@ -34,27 +32,40 @@ header {
 }
 
 #editor, #preview {
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     padding: 1.5rem;
-    /* width: 65rem; */
-    /* width: min(65rem, 90%); could work */
-    /* width: min(50rem, 90%); */
-    /* width to be min of a relative, and a hardset max */
-    /* how to control how much it shrinks before it wraps? could be a flex feature */
-    
-    /* what ai says v */
-    /* flex-basis: 50rem;  */
-    /* min-width: 10rem;   */
-    flex-shrink: 1;   
+    flex-shrink: 1;
 }
 
 #editor {
     flex: 0 1 35rem;
 }
 
+#preview {
+    flex: 0 1 55rem;
+    min-height: 30rem;
+    background-color: var(--color-cream);
+    border: 2px solid var(--color-black);
+    font-size: 2rem;
+}
+
+.centered {
+    text-align: center;
+}
+
+/* Add-experience form */
+
+#add-exp {
+    margin-top: 1rem;
+}
+
 fieldset {
-    border: black 2px solid;
-    border-radius: 6px;
+    border: 2px solid var(--color-black);
+    border-radius: var(--radius-md);
+}
+
+.options {
+    padding: .5em .8em;
 }
 
 #filter-groups #circuit-legend, #select-label {
@@ -63,10 +74,6 @@ fieldset {
 
 #filter-groups legend {
     font-size: 2.2rem;
-}
-
-.options {
-    padding: .5em .8em;
 }
 
 #filter-groups input {
@@ -92,48 +99,18 @@ label[for="year-marched"], #year-marched {
 
 #add-exp input[type="submit"] {
     padding: .3em;
+    border: 2px solid var(--color-black);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-white);
     font-size: 1.6rem;
-    border: black solid 2px;
-    border-radius: 8px;
-    background-color: #ffffff;
 }
 
-#preview {
-    /* min-width: none; */
-    flex: 0 1 55rem;
-    background-color: antiquewhite;
-    min-height: 30rem;
-    border: 2px black solid;
-    font-size: 2rem;
-}
-
-.year-cont, .groups-cont {
-    margin-left: 1.2em;
-}
-
-.year-cont {
-    margin-bottom: .5em;
-}
-
-/* .groups-cont, .WGI-cont, .DCI-cont {
-    border: black 1px dashed;
-} */
-
-.WGI-cont, .DCI-cont {
-    margin: .5rem;
-}
+/* Buttons */
 
 button {
-    background-color: white;
-    border: 2px red solid;
+    background-color: var(--color-white);
+    border: 2px solid var(--color-accent);
     margin: 1rem;
     padding: .3rem;
-    border-radius: 8px;
-}
-
-.clip-toggle {
-    background-color: black;
-    color: white;
-    border: 2px red solid;
-    margin: 1rem;
+    border-radius: var(--radius-lg);
 }
