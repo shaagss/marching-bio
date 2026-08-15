@@ -22,13 +22,15 @@
     --font-xl: 9rem;
 
     /* Border radius scale */
+    --radius-xs: 3px;
     --radius-sm: 8px;
     --radius-md: 10px;
     --radius-lg: 20px;
 
     /* Transitions */
     --transition-fast: 0.1s ease;
-    --transition-med: 1s ease;
+    --transition-med: 0.4s ease;
+    --transition-slow: 1s ease;
 
     /* Shadows */
     --shadow-md: #00000033 .6rem .4rem 3px;
@@ -136,9 +138,9 @@ img {
     opacity: 1;
     transform: translateY(0);
     box-shadow: none;
-    transition: opacity var(--transition-med),
-                transform var(--transition-med),
-                box-shadow var(--transition-med);
+    transition: opacity var(--transition-slow),
+                transform var(--transition-slow),
+                box-shadow var(--transition-slow);
 }
 
 .user-card.hidden, .expr-card.hidden {

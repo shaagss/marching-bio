@@ -12,10 +12,18 @@ checkAuthStatus();
 // ---Existing user cookie checker---
 function openLogin() {
     dialog.showModal();
+
+    requestAnimationFrame(() => {
+        dialog.classList.add('shown');
+    });
 }
 
 function closeLogin() {
-    dialog.close();
+    dialog.classList.remove('shown');
+
+    setTimeout(() => {
+        dialog.close();
+    }, 1000)
 }
 
 async function checkAuthStatus() {

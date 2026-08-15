@@ -1,27 +1,11 @@
 /* index.css - homepage only */
 
-/* Fixed floating title */
-
-.toptitle {
-    font-size: 3.2rem;
-}
+/* Header / nav */
 
 .title {
-    position: fixed;
-    width: 100%;
-    pointer-events: none;
-    z-index: 9;
+    font-size: 3.2rem;
+    font-weight: 650;
 }
-
-.title p {
-    display: inline-block;
-    margin-top: 1rem;
-    padding: 5px 9px;
-    border-radius: var(--radius-lg);
-    pointer-events: auto;
-}
-
-/* Header / nav */
 
 header {
     position: relative;
@@ -29,17 +13,7 @@ header {
     flex-flow: row nowrap;
     justify-content: center;
     align-items: center;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 7rem;
-    gap: clamp(5%, 20% - 8rem, 20rem);
-    z-index: 10;
-}
-
-header img {
-    width: 9rem;
-    z-index: 2;
+    padding: 1.2rem 0;
 }
 
 .make {
@@ -49,15 +23,14 @@ header img {
     z-index: 11;
     /* width: min(18%, 120px); */
     width: 8rem;
-    padding: 4px;
-    border-radius: var(--radius-sm);
+    padding: 1rem .4rem;
+    border-radius: var(--radius-lg);
     background-color: var(--color-accent);
-    color: var(--color-primary-dark);
-    font-size: min(3.3vw, 1.7rem);
+    color: var(--color-black);
     cursor: pointer;
-
+    
     transition: background-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
-
+    
     animation: hover-bob 3s ease-in-out infinite;
     box-shadow: var(--shadow-md);
 }
@@ -80,6 +53,11 @@ header img {
 
 #make-btn {
     pointer-events: none;
+}
+
+.make p {
+    font-size: min(4vw, 1.7rem);
+    font-weight: 700;
 }
 
 /* Layout blocks */
@@ -179,6 +157,11 @@ dialog {
     border: none;
     border-radius: var(--radius-lg);
     outline: none;
+    
+    opacity: 0;
+    box-shadow: none;
+    transform: scale(0.7);
+    transition: opacity var(--transition-med), box-shadow var(--transition-med), transform var(--transition-med);
 }
 
 dialog[open] {
@@ -186,7 +169,19 @@ dialog[open] {
     flex-flow: column nowrap;
 }
 
+dialog.shown {
+    opacity: 1;
+    box-shadow: var(--shadow-md);
+    transform: scale(1);
+}
+
 dialog::backdrop {
+    background-color: transparent;
+    backdrop-filter: blur(0px);
+    transition: background-color var(--transition-med), backdrop-filter var(--transition-med);
+}
+
+dialog.shown::backdrop {
     background-color: #00000033;
     backdrop-filter: blur(2px);
 }
@@ -227,17 +222,29 @@ dialog .end {
     content: "\00d7";
 }
 
+label {
+    color: var(--color-accent-dark);
+}
+
+input[type="email"], input[type="name"], input[type="submit"] {
+    border: 2px solid var(--color-accent);
+    border-radius: var(--radius-sm);
+    padding: .4em;
+}
+
 input[type="email"] {
     width: min(90%, 400px);
-    padding: 4px;
     font-size: 1.5rem;
 }
 
+input[type="name"] {
+
+}
+
 input[type="submit"] {
-    padding: .4em;
-    border: 2px solid var(--color-black);
-    border-radius: var(--radius-lg);
     font-size: 2rem;
+    color: var(--color-accent-dark);
+    font-weight: 600;
 }
 
 #form-swap {
