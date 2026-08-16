@@ -372,8 +372,9 @@ document.getElementById('experience').addEventListener('submit', async event => 
         return;
     }
 
-    const group = document.getElementById('add-clip-cont').parentElement.firstElementChild.dataset.group;
-    const year = document.getElementById('add-clip-cont').parentElement.parentElement.parentElement.firstElementChild.dataset.year;
+    const groupCont = event.target.closest('.WGI-cont, .DCI-cont');
+    const group = groupCont.firstElementChild.dataset.group;
+    const year = groupCont.parentElement.parentElement.firstElementChild.dataset.year;
     addClip(year, group, videoId, startTime, endTime);
 });
 
