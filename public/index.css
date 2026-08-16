@@ -208,20 +208,6 @@ dialog .end {
     align-items: center;
 }
 
-.exit {
-    position: absolute;
-    top: 0;
-    right: 8px;
-    display: inline-block;
-    font-size: 3rem;
-    color: #333333;
-    cursor: pointer;
-}
-
-.exit::before {
-    content: "\00d7";
-}
-
 label {
     color: var(--color-accent-dark);
 }
@@ -235,10 +221,6 @@ input[type="email"], input[type="name"], input[type="submit"] {
 input[type="email"] {
     width: min(90%, 400px);
     font-size: 1.5rem;
-}
-
-input[type="name"] {
-
 }
 
 input[type="submit"] {

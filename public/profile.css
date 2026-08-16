@@ -36,12 +36,17 @@ header img {
 /* Footer */
 
 footer {
-    padding: 10px 0;
-    border-top: 2px dashed blue;
+    padding: 1rem 0;
+    font-size: var(--font-xs);
+    background-color: var(--color-secondary);
+    --border: solid 2px var(--color-secondary-dark);
+    border-top: var(--border);
+    border-bottom: var(--border);
+    font-weight: 500;
 }
 
 footer a,
 footer a:link,
 footer a:visited {
-    color: blue;
+    color: var(--color-accent-dark);
 }

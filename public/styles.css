@@ -121,7 +121,26 @@ img {
     display: inline;
 }
 
+.centered {
+    text-align: center;
+}
+
 /* Shared components */
+
+.exit {
+    position: absolute;
+    top: 0;
+    right: 8px;
+    display: inline-block;
+    font-size: 3rem;
+    /* color: #333333; */
+    color: var(--color-black);
+    cursor: pointer;
+}
+
+.exit::before {
+    content: "\00d7";
+}
 
 .card {
     width: min(90%, 500px);

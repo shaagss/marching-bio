@@ -31,66 +31,56 @@ header {
     padding: 0 1rem;
 }
 
-#editor, #preview {
+#editor {
     border-radius: var(--radius-md);
     padding: 1.5rem;
     flex-shrink: 1;
-}
-
-#editor {
     flex: 0 1 35rem;
-}
+} 
 
-#preview {
-    flex: 0 1 55rem;
-    min-height: 30rem;
-    background-color: var(--color-cream);
-    border: 2px solid var(--color-black);
-    font-size: 2rem;
-}
-
-.centered {
-    text-align: center;
+#editor, #deleter {
+    position: relative;
 }
 
 /* Add-experience form */
+
+#editor fieldset {
+    border: 3px solid var(--color-primary-dark);
+    border-radius: var(--radius-md);
+    padding: .5em .8em;
+}
 
 #add-exp {
     margin-top: 1rem;
 }
 
-fieldset {
-    border: 2px solid var(--color-black);
-    border-radius: var(--radius-md);
-}
-
-.options {
-    padding: .5em .8em;
+#add-exp fieldset {
+    border: 3px solid var(--color-secondary-dark);
 }
 
 #filter-groups #circuit-legend, #select-label {
-    font-size: 3rem;
+    font-size: var(--font-md);
 }
 
 #filter-groups legend {
-    font-size: 2.2rem;
+    font-size: var(--font-sm);
+}
+
+#filter-groups label {
+    font-size: var(--font-xs);
+    white-space: nowrap;
 }
 
 #filter-groups input {
     margin-left: 1em;
 }
 
-#filter-groups label {
-    font-size: 1.7rem;
-    white-space: nowrap;
-}
-
 #conf {
-    font-size: 1.7rem;
+    font-size: var(--font-xs);
 }
 
 label[for="year-marched"], #year-marched {
-    font-size: 1.8rem;
+    font-size: var(--font-xs);
 }
 
 #add-exp input[id="year-marched"] {
@@ -98,11 +88,103 @@ label[for="year-marched"], #year-marched {
 }
 
 #add-exp input[type="submit"] {
-    padding: .3em;
+    border: 2px solid var(--color-accent-dark);
+    border-radius: var(--radius-sm);
+    padding: .4em;
+    font-size: var(--font-xs);
+}
+
+/* Delete experience form */
+
+#deleter fieldset {
+    border: 3px solid var(--color-accent-dark);
+    border-radius: var(--radius-md);
+    padding: 1.6rem 2.4rem;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    gap: 1rem;
+}
+
+#deleter .exit {
+    top: -16px;
+    right: -6px;
+}
+
+#deleter legend {
+    font-size: var(--font-md);
+}
+
+#deleter select {
+    font-size: var(--font-sm);
+}
+
+#deleter input[type="submit"] {
     border: 2px solid var(--color-black);
-    border-radius: var(--radius-lg);
-    background-color: var(--color-white);
-    font-size: 1.6rem;
+    color: var(--color-accent-dark);
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+    padding: .4em;
+    font-size: var(--font-xs);
+}
+
+/* Clip add form */
+
+#add-clip-cont fieldset {
+    margin: 2rem auto 0;
+    border: 3px solid var(--color-accent);
+    border-radius: var(--radius-md);
+    position: relative;
+    width: 65%;
+}
+
+#add-clip-cont .exit {
+    top: -20px;
+}
+
+#add-clip-cont legend {
+    font-size: var(--font-md);
+}
+
+#clip-status {
+    font-size: var(--font-xs);
+}
+
+#add-clip-cont label {
+    font-size: var(--font-sm);
+}
+
+#add-clip-cont input {
+    font-size: var(--font-xs);
+    border: 2px solid var(--color-accent);
+    border-radius: var(--radius-sm);
+    padding: .4em;
+}
+
+.clip-options {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem 0;
+}
+
+.clip-duo {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    gap: .6rem;
+}
+
+.clip-time {
+    width: 6rem;
+}
+
+#add-clip-cont input[type="submit"] {
+    border: 2px solid var(--color-accent-dark);
+    border-radius: var(--radius-sm);
+    padding: .4em;
+    font-size: var(--font-sm);
 }
 
 /* Buttons */
@@ -112,6 +194,11 @@ button {
     margin: 1rem;
     padding: .3rem;
     border-radius: var(--radius-md);
+}
+
+.exit {
+    border: none;
+    margin: 0;
 }
 
 .add-clip {

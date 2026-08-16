@@ -134,7 +134,7 @@ function delClipButton(){
 }
 
 function updateDeleteGroup(expr){
-    exprToList(expr, 'delete-select', 'Select group to delete');
+    exprToList(expr, 'delete-select', 'Group to delete');
 }
 
 // ---Check what user submitted---
@@ -437,18 +437,24 @@ document.getElementById('expr-card').addEventListener('click', async (event) => 
 
         button.insertAdjacentHTML('afterend', `
             <div id="add-clip-cont">
-                <button id="exit-add-clip">XX</button>
-                <p id="clip-status"></p>
-                <form id="add-clip">
-                    <fieldset>
+            <p id="clip-status"></p>
+            <form id="add-clip">
+            <fieldset>
+            <button class="exit" id="exit-add-clip"></button>
                         <legend>Clip</legend>
-                        <div class="options">
-                            <label for="clip-link">Youtube link</label><br>
-                            <input required id="clip-link" type="url"></input><br><br>
-                            <label for="start-time">Start timestamp:</label>
-                            <input required id="start-time" class="work-sans" name="start-time" type="text" placeholder="1:23"><br><br>
-                            <label for="end-time">End timestamp:</label>
-                            <input required id="end-time" name="end-time" type="text" placeholder="4:56"><br><br>
+                        <div class="clip-options">
+                            <div class="clip-duo">
+                                <label for="clip-link">Youtube link</label>
+                                <input required id="clip-link" type="url">
+                            </div>
+                            <div class="clip-duo">
+                                <label for="start-time">Start timestamp:</label>
+                                <input required class="clip-time" id="start-time" class="work-sans" name="start-time" type="text" placeholder="1:23">
+                            </div>
+                            <div class="clip-duo">
+                                <label for="end-time">End timestamp:</label>
+                                <input required class="clip-time" id="end-time" name="end-time" type="text" placeholder="4:56">
+                            </div>
                             <input id="clip-submit" type="submit" value="Submit">
                         </div>
                     </fieldset>
