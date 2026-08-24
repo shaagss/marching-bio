@@ -1,3 +1,5 @@
+import { swapSubmitToLoading, swapLoadingBack } from './helpers.js';
+
 const dialog = document.getElementById('login');
 const makeBtn = document.getElementById('make-btn');
 const formSwap = document.getElementById('form-swap');
@@ -69,14 +71,14 @@ async function profileExists(email){
 
 async function requestLogin(email, name) {
     statusText.textContent = '';
-
+    
     // If it needs name but its empty - just in case
     if ( name.trim() === '' && askForName ) {
         statusText.textContent = 'Something went wrong. Try again.';
         statusText.style.color = 'red';
         return;
     }
-
+    
     // If user turns off name, but their profile doesnt exist
     if( !askForName && !(await profileExists(email)) ){
         statusText.textContent = 'Account doesn\'t exist.';
@@ -104,12 +106,18 @@ async function requestLogin(email, name) {
     }
 }
 
-loginForm.addEventListener('submit', event => {
-    event.preventDefault();
-
+async function submitPressed(submitter){
+    swapSubmitToLoading(submitter);
+    
     const email = document.getElementById('email').value;
     const name = document.getElementById('name').value;
     
-    requestLogin(email, name);
+    await requestLogin(email, name);
+    swapLoadingBack(submitter);
+}
+
+loginForm.addEventListener('submit', event => {
+    event.preventDefault();
+    submitPressed(event.submitter);
 });
 

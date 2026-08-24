@@ -212,7 +212,7 @@ label {
     color: var(--color-accent-dark);
 }
 
-input[type="email"], input[type="name"], input[type="submit"] {
+input[type="email"], input[type="name"], button[type="submit"] {
     border: 2px solid var(--color-accent);
     border-radius: var(--radius-sm);
     padding: .4em;
@@ -223,10 +223,15 @@ input[type="email"] {
     font-size: 1.5rem;
 }
 
-input[type="submit"] {
+button[type="submit"] {
+    position: relative;
     font-size: 2rem;
     color: var(--color-accent-dark);
     font-weight: 600;
+}
+
+#status-text {
+    font-size: var(--font-xs);
 }
 
 #form-swap {

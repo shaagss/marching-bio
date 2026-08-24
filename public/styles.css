@@ -109,8 +109,16 @@ img {
 
 /* Utility classes */
 
+.not-displayed {
+    display: none;
+}
+
 .invisible {
     visibility: hidden;
+}
+
+.clear {
+    opacity: 0;
 }
 
 .italic {
@@ -126,6 +134,24 @@ img {
 }
 
 /* Shared components */
+
+button[type="submit"] {
+    position: relative;
+}
+
+.submit-span {
+    transition: opacity var(--transition-med);
+}
+
+.loading {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    height: 80%;
+    width: auto;
+
+    transition: opacity var(--transition-med);
+}
 
 .exit {
     position: absolute;
@@ -171,7 +197,6 @@ img {
 .year-cont {
     color: #808080aa;
     font-size: var(--font-sm);
-    margin-bottom: 4rem;
     text-align: left;
 }
 
@@ -182,21 +207,37 @@ img {
 }
 
 .WGI-cont {
-    --border: 3px dashed var(--color-secondary);
+    --border: 3px var(--color-secondary);
 }
 
 .DCI-cont {
-    --border: 3px dashed var(--color-primary);
+    --border: 3px var(--color-primary);
 }
 
 .WGI-cont, .DCI-cont {
     margin-bottom: 2rem;
     padding-bottom: 1rem;
-    border-bottom: var(--border);
-    /* border-right: var(--border); */
+    border-bottom: var(--border) dashed;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.group-img-cont {
+    background-color: #00000055;
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    border: var(--border) solid;
+}
+
+.group-img {
+    max-width: 20rem;
+    height: auto;
 }
 
 .allClipButton-cont {
+    align-self: stretch;
     display: flex;
     flex-flow: row wrap;
     justify-content: space-around;
@@ -240,4 +281,13 @@ img {
     max-width: 100%;
     aspect-ratio: 16 / 9;
     height: auto;
+}
+
+.extra-cont {
+    align-self: stretch;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+    align-items: center;
+    font-size: var(--font-xs);
 }

@@ -6,7 +6,7 @@ export async function exprToHtml(expr, clips, parentId) {
     parent.replaceChildren();
 
     // Make div containing entire year, then just the groups. Fill them
-    for (const [year, groups] of Object.entries(expr)){
+    for (const [year, groups] of Object.entries(expr).reverse()){
         const yearCont = document.createElement('div')
         yearCont.classList.add('year-cont');
 
@@ -18,19 +18,53 @@ export async function exprToHtml(expr, clips, parentId) {
         yearHead.dataset.year = year;
         yearCont.append(yearHead, groupsCont);
 
-        const circuits = ['WGI', 'DCI'];
+        const circuits = ['DCI', 'WGI'];
         for(const circuit of circuits){
             if(Object.hasOwn(groups, circuit) === true){
                 const thisGroupCont = document.createElement('div');
                 thisGroupCont.classList.add(circuit + '-cont')
                 groupsCont.append(thisGroupCont);
 
+                let groupId = groups[circuit];
+                if(groupDetails[groupId].photo_url){
+                    const img = document.createElement('img');
+                    img.src = groupDetails[groupId].photo_url;
+                    img.alt = `${groupDetails[groupId].name} logo`;
+                    img.classList.add('group-img');
+                    
+                    const imgCont = document.createElement('div');
+                    imgCont.classList.add('group-img-cont');
+
+                    imgCont.append(img);
+                    thisGroupCont.append(imgCont);
+                }
+
                 const p = document.createElement('p');
-                p.textContent = groupDetails[groups[circuit]].name;
-                p.dataset.group = groups[circuit];
+                p.textContent = groupDetails[groupId].name;
+                p.dataset.group = groupId;
                 thisGroupCont.append(p);
                 if(Object.hasOwn(clips, year) && Object.hasOwn(clips[year], circuit)){
                     addClipButton(clips[year][circuit], thisGroupCont, year, circuit);
+                }
+
+                // div for extra detail (correct class,
+                // final place / score, etc
+                if( groupId === 'paradigm' ) { // obviously change
+                    const extraCont = document.createElement('div');
+                    extraCont.classList.add('extra-cont');
+                    thisGroupCont.append(extraCont);
+
+                    const corClass = document.createElement('p');
+                    corClass.textContent = 'PIO';
+                    extraCont.append(corClass);
+
+                    const place = document.createElement('p');
+                    place.textContent = '10th - Finals';
+                    extraCont.append(place);
+
+                    const score = document.createElement('p');
+                    score.textContent = '91.163';
+                    extraCont.append(score);
                 }
             }
         }
@@ -48,7 +82,7 @@ export async function exprToHtml(expr, clips, parentId) {
 async function exprToGroupInfo(expr){
     // every group id is added to dictionary,
     // and each value is a dict of details
-    // (name, photo_url, medals)
+    // (name, photo_url)
     let allGroupIds = [];
 
     for (const [year, circuits] of Object.entries(expr)){
@@ -95,7 +129,8 @@ function addClipButton(clips, groupsCont, year, circuit){
     }
 }
 
-export function exprToList(expr, selectId, defaultOptString){
+export async function exprToList(expr, selectId, defaultOptString){
+    const groupDetails = await exprToGroupInfo(expr);
     const select = document.getElementById(selectId);
     select.replaceChildren();
 
@@ -106,22 +141,45 @@ export function exprToList(expr, selectId, defaultOptString){
     defaultOpt.selected = true;
     select.append(defaultOpt);
 
-    for (const [year, groups] of Object.entries(expr)){
+    for (const [year, groups] of Object.entries(expr).reverse()){
         const yearHead = document.createElement('optgroup')
         yearHead.label = year;
 
-        const circuits = ['WGI', 'DCI'];
+        const circuits = ['DCI', 'WGI'];
         for(const circuit of circuits){
             if(Object.hasOwn(groups, circuit) === true){
                 const thisGroupOpt = document.createElement('option');
-                thisGroupOpt.textContent = groups[circuit];
+                thisGroupOpt.textContent = groupDetails[groups[circuit]].name;
                 thisGroupOpt.value = groups[circuit];
                 thisGroupOpt.dataset.year = year;
 
                 yearHead.append(thisGroupOpt);
-
             }
         }
         select.append(yearHead);
     }
+}
+
+export function swapSubmitToLoading(submitButton){
+    submitButton.disabled = true;
+    submitButton.firstElementChild.classList.add('clear');
+    submitButton.firstElementChild.addEventListener('transitioned', event => {
+        if(event.propertyName === 'opacity'){
+            submitButton.firstElementChild.classList.add('invisible');
+        }
+    }, { once: true })
+
+    submitButton.lastElementChild.classList.remove('invisible', 'clear')
+}
+
+export function swapLoadingBack(submitButton){
+    submitButton.lastElementChild.classList.add('clear');
+    submitButton.lastElementChild.addEventListener('transitioned', event => {
+        if(event.propertyName === 'opacity'){
+            submitButton.lastElementChild.classList.add('invisible');
+        }
+    }, { once: true })
+    
+    submitButton.firstElementChild.classList.remove('invisible', 'clear');
+    submitButton.disabled = false;
 }

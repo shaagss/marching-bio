@@ -19,9 +19,11 @@
 </head>
 <body class="work-sans" hidden>
     <header>
-        <h1>marching.bio editor</h1>
-        <h2 id="user-info"></h2>
-        <p>Your profile is <a id="profile-link" href=""></a></p>
+        <div class="card">
+            <h1>marching.bio editor</h1>
+            <h2><span id="user-name"></span> - <a id="profile-link" href=""></a></h2>
+            <p><span id="user-email"></span></p>
+        </div>
     </header>
 
     <div class="page-divider">
@@ -64,7 +66,10 @@
                         <div class="centered">
                             <label for="year-marched">Year marched:</label>
                             <input disabled required id="year-marched" class="work-sans" name="year-marched" type="number" placeholder="1972"><br><br>
-                            <input disabled id="exp-submit" type="submit" value="Submit">
+                            <button disabled id="exp-submit" type="submit">
+                                <span class="submit-span">Submit</span>
+                                <img class="loading clear invisible" src="img/loading.gif" alt="Loading">
+                            </button>
                         </div>
                     </div>
                 </fieldset>
@@ -78,14 +83,17 @@
                     <legend id="delete-legend">Group</legend>
                     <select id="delete-select"></select>
     
-                    <input id="delete-submit" type="submit" value="Delete">
+                    <button id="delete-submit" type="submit">
+                        <span class="submit-span">Delete</span>
+                        <img class="loading clear invisible" src="img/loading.gif" alt="Loading">
+                    </button>
                 </fieldset>
             </form>
         </div>
         
         <div class="card expr-card" id="expr-card">
             <p id="status"></p>
-            <h2>Preview</h2>
+            <h2 class="inline">Preview</h2>
             <div id="experience">
                 <p class="italic">Loading...</p>
             </div>

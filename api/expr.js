@@ -133,19 +133,19 @@ export default async function handler(req, res){
     }
 }
 
-async function addExpr(email, req, res){
-    const { group, year } = req.body;
-    
-    await checkAddExprFormat(email, group, year);
-    res.status(200).json({ success: true });
-}
-
 async function getExpr(email, req, res){
     const client = await pool.connect();
     const expr = await getExprFromDB(email, client);
 
     res.status(200).json(expr);
 }
+
+async function addExpr(email, req, res){
+    const { group, year } = req.body;
+    
+    await checkAddExprFormat(email, group, year);
+    res.status(200).json({ success: true });
+}    
 
 async function delExpr(email, req, res){
     const { group, year } = req.body;

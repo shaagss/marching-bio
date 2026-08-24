@@ -1,7 +1,7 @@
 import { getVideoDuration } from '../lib/yt.js';
 
 export default async function handler(req, res) {
-    let { videoId, start, end } = req.body;
+    let { videoid: videoId, start, end} = req.query;
     start = parseInt(start);
     end = parseInt(end);
     const duration = await getVideoDuration(videoId);

@@ -1,4 +1,4 @@
-import { exprToHtml, exprToList } from './helpers.js';
+import { exprToHtml, exprToList, swapSubmitToLoading, swapLoadingBack } from './helpers.js';
 
 const yearInput = document.getElementById('year-marched');
 const expSubmit = document.getElementById('exp-submit');
@@ -33,7 +33,8 @@ async function checkAuth() {
     const profileRes = await fetch(`/api/existing-profile?email=${data.email}`);
     const profileData = await profileRes.json()
 
-    document.getElementById('user-info').textContent = `${profileData.name} (${profileData.email})`;
+    document.getElementById('user-name').textContent = profileData.name;
+    document.getElementById('user-email').textContent = profileData.email;
     const profileAnchor = document.getElementById('profile-link');
     const profileAnchorLink = '/' + profileData.code;
     profileAnchor.textContent = 'marching.bio' + profileAnchorLink;
@@ -89,18 +90,21 @@ async function updatePreviewExpr(){
     await exprToHtml(expr, clips, 'experience');
     updateDeleteGroup(expr);
     addClipButtons();
+    status.textContent = '';
 }
 
 function groupButtons(){
     const plusButton = document.createElement('button');
     plusButton.textContent = 'Add group';
     plusButton.id = 'add-group';
+    plusButton.classList.add('inline');
         
     document.getElementById('experience').insertAdjacentElement('beforebegin', plusButton);
 
     let trashButton = document.createElement('button');
     trashButton.textContent = '🗑️';
     trashButton.id = 'delete-group';
+    trashButton.classList.add('inline');
 
     document.getElementById('experience').insertAdjacentElement('beforebegin', trashButton);
 }
@@ -220,11 +224,11 @@ function addStatusElements(groupId, year, deleted = false){
     const groupName = document.querySelector(`option[value="${groupId}"]`).textContent;
 
     if(deleted){
-        status.textContent = `Successfully deleted ${groupName} ${year} from your profile`;
+        status.textContent = `Successfully deleted ${groupName} ${year}. Reloading...`;
         resetDeleter();
     }
     else{
-        status.textContent = `Successfully added ${groupName} ${year} to your experience`;
+        status.textContent = `Successfully added ${groupName} ${year}. Reloading...`;
         resetEditorForms();
     }
 }    
@@ -251,14 +255,19 @@ function resetEditorForms(){
     editor.hidden = true;
 }
 
-
-document.getElementById('add-exp').addEventListener('submit', event => {
-    event.preventDefault();
-    status.textContent = `Loading...`;
+async function addExprSubmitPressed(submitter){
+    status.textContent = ``;
+    swapSubmitToLoading(submitter);
     
     const group = document.getElementById('group-select').value;
     const year = document.getElementById('year-marched').value;
-    addExpr(group, year);
+    await addExpr(group, year);
+    swapLoadingBack(submitter);
+}
+
+document.getElementById('add-exp').addEventListener('submit', event => {
+    event.preventDefault();
+    addExprSubmitPressed(event.submitter);
 });   
 
 // ---Deletes expr from profile---
@@ -283,16 +292,22 @@ function resetDeleter(){
     deleter.hidden = true;
 }
 
-document.getElementById('delete-group-form').addEventListener('submit', event => {
-    event.preventDefault();
-    status.textContent = `Loading...`;
-
+async function removeExprSubmitPressed(submitter){
+    status.textContent = ``;
+    swapSubmitToLoading(submitter);
+    
     const select = document.getElementById('delete-select');
     const selectedOption = select.options[select.selectedIndex];
-
+    
     const group = selectedOption.value;
     const year = selectedOption.dataset.year;
-    deleteExpr(group, year);
+    await deleteExpr(group, year);
+    swapLoadingBack(submitter);
+}
+
+document.getElementById('delete-group-form').addEventListener('submit', event => {
+    event.preventDefault();
+    removeExprSubmitPressed(event.submitter);
 });   
 
 // ---Adds clip to profile---
@@ -323,14 +338,13 @@ function extractVideoId(url){
     return null;
 }
 
-async function validateClip(videoId, startTime, endTime){
-    const response = await fetch('/api/validate-clip', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ videoId, startTime, endTime })
-    });
+async function validateClip(videoId, start, end){  
+    const startStr = String(start);
+    const endStr = String(end);  
+    const response = await fetch(`/api/validate-clip?videoid=${videoId}&start=${startStr}&end=${endStr}`);
     if( !response.ok ){
-        document.getElementById('clip-status').textContent = `ERROR: Invalid URL/ Timestamps`;
+        const errorData = await response.json();
+        document.getElementById('clip-status').textContent = `Error: ${errorData.error}`;
     }
     return response.ok;
 }
@@ -340,42 +354,68 @@ function timestampToSeconds(timestamp) {
     if(timestamp.indexOf(':') === -1){
         return null;
     }
-    const minute = parseInt(timestamp.slice(0, timestamp.indexOf(':')));
-    const second = parseInt(timestamp.slice(timestamp.indexOf(':') + 1));
+    let minute;
+    let second;
+
+    if(timestamp.indexOf(':') === 0){
+        minute = 0;
+    }
+    else {
+        minute = parseInt(timestamp.slice(0, timestamp.indexOf(':')));
+    }
+
+    if(timestamp.indexOf(':') === (timestamp.length - 1)){
+        second = 0;
+    }
+    else {
+        second = parseInt(timestamp.slice(timestamp.indexOf(':') + 1));
+    }
+
     return minute * 60 + second;
+}
+
+async function addClipSubmitPressed(event){
+    const clipStatus = document.getElementById('clip-status');
+    clipStatus.textContent = ``;
+    swapSubmitToLoading(event.submitter);
+    
+    const clipLink = document.getElementById('clip-link').value;
+    const videoId = extractVideoId(clipLink);
+    if(!videoId){
+        clipStatus.textContent = 'Invalid Url';
+        swapLoadingBack(event.submitter);
+        return;
+    }
+    
+    let startTime = document.getElementById('start-time').value;
+    startTime = timestampToSeconds(startTime);
+    let endTime = document.getElementById('end-time').value;
+    endTime = timestampToSeconds(endTime);
+    
+    if(startTime === null || endTime === null){
+        clipStatus.textContent = 'Invalid timestamp';
+        swapLoadingBack(event.submitter);
+        return;
+    }
+    
+    const isValid = await validateClip(videoId, startTime, endTime)
+    if (!isValid) {
+        swapLoadingBack(event.submitter);
+        return;
+    }
+    
+    const groupCont = event.target.closest('.WGI-cont, .DCI-cont');
+    const group = groupCont.querySelector('[data-group]').dataset.group;
+    const year = groupCont.parentElement.parentElement.firstElementChild.dataset.year;
+    await addClip(year, group, videoId, startTime, endTime);
+    clipStatus.textContent = 'Successfully added clip. Reloading...';
+    event.submitter.parentElement.remove();
 }
 
 document.getElementById('experience').addEventListener('submit', async event => {
     if (!event.target.matches('#add-clip')) return;
     event.preventDefault();
-    document.getElementById('clip-status').textContent = `Loading...`;
-
-    const clipLink = document.getElementById('clip-link').value;
-    const videoId = extractVideoId(clipLink);
-    if(!videoId){
-        document.getElementById('clip-status').textContent = 'Invalid Url';
-        return;
-    }
-
-    let startTime = document.getElementById('start-time').value;
-    startTime = timestampToSeconds(startTime);
-    let endTime = document.getElementById('end-time').value;
-    endTime = timestampToSeconds(endTime);
-
-    if(startTime === null || endTime === null){
-        document.getElementById('clip-status').textContent = 'Invalid timestamp';
-        return;
-    }
-
-    const isValid = await validateClip(videoId, startTime, endTime)
-    if (!isValid) {
-        return;
-    }
-
-    const groupCont = event.target.closest('.WGI-cont, .DCI-cont');
-    const group = groupCont.firstElementChild.dataset.group;
-    const year = groupCont.parentElement.parentElement.firstElementChild.dataset.year;
-    addClip(year, group, videoId, startTime, endTime);
+    addClipSubmitPressed(event);
 });
 
 // ---Deletes clip from profile---
@@ -389,28 +429,33 @@ async function deleteClip(year, group, videoId, startTime, endTime) {
         status.textContent = `ERROR: Please try again`;
         return;
     }
-
+    
     activePlayer?.destroy();
     activePlayer = null;
+    
+    const clipDelStatus = document.createElement('p');
+    clipDelStatus.id = 'clip-del-status';
+    clipDelStatus.textContent = 'Deleting clip...';
+    document.getElementById(activeContainerId).append(clipDelStatus);
+
     activeContainerId = null;
     activeButton = null;
     activeDelButton = null;
 
-    status.textContent = `Successfully deleted clip`;
     updatePreviewExpr();
 }
 
 // ---Toggles for expr and clips adder forms---
 
 function addSingleClipButton(groupCont) {
-        let newClipButton = document.createElement('button');
-        newClipButton.textContent = '+🎥';
-        newClipButton.classList.add('add-clip');
-        groupCont.appendChild(newClipButton);
+    let newClipButton = document.createElement('button');
+    newClipButton.textContent = '+🎥';
+    newClipButton.classList.add('add-clip');
+    groupCont.appendChild(newClipButton);
 }
 
 document.getElementById('expr-card').addEventListener('click', async (event) => {
-    // Add group button
+    // Reveal add group
     let button = event.target.closest('#add-group');
     if(button){
         resetDeleter();
@@ -418,7 +463,7 @@ document.getElementById('expr-card').addEventListener('click', async (event) => 
         return
     }
 
-    // Delete group button
+    // Reveal delete group
     button = event.target.closest('#delete-group');
     if(button){
         resetEditorForms();
@@ -426,7 +471,7 @@ document.getElementById('expr-card').addEventListener('click', async (event) => 
         return
     }
 
-    // Add clip button
+    // Reveal add clip
     button = event.target.closest('.add-clip');
     if(button){
         if(activeClipCont){
@@ -437,10 +482,9 @@ document.getElementById('expr-card').addEventListener('click', async (event) => 
 
         button.insertAdjacentHTML('afterend', `
             <div id="add-clip-cont">
-            <p id="clip-status"></p>
-            <form id="add-clip">
-            <fieldset>
-            <button class="exit" id="exit-add-clip"></button>
+                <form id="add-clip">
+                    <fieldset>
+                        <button class="exit" id="exit-add-clip"></button>
                         <legend>Clip</legend>
                         <div class="clip-options">
                             <div class="clip-duo">
@@ -455,8 +499,12 @@ document.getElementById('expr-card').addEventListener('click', async (event) => 
                                 <label for="end-time">End timestamp:</label>
                                 <input required class="clip-time" id="end-time" name="end-time" type="text" placeholder="4:56">
                             </div>
-                            <input id="clip-submit" type="submit" value="Submit">
+                            <button id="clip-submit" type="submit">
+                                <span class="submit-span">Submit</span>
+                                <img class="loading clear invisible" src="img/loading.gif" alt="Loading">
+                            </button>
                         </div>
+                        <p id="clip-status"></p>
                     </fieldset>
                 </form>
             </div>
@@ -469,9 +517,8 @@ document.getElementById('expr-card').addEventListener('click', async (event) => 
     // Exit add clip
     button = event.target.closest('#exit-add-clip');
     if(button){
-        addSingleClipButton(button.parentElement.parentElement);
-
-        button.parentElement.remove();
+        addSingleClipButton(button.closest('#add-clip-cont').parentElement);
+        button.closest('#add-clip-cont').remove();
         activeClipCont = false;
         return;
     }
@@ -482,11 +529,11 @@ document.getElementById('expr-card').addEventListener('click', async (event) => 
         const videoId = activeButton.dataset.videoId;
         const startTime = parseInt(activeButton.dataset.start);
         const endTime = parseInt(activeButton.dataset.end);
-
-        const groupsCont = activeButton.closest('.WGI-cont, .DCI-cont');
-        const group = groupsCont.firstElementChild.dataset.group;
-        const year = groupsCont.parentElement.parentElement.firstElementChild.dataset.year;
-
+        
+        const groupCont = activeButton.closest('.WGI-cont, .DCI-cont');
+        const group = groupCont.querySelector('[data-group]').dataset.group;
+        const year = groupCont.parentElement.parentElement.firstElementChild.dataset.year;
+        
         deleteClip(year, group, videoId, startTime, endTime);
         return;
     }

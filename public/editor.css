@@ -21,6 +21,10 @@ header {
     color: blue;
 }
 
+#user-email {
+    color: var(--color-secondary-dark);
+}
+
 /* Editor / preview layout */
 
 .page-divider {
@@ -87,7 +91,7 @@ label[for="year-marched"], #year-marched {
     width: 20%;
 }
 
-#add-exp input[type="submit"] {
+#add-exp button[type="submit"] {
     border: 2px solid var(--color-accent-dark);
     border-radius: var(--radius-sm);
     padding: .4em;
@@ -119,7 +123,7 @@ label[for="year-marched"], #year-marched {
     font-size: var(--font-sm);
 }
 
-#deleter input[type="submit"] {
+#deleter button[type="submit"] {
     border: 2px solid var(--color-black);
     color: var(--color-accent-dark);
     font-weight: 500;
@@ -130,8 +134,12 @@ label[for="year-marched"], #year-marched {
 
 /* Clip add form */
 
+#add-clip-cont {
+    width: 100%;
+}
+
 #add-clip-cont fieldset {
-    margin: 2rem auto 0;
+    margin: 3rem auto 1rem;
     border: 3px solid var(--color-accent);
     border-radius: var(--radius-md);
     position: relative;
@@ -148,6 +156,12 @@ label[for="year-marched"], #year-marched {
 
 #clip-status {
     font-size: var(--font-xs);
+    color: red;
+}
+
+#clip-del-status {
+    font-size: var(--font-xs);
+    color: black;
 }
 
 #add-clip-cont label {
@@ -180,7 +194,7 @@ label[for="year-marched"], #year-marched {
     width: 6rem;
 }
 
-#add-clip-cont input[type="submit"] {
+#add-clip-cont button[type="submit"] {
     border: 2px solid var(--color-accent-dark);
     border-radius: var(--radius-sm);
     padding: .4em;
