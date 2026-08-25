@@ -60,6 +60,15 @@ header {
     font-weight: 700;
 }
 
+footer, .form-privacy {
+    font-size: var(--font-xx);
+    color: var(--color-accent-dark);
+}
+
+.form-privacy {
+    margin: 1.5rem auto;
+}
+
 /* Layout blocks */
 
 main {
@@ -69,7 +78,8 @@ main {
 }
 
 .block {
-    min-height: 500px;
+    padding: 4rem 0;
+    border-top: solid 4px var(--color-accent-dark);
 }
 
 .container {

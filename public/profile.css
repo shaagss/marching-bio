@@ -15,7 +15,8 @@ header img {
 /* Cards */
 
 .user-card h1 {
-    font-size: min(7vw, var(--font-md));
+    /* font-size: min(7vw, var(--font-md)); */
+    font-size: var(--font-sm);
 }
 
 #user-photo {
@@ -30,7 +31,8 @@ header img {
 }
 
 .user-card h2 {
-    font-size: min(13vw, var(--font-lg));
+    /* font-size: min(13vw, var(--font-lg)); */
+    font-size: var(--font-md);
 }
 
 /* Footer */
@@ -49,4 +51,10 @@ footer a,
 footer a:link,
 footer a:visited {
     color: var(--color-accent-dark);
+}
+
+.privacy {
+    font-size: var(--font-xx);
+    color: var(--color-accent-dark);
+    margin: 1rem auto;
 }

@@ -1,6 +1,7 @@
 {
   "rewrites": [
     { "source": "/editor", "destination": "/editor.html" },
+    { "source": "/privacy", "destination": "/privacy.html" },
     { "source": "/:code([0-9a-f]{4,6})", "destination": "/profile.html" }
   ]
 }
