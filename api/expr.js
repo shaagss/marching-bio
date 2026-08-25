@@ -3,7 +3,6 @@ import { Pool } from 'pg';
 import { getSessionEmail } from '../lib/auth.js';
 import { getClipsFromDB, updateClipsRow } from '../lib/clips.js';
 
-
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: {

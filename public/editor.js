@@ -32,7 +32,10 @@ async function checkAuth() {
 
     const profileRes = await fetch(`/api/existing-profile?email=${data.email}`);
     const profileData = await profileRes.json()
-
+    
+    if( profileData.photo_url ){
+        document.getElementById('user-photo').src = profileData.photo_url;
+    }
     document.getElementById('user-name').textContent = profileData.name;
     document.getElementById('user-email').textContent = profileData.email;
     const profileAnchor = document.getElementById('profile-link');
@@ -70,6 +73,55 @@ function initGroupSelect() {
     
     editor.classList.remove('invisible');
 }
+
+// ---Profile photo---
+function cropToSquare(file) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+            const size = Math.min(img.width, img.height);
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+
+            const ctx = canvas.getContext('2d');
+            const offsetX = (img.width - size) / 2;
+            const offsetY = (img.height - size) / 2;
+            ctx.drawImage(img, offsetX, offsetY, size, size, 0, 0, size, size);
+
+            canvas.toBlob(resolve, 'image/jpeg', 0.85);
+        };
+        img.src = URL.createObjectURL(file);
+    });
+}
+
+document.getElementById('photo-upload-btn').addEventListener('click', () => {
+    document.getElementById('photo-input').click();
+});
+
+document.getElementById('photo-input').addEventListener('change', async () => {
+    const file = document.getElementById('photo-input').files[0];
+    if (!file) return;
+
+    document.getElementById('photo-upload-btn').textContent = 'Uploading...';
+
+    const croppedBlob = await cropToSquare(file);
+
+    const response = await fetch('/api/upload-photo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'image/jpeg' },
+        body: croppedBlob,
+    });
+
+    if (!response.ok) {
+        document.getElementById('photo-upload-btn').textContent = 'Error: try again';
+        return;
+    }
+
+    document.getElementById('photo-upload-btn').textContent = 'Photo updated!';
+    // location.reload();
+});
+
 
 // ---Updates preview from DB---
 async function updatePreviewExpr(){

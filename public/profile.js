@@ -20,7 +20,7 @@ async function loadProfile() {
     }
 
     ensureYtApiLoaded();
-    const { name, expr, clips } = await response.json();
+    const { name, expr, clips, photo_url } = await response.json();
     await exprToHtml(expr, clips, 'experience');
     
     document.querySelector('body').hidden = false;
@@ -28,7 +28,9 @@ async function loadProfile() {
         document.getElementById('user-card').classList.remove('hidden');
         document.getElementById('expr-card').classList.remove('hidden');
     });
-
+    if( photo_url ){
+        document.getElementById('user-photo').src = photo_url;
+    }
     if(name === null){
         document.title = name + 'user - marching.bio'
         profileName.textContent = "Invalid name";

@@ -11,9 +11,26 @@ body {
 
 /* Header */
 
-header {
-    margin: 1em 2em;
-    font-size: 1.6rem;
+.user-card {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 2rem;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.user-left {
+    flex: 60%;
+}
+
+.user-right {
+    flex: 40%;
+}
+
+header h1, header h2 {
+    font-size: var(--font-sm);
 }
 
 #profile-link {
@@ -23,6 +40,18 @@ header {
 
 #user-email {
     color: var(--color-secondary-dark);
+    font-size: var(--font-xs);
+}
+
+#user-photo {
+    width: 100%;
+    border: 2px solid var(--color-accent-dark);
+    border-radius: var(--radius-md);
+    margin: 10px auto;
+    display: block;
+    
+    aspect-ratio: 1/1;
+    object-fit: cover;
 }
 
 /* Editor / preview layout */
@@ -32,7 +61,6 @@ header {
     flex-flow: row wrap;
     justify-content: space-around;
     gap: 1.2rem;
-    padding: 0 1rem;
 }
 
 #editor {
@@ -100,6 +128,13 @@ label[for="year-marched"], #year-marched {
 
 /* Delete experience form */
 
+#deleter {
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    flex-shrink: 1;
+    flex: 0 1 35rem;
+}
+
 #deleter fieldset {
     border: 3px solid var(--color-accent-dark);
     border-radius: var(--radius-md);
@@ -108,11 +143,6 @@ label[for="year-marched"], #year-marched {
     flex-flow: column nowrap;
     align-items: center;
     gap: 1rem;
-}
-
-#deleter .exit {
-    top: -16px;
-    right: -6px;
 }
 
 #deleter legend {

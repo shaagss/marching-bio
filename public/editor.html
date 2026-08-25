@@ -19,15 +19,22 @@
 </head>
 <body class="work-sans" hidden>
     <header>
-        <div class="card">
-            <h1>marching.bio editor</h1>
-            <h2><span id="user-name"></span> - <a id="profile-link" href=""></a></h2>
-            <p><span id="user-email"></span></p>
+        <div class="card user-card">
+            <div class="user-left">
+                <h1>marching.bio editor</h1>
+                <h2><span id="user-name"></span> - <a id="profile-link" href=""></a></h2>
+                <p><span id="user-email"></span></p>
+                <button id="photo-upload-btn" type="button">Upload profile photo</button>
+                <input type="file" id="photo-input" accept="image/*" hidden>
+            </div>
+            <div class="user-right">
+                <img id="user-photo" src="img/randomface.jpg" alt="User's profile picture">
+            </div>
         </div>
     </header>
 
     <div class="page-divider">
-        <div id="editor" hidden>
+        <div id="editor" class="card" hidden>
             <button class="exit" id="exit-add-group"></button>
             <form id="filter-groups">
                 <fieldset>
@@ -76,7 +83,7 @@
             </form>
         </div>
 
-        <div id="deleter" hidden> 
+        <div id="deleter" class="card" hidden> 
             <button class="exit" id="exit-delete-group"></button>
             <form id="delete-group-form">
                 <fieldset>
