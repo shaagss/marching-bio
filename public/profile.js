@@ -28,8 +28,13 @@ async function loadProfile() {
         document.getElementById('user-card').classList.remove('hidden');
         document.getElementById('expr-card').classList.remove('hidden');
     });
-    if( photo_url ){
-        document.getElementById('user-photo').src = photo_url;
+    if( photo_url ){ 
+        const userPhoto = document.createElement('img');
+        userPhoto.id = 'user-photo';
+        userPhoto.alt = "User's profile picture";
+        userPhoto.src = photo_url;
+
+        document.getElementById('name').insertAdjacentElement('beforebegin', userPhoto);
     }
     if(name === null){
         document.title = name + 'user - marching.bio'

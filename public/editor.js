@@ -32,9 +32,18 @@ async function checkAuth() {
 
     const profileRes = await fetch(`/api/existing-profile?email=${data.email}`);
     const profileData = await profileRes.json()
-    
+
     if( profileData.photo_url ){
-        document.getElementById('user-photo').src = profileData.photo_url;
+        const userPhoto = document.createElement('img');
+        userPhoto.id = 'user-photo';
+        userPhoto.alt = "User's profile picture";
+        userPhoto.src = profileData.photo_url;
+
+        const userRight = document.createElement('div');
+        userRight.classList.add('user-right');
+        userRight.appendChild(userPhoto);
+
+        document.getElementById('user-card').appendChild(userRight);
     }
     document.getElementById('user-name').textContent = profileData.name;
     document.getElementById('user-email').textContent = profileData.email;

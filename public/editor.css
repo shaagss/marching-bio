@@ -17,8 +17,6 @@ body {
     justify-content: flex-start;
     align-items: center;
     gap: 2rem;
-    padding-top: 0;
-    padding-bottom: 0;
 }
 
 .user-left {
