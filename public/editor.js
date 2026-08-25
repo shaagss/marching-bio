@@ -10,7 +10,7 @@ let allGroups = [];
 let activeClipCont = false;
 let groupSelect;
 const classOptions = {
-    DCI: ["World", "Open", "All-Age", "International"],
+    DCI: ["World", "Open", "All-Age"],
     WGI: ["World", "Open", "A"]
 };
 
@@ -128,7 +128,7 @@ document.getElementById('photo-input').addEventListener('change', async () => {
     }
 
     document.getElementById('photo-upload-btn').textContent = 'Photo updated!';
-    // location.reload();
+    location.reload();
 });
 
 
