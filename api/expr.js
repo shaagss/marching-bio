@@ -2,6 +2,8 @@ import 'dotenv/config';
 import { Pool } from 'pg';
 import { getSessionEmail } from '../lib/auth.js';
 import { getClipsFromDB, updateClipsRow } from '../lib/clips.js';
+import { getDetailsFromDB, updateDetailsRow } from '../lib/details.js';
+
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
@@ -91,6 +93,17 @@ async function checkDelExprFormat(email, group, year){
             }
             await updateClipsRow(email, userClips, client);
         }
+
+        //remove details
+        const userDetails = await getDetailsFromDB(email, client);
+        if (Object.hasOwn(userDetails, year) && Object.hasOwn(userDetails[year], circuit)) {
+            delete userDetails[year][circuit];
+            if (Object.keys(userDetails[year]).length === 0) {
+                delete userDetails[year];
+            }
+            await updateDetailsRow(email, userDetails, client);
+        }
+
     }
     catch (err){
         console.error(err);

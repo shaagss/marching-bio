@@ -7,12 +7,14 @@ const deleter = document.getElementById('deleter');
 const status = document.getElementById('status')
 
 let allGroups = [];
-let activeClipCont = false;
+let activeClipReveal = false;
+let activeDetailReveal = false;
 let groupSelect;
 const classOptions = {
     DCI: ["World", "Open", "All-Age"],
     WGI: ["World", "Open", "A"]
 };
+let currentDetails;
 
 let activePlayer = null;
 let activeContainerId = null;
@@ -43,8 +45,20 @@ async function checkAuth() {
         userRight.classList.add('user-right');
         userRight.appendChild(userPhoto);
 
-        document.getElementById('user-card').appendChild(userRight);
+        document.getElementById('flexer').appendChild(userRight);
     }
+
+    currentDetails = profileData.details;
+    if( Object.hasOwn(profileData.details, 'instruments') ){
+        const addInstrumentButton = document.getElementById('add-instrument');
+        for(const instrument of profileData.details.instruments){
+            const instrumentP = document.createElement('p');
+            instrumentP.classList.add('instrument');
+            instrumentP.textContent = instrument;
+            addInstrumentButton.insertAdjacentElement('beforebegin', instrumentP);
+        }
+    }
+
     document.getElementById('user-name').textContent = profileData.name;
     document.getElementById('user-email').textContent = profileData.email;
     const profileAnchor = document.getElementById('profile-link');
@@ -148,9 +162,17 @@ async function updatePreviewExpr(){
     }
     const clips = await clipsRes.json();
 
-    await exprToHtml(expr, clips, 'experience');
+    const detailsRes = await fetch(`/api/details`);
+    if (!detailsRes.ok) {
+        console.error('Failed to load details:', detailsRes.status);
+        return;
+    }
+    const details = await detailsRes.json();
+
+    await exprToHtml(expr, clips, details, 'experience');
     updateDeleteGroup(expr);
-    addClipButtons();
+    addAddClipButton();
+    addEditDetailsButton();
     status.textContent = '';
 }
 
@@ -170,21 +192,21 @@ function groupButtons(){
     document.getElementById('experience').insertAdjacentElement('beforebegin', trashButton);
 }
 
-function addClipButtons() {
+function addAddClipButton() {
     // if it has a allClipButton-cont, add there.
     // if not, then just in the normal cont
     const allGroups = document.querySelectorAll('.WGI-cont, .DCI-cont');
     allGroups.forEach( element => {
-        let apendee = element;
-        if(element.querySelector('.allClipButton-cont')){
-            apendee = element.querySelector('.allClipButton-cont');
-        } 
-
         let button = document.createElement('button');
         button.textContent = '+🎥';
         button.classList.add('add-clip');
-            
-        apendee.appendChild(button);
+
+        if(element.querySelector('.allClipButton-cont')){
+            element.querySelector('.allClipButton-cont').appendChild(button);
+        } 
+        else{
+            element.querySelector('.name-cont').after(button);
+        }  
     })
 }
 
@@ -194,7 +216,8 @@ function delClipButton(){
     button.id = 'delete-clip';
 
     // activeButton.insertAdjacentElement('afterend', button);
-    activeButton.parentElement.parentElement.appendChild(button);
+    // activeButton.parentElement.parentElement.appendChild(button);
+    activeButton.closest('.allClips-cont').insertAdjacentElement('beforeend', button);
     activeDelButton = button;
 }
 
@@ -383,7 +406,7 @@ async function addClip(year, group, videoId, startTime, endTime) {
         return;
     }
 
-    activeClipCont = false;
+    activeClipReveal = false;
 
     updatePreviewExpr();
 }
@@ -506,13 +529,270 @@ async function deleteClip(year, group, videoId, startTime, endTime) {
     updatePreviewExpr();
 }
 
-// ---Toggles for expr and clips adder forms---
+// --Details---
+function addEditDetailsButton(){
+    const allGroups = document.querySelectorAll('.WGI-cont, .DCI-cont');
+    allGroups.forEach( element => {
+        let apendee = element.querySelector('.name-cont');
+        if(element.querySelector('.group-img-cont')){
+            apendee = element.querySelector('.group-img-cont');
+        } 
+        
+        let editDetailsButton = document.createElement('button');
+        editDetailsButton.classList.add('edit-details');
+        editDetailsButton.textContent = '✏️';
+            
+        apendee.appendChild(editDetailsButton);
+    })
+}
 
+async function addDetails(year, circuit, details){
+    const detailStatus = document.getElementById('detail-status');
+
+    const response = await fetch('/api/details', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ year, circuit, details })
+    });
+    if( !response.ok ){
+        detailStatus.style.color = "red";
+        detailStatus.textContent = `ERROR: Please try again`;
+        return;
+    }
+    detailStatus.style.color = "black";
+    detailStatus.textContent = 'Reload to apply details';
+
+}
+
+function resetCompetitionDetailOptions(){
+    const competitionDetailForm = document.getElementById('competition-detail-form');
+    competitionDetailForm.replaceChildren();
+    const year = competitionDetailForm.closest('.year-cont').querySelector('[data-year]').dataset.year;
+    const circuit = competitionDetailForm.closest('.DCI-cont, .WGI-cont').querySelector('[data-circuit]').dataset.circuit;
+    const division = competitionDetailForm.closest('.DCI-cont, .WGI-cont').querySelector('[data-division]').dataset.division;
+
+    let theClass;
+    if(Object.hasOwn(currentDetails, year) &&
+        Object.hasOwn(currentDetails[year], circuit) &&
+        Object.hasOwn(currentDetails[year][circuit], 'correctedClass'))
+    {
+        theClass = currentDetails[year][circuit]['correctedClass'];
+    }
+    else{
+        theClass = competitionDetailForm.closest('.DCI-cont, .WGI-cont').querySelector('[data-class]').dataset.class;
+    }
+
+    const legend = document.createElement('legend')
+    legend.textContent = 'Competition';
+    competitionDetailForm.appendChild(legend);
+
+    const competitions = ['Finals', 'Semis', 'Prelims'];
+
+    for(const competition of competitions){
+        if(competition === 'Semis'){
+            if(division === 'Winds' ||
+                theClass !== 'World')
+            {
+                continue;
+            }
+        }
+        
+        const detailDuo = document.createElement('div');
+        detailDuo.classList.add('detail-duo');
+        competitionDetailForm.appendChild(detailDuo);
+
+        const detailInput = document.createElement('input');
+        detailInput.type = 'radio';
+        detailInput.id = competition;
+        detailInput.name = 'competition';
+        detailInput.value = competition;
+        detailInput.required = true;
+        detailDuo.appendChild(detailInput);
+
+        const detailLabel = document.createElement('label');
+        detailLabel.htmlFor = competition;
+        if(circuit === 'DCI'){
+            detailLabel.textContent = `DCI ${theClass} ${competition}`;
+        }
+        else if(circuit === 'WGI'){
+            detailLabel.textContent = `WGI ${competition}`;
+        }
+        detailDuo.appendChild(detailLabel);
+        
+    }
+
+    if(circuit === 'DCI'){
+        //finals
+        if(theClass === 'World'){
+            //semis
+        }
+        //prelims
+    }
+    else if(circuit === 'WGI'){
+
+    }
+}
+
+async function revertDetailsShowName(year, circuit){
+    if(Object.hasOwn(currentDetails, year) &&
+        Object.hasOwn(currentDetails[year], circuit) &&
+        Object.hasOwn(currentDetails[year][circuit], 'showName'))
+    {
+        delete currentDetails[year][circuit]['showName'];
+        addDetails(year, circuit, currentDetails[year][circuit])
+    }
+}
+
+async function revertDetailsCompetitionTrio(year, circuit){
+    if(Object.hasOwn(currentDetails, year) &&
+        Object.hasOwn(currentDetails[year], circuit) &&
+        Object.hasOwn(currentDetails[year][circuit], 'placement') &&
+        Object.hasOwn(currentDetails[year][circuit], 'competition') &&
+        Object.hasOwn(currentDetails[year][circuit], 'score'))
+    {
+        delete currentDetails[year][circuit]['placement'];
+        delete currentDetails[year][circuit]['competition'];
+        delete currentDetails[year][circuit]['score'];
+        addDetails(year, circuit, currentDetails[year][circuit])
+    }
+}
+
+async function revertDetailsCorrectedClass(year, circuit){
+    if(Object.hasOwn(currentDetails, year) &&
+        Object.hasOwn(currentDetails[year], circuit) &&
+        Object.hasOwn(currentDetails[year][circuit], 'correctedClass'))
+    {
+        delete currentDetails[year][circuit]['correctedClass'];
+        addDetails(year, circuit, currentDetails[year][circuit])
+    }
+}
+
+async function addDetailsShowNameSubmitPressed(event, year, circuit){
+    swapSubmitToLoading(event.submitter);
+    
+    currentDetails[year][circuit]['showName'] = event.target.elements.showName.value.trim();
+    await addDetails(year, circuit, currentDetails[year][circuit]);
+
+    swapLoadingBack(event.submitter);
+}
+
+async function addDetailsCompetitionTrioSubmitPressed(event, year, circuit){
+    swapSubmitToLoading(event.submitter);
+    
+    currentDetails[year][circuit]['placement'] = event.target.elements.placement.value;
+    currentDetails[year][circuit]['competition'] = event.target.elements.competition.value;
+    if(event.target.elements.score.value.indexOf('.') === -1){
+        event.target.elements.score.value += '.0';
+    }
+    currentDetails[year][circuit]['score'] = event.target.elements.score.value;
+    await addDetails(year, circuit, currentDetails[year][circuit]);
+
+    swapLoadingBack(event.submitter);
+}
+
+async function addDetailsCorrectedClassSubmitPressed(event, year, circuit){
+    swapSubmitToLoading(event.submitter);
+
+    if(event.target.elements['correctedClass'].value === event.target.closest('.DCI-cont, .WGI-cont').querySelector('[data-class]').dataset.class){
+        if(Object.hasOwn(currentDetails[year][circuit], 'correctedClass')){
+            delete currentDetails[year][circuit]['correctedClass'];
+        }
+    }
+    else {
+        currentDetails[year][circuit]['correctedClass'] = event.target.elements['correctedClass'].value;
+    }
+    await addDetails(year, circuit, currentDetails[year][circuit]);
+
+    resetCompetitionDetailOptions();
+    swapLoadingBack(event.submitter);
+}
+
+document.getElementById('experience').addEventListener('submit', async event => {
+    if (!event.target.closest('#add-detail-cont')) return;
+    event.preventDefault();
+
+    const detailStatus = document.getElementById('detail-status');
+    detailStatus.textContent = ``;
+
+    const year = event.target.closest('.year-cont').querySelector('[data-year]').dataset.year;
+    const circuit = event.target.closest('.WGI-cont, .DCI-cont').querySelector('[data-circuit]').dataset.circuit;
+
+    if(!Object.hasOwn(currentDetails, year)){
+        currentDetails[year] = {};
+    }
+    if(!Object.hasOwn(currentDetails[year], circuit)){
+        currentDetails[year][circuit] = {};
+    }
+
+    if(event.target.matches('#add-detail-showName')){
+        addDetailsShowNameSubmitPressed(event, year, circuit);
+    }
+    else if(event.target.matches('#add-detail-competitionTrio')){
+        addDetailsCompetitionTrioSubmitPressed(event, year, circuit);
+    }
+    else if (event.target.matches('#add-detail-correctedClass')){
+        addDetailsCorrectedClassSubmitPressed(event, year, circuit);
+    }
+})
+
+// ---Toggles for expr, clips adder, and detail adder forms---
 function addSingleClipButton(groupCont) {
     let newClipButton = document.createElement('button');
     newClipButton.textContent = '+🎥';
     newClipButton.classList.add('add-clip');
-    groupCont.appendChild(newClipButton);
+
+    if(groupCont.querySelector('.allClipButton-cont')){
+        groupCont.querySelector('.allClipButton-cont').appendChild(newClipButton);
+    } 
+    else{
+        groupCont.querySelector('.name-cont').after(newClipButton);
+    }  
+}
+
+function addSingleDetailButton(groupCont){
+    let apendee = groupCont.querySelector('.name-cont');
+    if(groupCont.querySelector('.group-img-cont')){
+        apendee = groupCont.querySelector('.group-img-cont');
+    } 
+    
+    let editDetailsButton = document.createElement('button');
+    editDetailsButton.classList.add('edit-details');
+    editDetailsButton.textContent = '✏️';
+        
+    apendee.appendChild(editDetailsButton);
+}
+
+function closeAllReveals(){
+    // Close clip adders
+    if(activeClipReveal){
+        addSingleClipButton(document.getElementById('add-clip-cont').closest('.WGI-cont, .DCI-cont'));
+        document.getElementById('add-clip-cont').remove();
+        activeClipReveal = false;
+    }
+
+    if(activeDetailReveal){
+        addSingleDetailButton(document.getElementById('add-detail-cont').closest('.WGI-cont, .DCI-cont'));
+        document.getElementById('add-detail-cont').remove();
+        activeDetailReveal = false;
+    }
+
+    // Close playing clips
+    if (activePlayer) {
+        activePlayer.destroy();
+        activePlayer = null;
+        activeButton.textContent = '🎥 #' + activeButton.dataset.count;
+
+        // animate closed  
+        const prevContainer = document.getElementById(activeContainerId);
+        prevContainer.style.maxHeight = '0px';
+        prevContainer.classList.remove('expanded');
+
+        activeContainerId = null;
+        activeButton = null;
+        activeDelButton.remove();
+    }
+
+    // Close detail adders
 }
 
 document.getElementById('expr-card').addEventListener('click', async (event) => {
@@ -521,7 +801,7 @@ document.getElementById('expr-card').addEventListener('click', async (event) => 
     if(button){
         resetDeleter();
         editor.hidden = false;
-        return
+        return;
     }
 
     // Reveal delete group
@@ -529,17 +809,13 @@ document.getElementById('expr-card').addEventListener('click', async (event) => 
     if(button){
         resetEditorForms();
         deleter.hidden = false;
-        return
+        return;
     }
 
     // Reveal add clip
     button = event.target.closest('.add-clip');
     if(button){
-        if(activeClipCont){
-            addSingleClipButton(document.getElementById('add-clip-cont').parentElement);
-            document.getElementById('add-clip-cont').remove();
-            activeClipCont = false;
-        }
+        closeAllReveals();
 
         button.insertAdjacentHTML('afterend', `
             <div id="add-clip-cont">
@@ -571,16 +847,148 @@ document.getElementById('expr-card').addEventListener('click', async (event) => 
             </div>
             `);
         button.remove();
-        activeClipCont = true;
+        activeClipReveal = true;
         return;
     }
 
     // Exit add clip
     button = event.target.closest('#exit-add-clip');
     if(button){
-        addSingleClipButton(button.closest('#add-clip-cont').parentElement);
+        addSingleClipButton(button.closest('.WGI-cont, .DCI-cont'));
         button.closest('#add-clip-cont').remove();
-        activeClipCont = false;
+        activeClipReveal = false;
+        return;
+    }
+
+    // Reveal add detail
+    button = event.target.closest('.edit-details');
+    if(button){
+        closeAllReveals();
+
+        const nameCont = button.closest('.WGI-cont, .DCI-cont').querySelector('.name-cont');
+        
+        nameCont.insertAdjacentHTML('afterend', `
+            <div id="add-detail-cont">
+                <button class="exit" id="exit-add-detail"></button>
+                <p>Details</p>
+                <p id="detail-status"></p>
+                <form class="add-detail" id="add-detail-showName">
+                    <fieldset>
+                        <legend>showName</legend>
+                        <div class="detail-options">
+                            <div class="detail-duo">
+                                <input required id="showName" type="text" placeholder="The Doors of Perception">
+                            </div>
+                            <button type="button" class="revert-detail" id="revert-showName">
+                                <span class="">Reset</span>
+                            </button>
+                            <button id="showName-submit" type="submit">
+                                <span class="submit-span">Apply</span>
+                                <img class="loading clear invisible" src="img/loading.gif" alt="Loading">
+                            </button>
+                        </div>
+                    </fieldset>
+                </form>
+                <form class="add-detail" id="add-detail-competitionTrio">
+                    <fieldset>
+                        <legend>competitionTrio</legend>
+                        <div class="detail-options">
+                            <div class="detail-duo">
+                                <label for="placement">Placement</label>
+                                <input required id="placement" type="number" placeholder="3">
+                            </div>
+                            <fieldset id="competition-detail-form">
+                            </fieldset>
+                            <div class="detail-duo">
+                                <label for="score">Score</label>
+                                <input required id="score" type="number" placeholder="88.45" step="0.001" inputmode="decimal">
+                            </div>
+                            <button type="button" class="revert-detail" id="revert-competitionTrio">
+                                <span class="">Reset</span>
+                            </button>
+                            <button id="competitionTrio-submit" type="submit">
+                                <span class="submit-span">Apply</span>
+                                <img class="loading clear invisible" src="img/loading.gif" alt="Loading">
+                            </button>
+                        </div>
+                    </fieldset>
+                </form>
+                <form class="add-detail" id="add-detail-correctedClass">
+                    <fieldset>
+                        <legend>correctedClass</legend>
+                        <div class="detail-options">
+                            <button type="button" class="revert-detail" id="revert-correctedClass">
+                                <span class="">Set Default</span>
+                            </button>
+                            <button id="correctedClass-submit" type="submit">
+                                <span class="submit-span">Apply</span>
+                                <img class="loading clear invisible" src="img/loading.gif" alt="Loading">
+                            </button>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        `);
+        const correctedClassDetailOptions = nameCont.closest('.DCI-cont, .WGI-cont').querySelector('#add-detail-correctedClass .detail-options');
+        let classList;
+        if(nameCont.closest('.DCI-cont, .WGI-cont').querySelector('[data-circuit]').dataset.circuit === "DCI"){
+            //DCI
+            classList = ['All-Age', 'Open', 'World'];
+        }
+        else {
+            //WGI
+            classList = ['A', 'Open', 'World'];
+        }
+        for(const theClass of classList){
+            const detailDuo = document.createElement('div');
+            detailDuo.classList.add('detail-duo');
+            correctedClassDetailOptions.insertAdjacentElement('afterbegin', detailDuo);
+
+            const detailInput = document.createElement('input');
+            detailInput.type = 'radio';
+            detailInput.id = theClass;
+            detailInput.name = 'correctedClass';
+            detailInput.value = theClass;
+            detailInput.required = true;
+            detailDuo.appendChild(detailInput);
+
+            const detailLabel = document.createElement('label');
+            detailLabel.htmlFor = theClass;
+            detailLabel.textContent = theClass;
+            detailDuo.appendChild(detailLabel);
+        }
+
+        resetCompetitionDetailOptions();
+
+        button.remove();
+
+        activeDetailReveal = true;
+    }
+
+    // Exit add detail
+    button = event.target.closest('#exit-add-detail');
+    if(button){
+        addSingleDetailButton(button.closest('.WGI-cont, .DCI-cont'));
+        button.closest('#add-detail-cont').remove();
+        activeDetailReveal = false;
+        return;
+    }
+
+    // Revert detail
+    button = event.target.closest('.revert-detail');
+    if(button){
+        const year = button.closest('.year-cont').querySelector('[data-year]').dataset.year;
+        const circuit = button.closest('.DCI-cont, .WGI-cont').querySelector('[data-circuit]').dataset.circuit;
+
+        if(button.id === 'revert-showName'){
+            revertDetailsShowName(year, circuit);
+        }
+        else if(button.id === 'revert-competitionTrio'){
+            revertDetailsCompetitionTrio(year, circuit);
+        }
+        else if(button.id === 'revert-correctedClass'){
+            revertDetailsCorrectedClass(year, circuit);
+        }
         return;
     }
 
@@ -625,20 +1033,7 @@ document.getElementById('experience').addEventListener('click', async (event) =>
     // if this exact button's clip is already open, treat it as closing it
     const clickedActiveOne = (containerId === activeContainerId);
 
-    if (activePlayer) {
-        activePlayer.destroy();
-        activePlayer = null;
-        activeButton.textContent = '🎥 #' + activeButton.dataset.count;
-
-        // animate closed  
-        const prevContainer = document.getElementById(activeContainerId);
-        prevContainer.style.maxHeight = '0px';
-        prevContainer.classList.remove('expanded');
-
-        activeContainerId = null;
-        activeButton = null;
-        activeDelButton.remove();
-    }
+    closeAllReveals();
 
     if (clickedActiveOne) {
         return; // it was already open, so clicking it just closes it

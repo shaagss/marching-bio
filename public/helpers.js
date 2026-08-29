@@ -1,5 +1,5 @@
 
-export async function exprToHtml(expr, clips, parentId) {
+export async function exprToHtml(expr, clips, details, parentId) {
     const groupDetails = await exprToGroupInfo(expr);
     // Get parent and clear children
     const parent = document.getElementById(parentId);
@@ -9,21 +9,27 @@ export async function exprToHtml(expr, clips, parentId) {
     for (const [year, groups] of Object.entries(expr).reverse()){
         const yearCont = document.createElement('div')
         yearCont.classList.add('year-cont');
-
-        const groupsCont = document.createElement('div')
-        groupsCont.classList.add('groups-cont');
-
+        
         const yearHead = document.createElement('h3');
         yearHead.textContent = year;
         yearHead.dataset.year = year;
+        
+        const groupsCont = document.createElement('div')
+        groupsCont.classList.add('groups-cont');
+
         yearCont.append(yearHead, groupsCont);
 
         const circuits = ['DCI', 'WGI'];
         for(const circuit of circuits){
             if(Object.hasOwn(groups, circuit) === true){
                 const thisGroupCont = document.createElement('div');
-                thisGroupCont.classList.add(circuit + '-cont')
+                thisGroupCont.classList.add(circuit + '-cont');
                 groupsCont.append(thisGroupCont);
+
+                const circuitHead = document.createElement('h4');
+                circuitHead.textContent = circuit;
+                circuitHead.dataset.circuit = circuit;
+                thisGroupCont.append(circuitHead);
 
                 let groupId = groups[circuit];
                 if(groupDetails[groupId].photo_url){
@@ -39,36 +45,32 @@ export async function exprToHtml(expr, clips, parentId) {
                     thisGroupCont.append(imgCont);
                 }
 
+                const nameCont = document.createElement('div');
+                nameCont.classList.add('name-cont');
+                thisGroupCont.append(nameCont);
+
                 const p = document.createElement('p');
                 p.textContent = groupDetails[groupId].name;
                 p.dataset.group = groupId;
-                thisGroupCont.append(p);
+                p.dataset.class = groupDetails[groupId].class
+                p.dataset.division = groupDetails[groupId].division;
+                p.classList.add('groupName');
+                nameCont.append(p);
+
                 if(Object.hasOwn(clips, year) && Object.hasOwn(clips[year], circuit)){
                     addClipButton(clips[year][circuit], thisGroupCont, year, circuit);
                 }
 
-                // div for extra detail (correct class,
-                // final place / score, etc
-                if( groupId === 'paradigm' ) { // obviously change
-                    const extraCont = document.createElement('div');
-                    extraCont.classList.add('extra-cont');
-                    thisGroupCont.append(extraCont);
-
-                    const corClass = document.createElement('p');
-                    corClass.textContent = 'PIO';
-                    extraCont.append(corClass);
-
-                    const place = document.createElement('p');
-                    place.textContent = '10th - Finals';
-                    extraCont.append(place);
-
-                    const score = document.createElement('p');
-                    score.textContent = '91.163';
-                    extraCont.append(score);
+                if( Object.hasOwn(details, year) && Object.hasOwn(details[year], circuit) ){
+                    addDetails(details[year][circuit], thisGroupCont, groupDetails[groupId])
                 }
+                else{
+                    addMinimalDetails(thisGroupCont, groupDetails[groupId]);
+                }
+
             }
         }
-
+        
         parent.append(yearCont);
         // parent has year-cont,
         // which is the year and a div class groups-cont,
@@ -84,7 +86,7 @@ async function exprToGroupInfo(expr){
     // and each value is a dict of details
     // (name, photo_url)
     let allGroupIds = [];
-
+    
     for (const [year, circuits] of Object.entries(expr)){
         for (const [circuit, groupId] of Object.entries(circuits)){
             if( !allGroupIds.includes(groupId) ){
@@ -97,10 +99,14 @@ async function exprToGroupInfo(expr){
 }
 
 function addClipButton(clips, groupsCont, year, circuit){
+    const allClipsCont = document.createElement('div');
+    allClipsCont.classList.add('allClips-cont');
+    groupsCont.appendChild(allClipsCont);
+
     const allClipButtonCont = document.createElement('div');
     allClipButtonCont.classList.add('allClipButton-cont');
-    groupsCont.appendChild(allClipButtonCont);
-
+    allClipsCont.appendChild(allClipButtonCont);
+    
     let count = 1;
     for(const clip of clips){
         let button = document.createElement('button');
@@ -113,11 +119,11 @@ function addClipButton(clips, groupsCont, year, circuit){
         button.dataset.end = clip.end;
         
         const baseId = `clip-${year}-${circuit}-${clip.videoId}-${clip.start}-${clip.end}`;
-
+        
         const clipCont = document.createElement('div');
         clipCont.id = baseId;
         clipCont.classList.add('clip-cont');
-
+        
         const playerTarget = document.createElement('div');
         playerTarget.id = `player-${baseId}`;
         clipCont.appendChild(playerTarget);
@@ -125,8 +131,125 @@ function addClipButton(clips, groupsCont, year, circuit){
         button.setAttribute('aria-controls', clipCont.id);
         
         allClipButtonCont.appendChild(button);
-        groupsCont.append(clipCont);
+        allClipsCont.append(clipCont);
     }
+}
+
+// if it has a value, display it.
+// placement + competition + score are always present as a SET
+
+function addMinimalDetails(groupsCont, defaultDetails){
+    const tiny = document.createElement('p');
+    tiny.classList.add('tiny');
+    const displayClass = classToStr(defaultDetails.circuit, defaultDetails.division, defaultDetails.class)
+    tiny.textContent = displayClass;
+
+    const groupName = groupsCont.querySelector('.groupName');
+    groupName.insertAdjacentElement('afterend', tiny);
+}
+
+function addDetails(details, groupsCont, defaultDetails){
+    let realClass;
+    if(Object.hasOwn(details, 'correctedClass')){
+        realClass = classToStr(defaultDetails.circuit, defaultDetails.division, details.correctedClass);
+    }
+    else {
+        realClass = classToStr(defaultDetails.circuit, defaultDetails.division, defaultDetails.class);
+    }
+
+    const groupName = groupsCont.querySelector('.groupName');
+    if( Object.hasOwn(details, 'showName') ){
+        const showName = document.createElement('p');
+        showName.classList.add('italic');
+        showName.textContent = details.showName;
+        groupName.insertAdjacentElement('beforebegin', showName);
+        groupName.classList.add('tiny');
+        groupName.textContent += ' - ' + realClass;
+    }
+    else{
+        const tiny = document.createElement('p');
+        tiny.classList.add('tiny');
+        tiny.textContent = realClass;
+        groupName.insertAdjacentElement('afterend', tiny);
+    }
+
+    if( Object.hasOwn(details, 'placement') &&
+        Object.hasOwn(details, 'competition') &&
+        Object.hasOwn(details, 'score') )
+    {
+        const extraCont = document.createElement('div');
+        extraCont.classList.add('extra-cont');
+        groupsCont.insertAdjacentElement('beforeend', extraCont);
+        
+        // PLACEMENT
+        const placement = document.createElement('p');
+        switch(details.placement){
+            case 1:
+                placement.textContent = '1st';
+                break;
+            case 2:
+                placement.textContent = '2nd';
+                break;
+            case 3:
+                placement.textContent = '3rd';
+                break;
+            default:
+                placement.textContent = details.placement + 'th';
+                break;
+        }
+        extraCont.append(placement);
+    
+        // COMPETITION
+        let compClass = "";
+        const competition = document.createElement('p');
+        if(defaultDetails.circuit === "DCI"){
+            if(Object.hasOwn(details, 'correctedClass')){
+                compClass = details.correctedClass + " ";
+            }
+            else {
+                compClass = defaultDetails.class + " ";
+            }
+        }
+        competition.textContent = '@ ' + defaultDetails.circuit + ' ' + compClass + details.competition; 
+        extraCont.append(competition);
+
+        // SCORE
+        const score = document.createElement('p');
+        score.textContent = details.score;
+        extraCont.append(score);
+    }
+}
+
+function classToStr(circuit, division, theClass){
+    if(circuit === "DCI"){
+        return theClass;
+    }
+
+    let abrv = "";
+
+    if(division === "percussion"){
+        abrv += "P";
+    }
+    else if(division === "winds"){
+        abrv += "W";
+    }
+    else if(division === "guard"){
+        // nothing
+    }
+
+    abrv += "I";
+
+    if(theClass === "A"){
+        abrv += "A";
+    }
+    else if(theClass === "Open"){
+        abrv += "O";
+    }
+    else if(theClass === "World"){
+        abrv += "W";
+    }
+
+    return abrv;
 }
 
 export async function exprToList(expr, selectId, defaultOptString){

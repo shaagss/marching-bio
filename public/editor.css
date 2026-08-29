@@ -13,6 +13,13 @@ body {
 
 .user-card {
     display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+.user-card .flexer {
+    display: flex;
     flex-flow: row nowrap;
     justify-content: flex-start;
     align-items: center;
@@ -25,6 +32,13 @@ body {
 
 .user-right {
     flex: 40%;
+}
+
+.user-bottom {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-evenly;
+    align-items: center;
 }
 
 header h1 {
@@ -238,6 +252,60 @@ label[for="year-marched"], #year-marched {
     padding: .4em;
     font-size: var(--font-sm);
 }
+
+/* Edit details */
+
+.edit-details{
+    position: absolute;
+    top: -1.8em;
+    right: -1.5em;
+    font-size: var(--font-xs);
+    padding: .5em;
+    border: none;
+}
+
+#add-detail-cont {
+    position: relative;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 2rem;
+
+    border: 3px solid var(--color-accent);
+    border-radius: var(--radius-md);
+    padding: .5rem;
+}
+
+#add-detail-cont .exit {
+    font-size: var(--font-md);
+}
+
+#add-detail-cont legend {
+    font-size: var(--font-sm);
+}
+
+#add-detail-cont label {
+    font-size: var(--font-sm);
+}
+
+#add-detail-cont input {
+    font-size: var(--font-xs);
+    border: 2px solid var(--color-accent);
+    border-radius: var(--radius-sm);
+    padding: .4em;
+} 
+
+#add-detail-cont button {
+    font-size: var(--font-xs);
+    border-color: var(--color-secondary-dark);
+}
+
+#detail-status {
+    font-size: var(--font-xs);
+    color: red;
+}
+
 
 /* Buttons */
 

@@ -6,13 +6,13 @@
     --color-primary-dark: #172938;
     --color-secondary: #a8c69f;
     --color-secondary-dark: #214e34;
-    /* --color-secondary-dark: #0b5351; */
     --color-accent: #9b6a6c;
     --color-accent-dark: #702632;
     --color-cream: antiquewhite;
 
     --color-black: #000000;
     --color-white: #ffffff;
+    --color-grey: #808080aa;
 
     /* Font sizes */
     --font-xx: 1.2rem;
@@ -196,7 +196,7 @@ button[type="submit"] {
 }
 
 .year-cont {
-    color: #808080aa;
+    color: var(--color-grey);
     font-size: var(--font-sm);
     text-align: left;
 }
@@ -205,6 +205,20 @@ button[type="submit"] {
     text-align: center;
     font-size: var(--font-md);
     color: black;
+}
+
+.groups-cont h4 {
+    color: var(--color-grey);
+    font-size: var(--font-xs);
+    align-self: flex-start;
+}
+
+.name-cont {
+    position: relative;
+}
+
+.tiny{
+    font-size: var(--font-xs);
 }
 
 .WGI-cont {
@@ -220,6 +234,7 @@ button[type="submit"] {
     padding-bottom: 1rem;
     border-bottom: var(--border) dashed;
     display: flex;
+    position: relative;
     flex-flow: column nowrap;
     justify-content: flex-start;
     align-items: center;
@@ -232,6 +247,7 @@ button[type="submit"] {
     border: var(--border) solid;
     max-height: 20rem;
     display: block;
+    position: relative;
     text-align: center;
 }
 
@@ -240,6 +256,10 @@ button[type="submit"] {
     /* max-height: 100%; */
     max-height: calc(20rem - 2rem);
     display: inline-block;
+}
+
+.allClips-cont {
+    width: 100%;
 }
 
 .allClipButton-cont {
@@ -293,7 +313,7 @@ button[type="submit"] {
     align-self: stretch;
     display: flex;
     flex-flow: row wrap;
-    justify-content: space-around;
+    justify-content: space-evenly;
     align-items: center;
     font-size: var(--font-xs);
 }
