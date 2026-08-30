@@ -267,6 +267,7 @@ label[for="year-marched"], #year-marched {
     font-size: var(--font-xs);
     padding: .5em;
     border: none;
+    filter: drop-shadow(.4rem .8rem 2px #00000088);
 }
 
 #add-detail-cont {
