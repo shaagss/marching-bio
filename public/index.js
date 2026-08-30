@@ -28,6 +28,12 @@ function closeLogin() {
     }, 1000)
 }
 
+document.getElementById('login').addEventListener('click', (event) => {
+    const button = event.target.closest('#exit-login');
+    if (!button) return;
+    closeLogin();
+});
+
 async function checkAuthStatus() {
     const response = await fetch('/api/me');
     const data = await response.json();

@@ -142,7 +142,6 @@ document.getElementById('photo-input').addEventListener('change', async () => {
     }
 
     document.getElementById('photo-upload-btn').textContent = 'Photo updated!';
-    location.reload();
 });
 
 
@@ -467,6 +466,7 @@ async function addClipSubmitPressed(event){
     const videoId = extractVideoId(clipLink);
     if(!videoId){
         clipStatus.textContent = 'Invalid Url';
+        clipStatus.style.color = 'red';
         swapLoadingBack(event.submitter);
         return;
     }
@@ -478,6 +478,7 @@ async function addClipSubmitPressed(event){
     
     if(startTime === null || endTime === null){
         clipStatus.textContent = 'Invalid timestamp';
+        clipStatus.style.color = 'red';
         swapLoadingBack(event.submitter);
         return;
     }
@@ -493,6 +494,7 @@ async function addClipSubmitPressed(event){
     const year = groupCont.parentElement.parentElement.firstElementChild.dataset.year;
     await addClip(year, group, videoId, startTime, endTime);
     clipStatus.textContent = 'Successfully added clip. Reloading...';
+    clipStatus.style.color = 'black';
     event.submitter.parentElement.remove();
 }
 

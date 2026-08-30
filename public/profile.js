@@ -20,8 +20,8 @@ async function loadProfile() {
     }
 
     ensureYtApiLoaded();
-    const { name, expr, clips, photo_url } = await response.json();
-    await exprToHtml(expr, clips, 'experience');
+    const { name, expr, clips, details, photo_url } = await response.json();
+    await exprToHtml(expr, clips, details, 'experience');
     
     document.querySelector('body').hidden = false;
     requestAnimationFrame(() => {
