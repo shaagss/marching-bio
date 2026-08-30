@@ -98,6 +98,10 @@ header button {
 
 /* Add-experience form */
 
+#editor {
+    align-self: flex-start;
+}
+
 #editor fieldset {
     border: 3px solid var(--color-primary-dark);
     border-radius: var(--radius-md);
@@ -155,6 +159,7 @@ label[for="year-marched"], #year-marched {
     padding: 1.5rem;
     flex-shrink: 1;
     flex: 0 1 35rem;
+    align-self: flex-start;
 }
 
 #deleter fieldset {
@@ -265,11 +270,12 @@ label[for="year-marched"], #year-marched {
 }
 
 #add-detail-cont {
+    width: 100%;
     position: relative;
     display: flex;
     flex-flow: column nowrap;
     justify-content: flex-start;
-    align-items: stretch;
+    align-items: center;
     gap: 2rem;
 
     border: 3px solid var(--color-accent);
@@ -281,12 +287,27 @@ label[for="year-marched"], #year-marched {
     font-size: var(--font-md);
 }
 
+#add-detail-cont fieldset {
+    padding: 0 4rem;
+    border: none;
+    border-top: var(--color-accent-dark) 2px solid;
+}
+
+fieldset#competition-detail-form {
+    margin: 1rem 0;
+    border-top: none;
+}
+
+fieldset#competition-detail-form .detail-duo {
+    margin: -1.5rem 0;
+}
+
 #add-detail-cont legend {
     font-size: var(--font-sm);
 }
 
-#add-detail-cont label {
-    font-size: var(--font-sm);
+#add-detail-cont label,  #competition-detail-form legend {
+    font-size: var(--font-xs);
 }
 
 #add-detail-cont input {
@@ -306,6 +327,22 @@ label[for="year-marched"], #year-marched {
     color: red;
 }
 
+#showName {
+    width: 22rem;
+}
+
+#add-detail-correctedClass p  {
+    font-size: var(--font-xx);
+}
+
+#correctedClass-inputs {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    gap: 1.5rem;
+    align-items: center;
+    align-content: center;
+}
 
 /* Buttons */
 

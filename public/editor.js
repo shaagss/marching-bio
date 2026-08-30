@@ -49,15 +49,15 @@ async function checkAuth() {
     }
 
     currentDetails = profileData.details;
-    if( Object.hasOwn(profileData.details, 'instruments') ){
-        const addInstrumentButton = document.getElementById('add-instrument');
-        for(const instrument of profileData.details.instruments){
-            const instrumentP = document.createElement('p');
-            instrumentP.classList.add('instrument');
-            instrumentP.textContent = instrument;
-            addInstrumentButton.insertAdjacentElement('beforebegin', instrumentP);
-        }
-    }
+    // if( Object.hasOwn(profileData.details, 'instruments') ){
+    //     const addInstrumentButton = document.getElementById('add-instrument');
+    //     for(const instrument of profileData.details.instruments){
+    //         const instrumentP = document.createElement('p');
+    //         instrumentP.classList.add('instrument');
+    //         instrumentP.textContent = instrument;
+    //         addInstrumentButton.insertAdjacentElement('beforebegin', instrumentP);
+    //     }
+    // }
 
     document.getElementById('user-name').textContent = profileData.name;
     document.getElementById('user-email').textContent = profileData.email;
@@ -583,7 +583,7 @@ function resetCompetitionDetailOptions(){
     }
 
     const legend = document.createElement('legend')
-    legend.textContent = 'Competition';
+    legend.textContent = 'Competition:';
     competitionDetailForm.appendChild(legend);
 
     const competitions = ['Finals', 'Semis', 'Prelims'];
@@ -870,11 +870,13 @@ document.getElementById('expr-card').addEventListener('click', async (event) => 
         nameCont.insertAdjacentHTML('afterend', `
             <div id="add-detail-cont">
                 <button class="exit" id="exit-add-detail"></button>
-                <p>Details</p>
-                <p id="detail-status"></p>
+                <div>
+                    <p>Details</p>
+                    <p id="detail-status"></p>
+                </div>
                 <form class="add-detail" id="add-detail-showName">
                     <fieldset>
-                        <legend>showName</legend>
+                        <legend>Show Name</legend>
                         <div class="detail-options">
                             <div class="detail-duo">
                                 <input required id="showName" type="text" placeholder="The Doors of Perception">
@@ -891,18 +893,18 @@ document.getElementById('expr-card').addEventListener('click', async (event) => 
                 </form>
                 <form class="add-detail" id="add-detail-competitionTrio">
                     <fieldset>
-                        <legend>competitionTrio</legend>
+                        <legend>Display Score</legend>
                         <div class="detail-options">
                             <div class="detail-duo">
-                                <label for="placement">Placement</label>
-                                <input required id="placement" type="number" placeholder="3">
+                                <label for="placement">Placement:</label>
+                                <input required id="placement" type="number" placeholder="3" min="1" max="99">
+                            </div>
+                            <div class="detail-duo">
+                                <label for="score">Score:</label>
+                                <input required id="score" type="number" placeholder="97.038" min="0" max="100" step="0.001" inputmode="decimal">
                             </div>
                             <fieldset id="competition-detail-form">
                             </fieldset>
-                            <div class="detail-duo">
-                                <label for="score">Score</label>
-                                <input required id="score" type="number" placeholder="88.45" step="0.001" inputmode="decimal">
-                            </div>
                             <button type="button" class="revert-detail" id="revert-competitionTrio">
                                 <span class="">Reset</span>
                             </button>
@@ -915,7 +917,9 @@ document.getElementById('expr-card').addEventListener('click', async (event) => 
                 </form>
                 <form class="add-detail" id="add-detail-correctedClass">
                     <fieldset>
-                        <legend>correctedClass</legend>
+                        <legend>Corrected Class</legend>
+                        <p>If the class this year is different than it is currently, use this form</p>
+                        <div id="correctedClass-inputs"></div>
                         <div class="detail-options">
                             <button type="button" class="revert-detail" id="revert-correctedClass">
                                 <span class="">Set Default</span>
@@ -929,7 +933,7 @@ document.getElementById('expr-card').addEventListener('click', async (event) => 
                 </form>
             </div>
         `);
-        const correctedClassDetailOptions = nameCont.closest('.DCI-cont, .WGI-cont').querySelector('#add-detail-correctedClass .detail-options');
+        const correctedClassDetailOptions = nameCont.closest('.DCI-cont, .WGI-cont').querySelector('#correctedClass-inputs');
         let classList;
         if(nameCont.closest('.DCI-cont, .WGI-cont').querySelector('[data-circuit]').dataset.circuit === "DCI"){
             //DCI
