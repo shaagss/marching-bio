@@ -285,24 +285,40 @@ export async function exprToList(expr, selectId, defaultOptString){
 
 export function swapSubmitToLoading(submitButton){
     submitButton.disabled = true;
-    submitButton.firstElementChild.classList.add('clear');
-    submitButton.firstElementChild.addEventListener('transitionend', event => {
-        if(event.propertyName === 'opacity'){
-            submitButton.firstElementChild.classList.add('invisible');
-        }
+
+    const text = submitButton.firstElementChild;
+    const loading = submitButton.lastElementChild;
+
+    const transitionId = Symbol();
+    submitButton._transitionId = transitionId;
+    text.classList.remove('invisible');
+    text.classList.add('clear');
+    // loading.classList.add('invisible', 'clear');
+
+    text.addEventListener('transitionend', event => {
+        if(event.propertyName !== 'opacity') return;
+        if(submitButton._transitionId !== transitionId) return;
+        text.classList.add('invisible');
     }, { once: true })
 
-    submitButton.lastElementChild.classList.remove('invisible', 'clear')
+    loading.classList.remove('invisible', 'clear')
 }
 
 export function swapLoadingBack(submitButton){
-    submitButton.lastElementChild.classList.add('clear');
-    submitButton.lastElementChild.addEventListener('transitionend', event => {
-        if(event.propertyName === 'opacity'){
-            submitButton.lastElementChild.classList.add('invisible');
-        }
+    const text = submitButton.firstElementChild;
+    const loading = submitButton.lastElementChild;
+
+    const transitionId = Symbol();
+    submitButton._transitionId = transitionId;
+    
+    loading.classList.add('clear');
+    loading.addEventListener('transitionend', event => {
+        if(event.propertyName !== 'opacity') return;
+        if(submitButton._transitionId !== transitionId) return;
+        loading.classList.add('invisible');
     }, { once: true })
     
-    submitButton.firstElementChild.classList.remove('invisible', 'clear');
+    text.classList.remove('invisible');
+    text.classList.remove('clear');
     submitButton.disabled = false;
 }
