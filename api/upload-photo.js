@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { Pool } from 'pg';
-import { put } from '@vercel/blob';
+import { put, del } from '@vercel/blob';
 import { getSessionEmail } from '../lib/auth.js';
 
 const pool = new Pool({
@@ -18,7 +18,10 @@ export default async function handler(req, res) {
 
     const fileBuffer = await bufferFromRequest(req);
 
-    const blob = await put(`profile-photos/${email}.jpg`, fileBuffer, {
+    const oldPhotoUrl = await getCurrentPhotoUrl(email);
+    const timestamp = Date.now();
+    
+    const blob = await put(`profile-photos/${email}-${timestamp}.jpg`, fileBuffer, {
         access: 'public',
         allowOverwrite: true,
     });
@@ -28,6 +31,15 @@ export default async function handler(req, res) {
     } catch (err) {
         console.error(err);
         return res.status(500).json({ error: 'Photo uploaded but failed to save' });
+    }
+
+    if (oldPhotoUrl) {
+        try {
+            await del(oldPhotoUrl);
+        }
+        catch (err) {
+            console.error('Failed to delete old profile picture:', err);
+        }
     }
 
     res.status(200).json({ url: blob.url });
@@ -56,6 +68,26 @@ async function updatePhotoRow(photoUrl, email){
     }
     catch (err){
         console.error(err);
+    }
+    finally {
+        client.release();
+    }
+}
+
+async function getCurrentPhotoUrl(email) {
+    const client = await pool.connect();
+
+    try {
+        const qText = `
+            SELECT photo_url
+            FROM profiles
+            WHERE email = $1
+        `;
+        const qValues = [email];
+
+        const result = await client.query(qText, qValues);
+
+        return result.rows[0]?.photo_url || null;
     }
     finally {
         client.release();

@@ -74,7 +74,7 @@ async function checkAuth() {
     }
     catch(err){
         console.error(err);
-        status.textContent = 'Network error, please try again';
+        status.textContent = 'Network error, please try again. ' + err;
     }
 }
 
@@ -356,7 +356,7 @@ async function addExprSubmitPressed(submitter){
     }
     catch (err){
         console.error(err);
-        status.textContent = 'Network error, please try again';
+        status.textContent = 'Network error, please try again. ' + err;
     }
     finally{
         swapLoadingBack(submitter);
@@ -404,7 +404,7 @@ async function removeExprSubmitPressed(submitter){
     }
     catch (err){
         console.error(err);
-        status.textContent = 'Network error, please try again';
+        status.textContent = 'Network error, please try again. ' + err;
     }
     finally {
         swapLoadingBack(submitter);
@@ -521,7 +521,7 @@ async function addClipSubmitPressed(event){
     }
     catch (err){
         console.error(err);
-        clipStatus.textContent = 'Network error, please try again';
+        clipStatus.textContent = 'Network error, please try again. ' + err;
     }
     finally{
         swapLoadingBack(event.submitter);
@@ -667,7 +667,7 @@ async function revertDetailsShowName(year, circuit){
     }
     catch(err){
         console.error(err);
-        status.textContent = 'Network error, please try again';
+        status.textContent = 'Network error, please try again. ' + err;
     }
 }
 
@@ -687,7 +687,7 @@ async function revertDetailsCompetitionTrio(year, circuit){
     }
     catch(err){
         console.error(err);
-        status.textContent = 'Network error, please try again';
+        status.textContent = 'Network error, please try again. ' + err;
     }
 }
 
@@ -703,7 +703,7 @@ async function revertDetailsCorrectedClass(year, circuit){
     }
     catch(err){
         console.error(err);
-        status.textContent = 'Network error, please try again';
+        status.textContent = 'Network error, please try again. ' + err;
     }
 }
 
@@ -716,7 +716,7 @@ async function addDetailsShowNameSubmitPressed(event, year, circuit){
     }
     catch(err){
         console.error(err);
-        status.textContent = 'Network error, please try again';
+        status.textContent = 'Network error, please try again. ' + err;
     }
     finally {
         swapLoadingBack(event.submitter);
@@ -738,7 +738,7 @@ async function addDetailsCompetitionTrioSubmitPressed(event, year, circuit){
     }
     catch(err){
         console.error(err);
-        status.textContent = 'Network error, please try again';
+        status.textContent = 'Network error, please try again. ' + err;
     }
     finally{
         swapLoadingBack(event.submitter);
@@ -764,7 +764,7 @@ async function addDetailsCorrectedClassSubmitPressed(event, year, circuit){
     }
     catch(err){
         console.error(err);
-        status.textContent = 'Network error, please try again';
+        status.textContent = 'Network error, please try again. ' + err;
     }
     finally{
         swapLoadingBack(event.submitter);
@@ -970,7 +970,7 @@ document.getElementById('expr-card').addEventListener('click', async (event) => 
                         <div class="detail-options">
                             <div class="detail-duo">
                                 <label for="placement">Placement:</label>
-                                <input required id="placement" type="number" placeholder="3" min="1" max="99">
+                                <input required id="placement" type="number" placeholder="3" min="1" max="99" inputmode="numeric">
                             </div>
                             <div class="detail-duo">
                                 <label for="score">Score:</label>

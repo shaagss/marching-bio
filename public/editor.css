@@ -288,19 +288,28 @@ label[for="year-marched"], #year-marched {
     font-size: var(--font-md);
 }
 
+#add-detail-cont form {
+    width: 100%;
+}
+
 #add-detail-cont fieldset {
-    padding: 0 4rem;
     border: none;
     border-top: var(--color-accent-dark) 2px solid;
+    width: 100%;
+}
+
+.detail-options {
+    width: 100%;
 }
 
 fieldset#competition-detail-form {
     margin: 1rem 0;
     border-top: none;
+    width: 100%;
 }
 
 fieldset#competition-detail-form .detail-duo {
-    margin: -1.5rem 0;
+    width: 100%;
 }
 
 #add-detail-cont legend {
