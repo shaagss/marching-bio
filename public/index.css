@@ -83,14 +83,24 @@ main {
 }
 
 .container {
-    display: flex;
-    flex-flow: row-reverse wrap;
-    justify-content: space-around;
-    align-items: center;
     width: 95%;
     max-width: 120rem;
     padding: 5rem 0;
     margin: 0 auto;
+}
+
+.order-normal {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.order-reverse {
+    display: flex;
+    flex-flow: row-reverse wrap;
+    justify-content: space-around;
+    align-items: center;
 }
 
 /* Block background colors */
@@ -116,11 +126,16 @@ main {
     z-index: 2;
 }
 
+.text-box-two {
+    max-width: 48rem;
+    z-index: 2;
+}
+
 .margin-top-sml {
     margin-top: .8em;
 }
 
-/* Photo triptych */
+/* Photo triphoto */
 
 .triphoto {
     position: relative;
@@ -154,6 +169,25 @@ main {
 
 .left, .right, .center {
     border-radius: var(--radius-sm);
+}
+
+.example-bio-cont {
+    display: inline-block;
+    width: min(25%, 35vw);
+}
+
+.example-bio {
+    width: 100%;
+    object-fit: cover;
+    aspect-ratio: 388 / 750;
+    border-radius: var(--radius-md);
+    margin: 0 auto;
+}
+
+@media (max-width: 800px) {
+    .example-bio-cont {
+        width: 60%;
+    }
 }
 
 /* Login dialog */
