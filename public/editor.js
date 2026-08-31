@@ -25,17 +25,18 @@ checkAuth();
 
 // ---Checks cookie for access---
 async function checkAuth() {
-    const response = await fetch('/api/me');
-    const data = await response.json();
-    if (!data.loggedIn) {
-        window.location.href = '/';
-        return;
-    }
-
-    const profileRes = await fetch(`/api/existing-profile?email=${data.email}`);
-    const profileData = await profileRes.json()
-
+    
     try{
+        const response = await fetch('/api/me');
+        const data = await response.json();
+        if (!data.loggedIn) {
+            window.location.href = '/';
+            return;
+        }
+    
+        const profileRes = await fetch(`/api/existing-profile?email=${data.email}`);
+        const profileData = await profileRes.json()
+
         if( profileData.photo_url ){
             const userPhoto = document.createElement('img');
             userPhoto.id = 'user-photo';
@@ -74,7 +75,8 @@ async function checkAuth() {
     }
     catch(err){
         console.error(err);
-        status.textContent = 'Network error, please try again. ' + err;
+        document.querySelector('body').hidden = false;
+        status.textContent = 'Network error, please try again. ' + err.message;
     }
 }
 
@@ -307,7 +309,7 @@ async function addExpr(group, year) {
     }
 
     addStatusElements(group, year);
-    updatePreviewExpr();
+    await updatePreviewExpr();
 }
 
 function addStatusElements(groupId, year, deleted = false){
@@ -356,7 +358,7 @@ async function addExprSubmitPressed(submitter){
     }
     catch (err){
         console.error(err);
-        status.textContent = 'Network error, please try again. ' + err;
+        status.textContent = 'Network error, please try again. ' + err.message;
     }
     finally{
         swapLoadingBack(submitter);
@@ -404,7 +406,7 @@ async function removeExprSubmitPressed(submitter){
     }
     catch (err){
         console.error(err);
-        status.textContent = 'Network error, please try again. ' + err;
+        status.textContent = 'Network error, please try again. ' + err.message;
     }
     finally {
         swapLoadingBack(submitter);
@@ -521,7 +523,7 @@ async function addClipSubmitPressed(event){
     }
     catch (err){
         console.error(err);
-        clipStatus.textContent = 'Network error, please try again. ' + err;
+        clipStatus.textContent = 'Network error, please try again. ' + err.message;
     }
     finally{
         swapLoadingBack(event.submitter);
@@ -667,7 +669,7 @@ async function revertDetailsShowName(year, circuit){
     }
     catch(err){
         console.error(err);
-        status.textContent = 'Network error, please try again. ' + err;
+        status.textContent = 'Network error, please try again. ' + err.message;
     }
 }
 
@@ -687,7 +689,7 @@ async function revertDetailsCompetitionTrio(year, circuit){
     }
     catch(err){
         console.error(err);
-        status.textContent = 'Network error, please try again. ' + err;
+        status.textContent = 'Network error, please try again. ' + err.message;
     }
 }
 
@@ -703,7 +705,7 @@ async function revertDetailsCorrectedClass(year, circuit){
     }
     catch(err){
         console.error(err);
-        status.textContent = 'Network error, please try again. ' + err;
+        status.textContent = 'Network error, please try again. ' + err.message;
     }
 }
 
@@ -716,7 +718,7 @@ async function addDetailsShowNameSubmitPressed(event, year, circuit){
     }
     catch(err){
         console.error(err);
-        status.textContent = 'Network error, please try again. ' + err;
+        status.textContent = 'Network error, please try again. ' + err.message;
     }
     finally {
         swapLoadingBack(event.submitter);
@@ -738,7 +740,7 @@ async function addDetailsCompetitionTrioSubmitPressed(event, year, circuit){
     }
     catch(err){
         console.error(err);
-        status.textContent = 'Network error, please try again. ' + err;
+        status.textContent = 'Network error, please try again. ' + err.message;
     }
     finally{
         swapLoadingBack(event.submitter);
@@ -764,7 +766,7 @@ async function addDetailsCorrectedClassSubmitPressed(event, year, circuit){
     }
     catch(err){
         console.error(err);
-        status.textContent = 'Network error, please try again. ' + err;
+        status.textContent = 'Network error, please try again. ' + err.message;
     }
     finally{
         swapLoadingBack(event.submitter);
