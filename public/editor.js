@@ -641,6 +641,9 @@ function resetCompetitionDetailOptions(){
         detailInput.name = 'competition';
         detailInput.value = competition;
         detailInput.required = true;
+        if(competition === 'Finals'){
+            detailInput.checked = true;
+        }
         detailDuo.appendChild(detailInput);
 
         const detailLabel = document.createElement('label');

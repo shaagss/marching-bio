@@ -184,13 +184,13 @@ function saveDetails(details, groupsCont, defaultDetails){
         // PLACEMENT
         const placement = document.createElement('p');
         switch(details.placement){
-            case 1:
+            case '1':
                 placement.textContent = '1st';
                 break;
-            case 2:
+            case '2':
                 placement.textContent = '2nd';
                 break;
-            case 3:
+            case '3':
                 placement.textContent = '3rd';
                 break;
             default:
