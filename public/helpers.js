@@ -62,7 +62,7 @@ export async function exprToHtml(expr, clips, details, parentId) {
                 }
 
                 if( Object.hasOwn(details, year) && Object.hasOwn(details[year], circuit) ){
-                    addDetails(details[year][circuit], thisGroupCont, groupDetails[groupId])
+                    saveDetails(details[year][circuit], thisGroupCont, groupDetails[groupId])
                 }
                 else{
                     addMinimalDetails(thisGroupCont, groupDetails[groupId]);
@@ -148,7 +148,7 @@ function addMinimalDetails(groupsCont, defaultDetails){
     groupName.insertAdjacentElement('afterend', tiny);
 }
 
-function addDetails(details, groupsCont, defaultDetails){
+function saveDetails(details, groupsCont, defaultDetails){
     let realClass;
     if(Object.hasOwn(details, 'correctedClass')){
         realClass = classToStr(defaultDetails.circuit, defaultDetails.division, details.correctedClass);
@@ -286,7 +286,7 @@ export async function exprToList(expr, selectId, defaultOptString){
 export function swapSubmitToLoading(submitButton){
     submitButton.disabled = true;
     submitButton.firstElementChild.classList.add('clear');
-    submitButton.firstElementChild.addEventListener('transitioned', event => {
+    submitButton.firstElementChild.addEventListener('transitionend', event => {
         if(event.propertyName === 'opacity'){
             submitButton.firstElementChild.classList.add('invisible');
         }
@@ -297,7 +297,7 @@ export function swapSubmitToLoading(submitButton){
 
 export function swapLoadingBack(submitButton){
     submitButton.lastElementChild.classList.add('clear');
-    submitButton.lastElementChild.addEventListener('transitioned', event => {
+    submitButton.lastElementChild.addEventListener('transitionend', event => {
         if(event.propertyName === 'opacity'){
             submitButton.lastElementChild.classList.add('invisible');
         }

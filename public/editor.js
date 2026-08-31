@@ -1,3 +1,4 @@
+import { act } from 'react';
 import { exprToHtml, exprToList, swapSubmitToLoading, swapLoadingBack } from './helpers.js';
 
 const yearInput = document.getElementById('year-marched');
@@ -35,41 +36,47 @@ async function checkAuth() {
     const profileRes = await fetch(`/api/existing-profile?email=${data.email}`);
     const profileData = await profileRes.json()
 
-    if( profileData.photo_url ){
-        const userPhoto = document.createElement('img');
-        userPhoto.id = 'user-photo';
-        userPhoto.alt = "User's profile picture";
-        userPhoto.src = profileData.photo_url;
+    try{
+        if( profileData.photo_url ){
+            const userPhoto = document.createElement('img');
+            userPhoto.id = 'user-photo';
+            userPhoto.alt = "User's profile picture";
+            userPhoto.src = profileData.photo_url;
 
-        const userRight = document.createElement('div');
-        userRight.classList.add('user-right');
-        userRight.appendChild(userPhoto);
+            const userRight = document.createElement('div');
+            userRight.classList.add('user-right');
+            userRight.appendChild(userPhoto);
 
-        document.getElementById('flexer').appendChild(userRight);
+            document.getElementById('flexer').appendChild(userRight);
+        }
+
+        currentDetails = profileData.details;
+        // if( Object.hasOwn(profileData.details, 'instruments') ){
+        //     const addInstrumentButton = document.getElementById('add-instrument');
+        //     for(const instrument of profileData.details.instruments){
+        //         const instrumentP = document.createElement('p');
+        //         instrumentP.classList.add('instrument');
+        //         instrumentP.textContent = instrument;
+        //         addInstrumentButton.insertAdjacentElement('beforebegin', instrumentP);
+        //     }
+        // }
+
+        document.getElementById('user-name').textContent = profileData.name;
+        document.getElementById('user-email').textContent = profileData.email;
+        const profileAnchor = document.getElementById('profile-link');
+        const profileAnchorLink = '/' + profileData.code;
+        profileAnchor.textContent = 'marching.bio' + profileAnchorLink;
+        profileAnchor.href = profileAnchorLink;
+
+        document.querySelector('body').hidden = false;
+        await loadGroups();
+        await updatePreviewExpr();
+        groupButtons();
     }
-
-    currentDetails = profileData.details;
-    // if( Object.hasOwn(profileData.details, 'instruments') ){
-    //     const addInstrumentButton = document.getElementById('add-instrument');
-    //     for(const instrument of profileData.details.instruments){
-    //         const instrumentP = document.createElement('p');
-    //         instrumentP.classList.add('instrument');
-    //         instrumentP.textContent = instrument;
-    //         addInstrumentButton.insertAdjacentElement('beforebegin', instrumentP);
-    //     }
-    // }
-
-    document.getElementById('user-name').textContent = profileData.name;
-    document.getElementById('user-email').textContent = profileData.email;
-    const profileAnchor = document.getElementById('profile-link');
-    const profileAnchorLink = '/' + profileData.code;
-    profileAnchor.textContent = 'marching.bio' + profileAnchorLink;
-    profileAnchor.href = profileAnchorLink;
-
-    document.querySelector('body').hidden = false;
-    await loadGroups();
-    await updatePreviewExpr();
-    groupButtons();
+    catch(err){
+        console.error(err);
+        status.textContent = 'Network error, please try again';
+    }
 }
 
 // ---Sets up groups from DB---
@@ -173,6 +180,7 @@ async function updatePreviewExpr(){
     addAddClipButton();
     addEditDetailsButton();
     status.textContent = '';
+    closeAllReveals();
 }
 
 function groupButtons(){
@@ -342,10 +350,18 @@ async function addExprSubmitPressed(submitter){
     status.textContent = ``;
     swapSubmitToLoading(submitter);
     
-    const group = document.getElementById('group-select').value;
-    const year = document.getElementById('year-marched').value;
-    await addExpr(group, year);
-    swapLoadingBack(submitter);
+    try{
+        const group = document.getElementById('group-select').value;
+        const year = document.getElementById('year-marched').value;
+        await addExpr(group, year);
+    }
+    catch (err){
+        console.error(err);
+        status.textContent = 'Network error, please try again';
+    }
+    finally{
+        swapLoadingBack(submitter);
+    }
 }
 
 document.getElementById('add-exp').addEventListener('submit', event => {
@@ -379,13 +395,22 @@ async function removeExprSubmitPressed(submitter){
     status.textContent = ``;
     swapSubmitToLoading(submitter);
     
-    const select = document.getElementById('delete-select');
-    const selectedOption = select.options[select.selectedIndex];
-    
-    const group = selectedOption.value;
-    const year = selectedOption.dataset.year;
-    await deleteExpr(group, year);
-    swapLoadingBack(submitter);
+    try{
+        const select = document.getElementById('delete-select');
+        const selectedOption = select.options[select.selectedIndex];
+        
+        const group = selectedOption.value;
+        const year = selectedOption.dataset.year;
+        await deleteExpr(group, year);
+    }
+    catch (err){
+        console.error(err);
+        status.textContent = 'Network error, please try again';
+    }
+    finally {
+        swapLoadingBack(submitter);
+    }
+
 }
 
 document.getElementById('delete-group-form').addEventListener('submit', event => {
@@ -462,40 +487,46 @@ async function addClipSubmitPressed(event){
     clipStatus.textContent = ``;
     swapSubmitToLoading(event.submitter);
     
-    const clipLink = document.getElementById('clip-link').value;
-    const videoId = extractVideoId(clipLink);
-    if(!videoId){
-        clipStatus.textContent = 'Invalid Url';
-        clipStatus.style.color = 'red';
-        swapLoadingBack(event.submitter);
-        return;
+    try {
+        const clipLink = document.getElementById('clip-link').value;
+        const videoId = extractVideoId(clipLink);
+        if(!videoId){
+            clipStatus.textContent = 'Invalid Url';
+            clipStatus.style.color = 'red';
+            return;
+        }
+        
+        let startTime = document.getElementById('start-time').value;
+        startTime = timestampToSeconds(startTime);
+        let endTime = document.getElementById('end-time').value;
+        endTime = timestampToSeconds(endTime);
+        
+        if(startTime === null || endTime === null){
+            clipStatus.textContent = 'Invalid timestamp';
+            clipStatus.style.color = 'red';
+            return;
+        }
+        
+        const isValid = await validateClip(videoId, startTime, endTime)
+        if (!isValid) {
+            return;
+        }
+        
+        const groupCont = event.target.closest('.WGI-cont, .DCI-cont');
+        const group = groupCont.querySelector('[data-group]').dataset.group;
+        const year = groupCont.parentElement.parentElement.firstElementChild.dataset.year;
+        await addClip(year, group, videoId, startTime, endTime);
+        clipStatus.textContent = 'Successfully added clip. Reloading...';
+        clipStatus.style.color = 'black';
+        event.submitter.parentElement.remove();
     }
-    
-    let startTime = document.getElementById('start-time').value;
-    startTime = timestampToSeconds(startTime);
-    let endTime = document.getElementById('end-time').value;
-    endTime = timestampToSeconds(endTime);
-    
-    if(startTime === null || endTime === null){
-        clipStatus.textContent = 'Invalid timestamp';
-        clipStatus.style.color = 'red';
-        swapLoadingBack(event.submitter);
-        return;
+    catch (err){
+        console.error(err);
+        clipStatus.textContent = 'Network error, please try again';
     }
-    
-    const isValid = await validateClip(videoId, startTime, endTime)
-    if (!isValid) {
+    finally{
         swapLoadingBack(event.submitter);
-        return;
     }
-    
-    const groupCont = event.target.closest('.WGI-cont, .DCI-cont');
-    const group = groupCont.querySelector('[data-group]').dataset.group;
-    const year = groupCont.parentElement.parentElement.firstElementChild.dataset.year;
-    await addClip(year, group, videoId, startTime, endTime);
-    clipStatus.textContent = 'Successfully added clip. Reloading...';
-    clipStatus.style.color = 'black';
-    event.submitter.parentElement.remove();
 }
 
 document.getElementById('experience').addEventListener('submit', async event => {
@@ -592,8 +623,8 @@ function resetCompetitionDetailOptions(){
 
     for(const competition of competitions){
         if(competition === 'Semis'){
-            if(division === 'Winds' ||
-                theClass !== 'World')
+            if(division === 'winds' || theClass === 'A' ||
+                (circuit === 'DCI' && theClass !== 'World'))
             {
                 continue;
             }
@@ -623,90 +654,122 @@ function resetCompetitionDetailOptions(){
         
     }
 
-    if(circuit === 'DCI'){
-        //finals
-        if(theClass === 'World'){
-            //semis
-        }
-        //prelims
-    }
-    else if(circuit === 'WGI'){
-
-    }
 }
 
 async function revertDetailsShowName(year, circuit){
-    if(Object.hasOwn(currentDetails, year) &&
-        Object.hasOwn(currentDetails[year], circuit) &&
-        Object.hasOwn(currentDetails[year][circuit], 'showName'))
-    {
-        delete currentDetails[year][circuit]['showName'];
-        addDetails(year, circuit, currentDetails[year][circuit])
+    try{
+        if(Object.hasOwn(currentDetails, year) &&
+            Object.hasOwn(currentDetails[year], circuit) &&
+            Object.hasOwn(currentDetails[year][circuit], 'showName'))
+        {
+            delete currentDetails[year][circuit]['showName'];
+            addDetails(year, circuit, currentDetails[year][circuit])
+        }
+    }
+    catch(err){
+        console.error(err);
+        status.textContent = 'Network error, please try again';
     }
 }
 
 async function revertDetailsCompetitionTrio(year, circuit){
-    if(Object.hasOwn(currentDetails, year) &&
-        Object.hasOwn(currentDetails[year], circuit) &&
-        Object.hasOwn(currentDetails[year][circuit], 'placement') &&
-        Object.hasOwn(currentDetails[year][circuit], 'competition') &&
-        Object.hasOwn(currentDetails[year][circuit], 'score'))
-    {
-        delete currentDetails[year][circuit]['placement'];
-        delete currentDetails[year][circuit]['competition'];
-        delete currentDetails[year][circuit]['score'];
-        addDetails(year, circuit, currentDetails[year][circuit])
+    try{
+        if(Object.hasOwn(currentDetails, year) &&
+            Object.hasOwn(currentDetails[year], circuit) &&
+            Object.hasOwn(currentDetails[year][circuit], 'placement') &&
+            Object.hasOwn(currentDetails[year][circuit], 'competition') &&
+            Object.hasOwn(currentDetails[year][circuit], 'score'))
+        {
+            delete currentDetails[year][circuit]['placement'];
+            delete currentDetails[year][circuit]['competition'];
+            delete currentDetails[year][circuit]['score'];
+            addDetails(year, circuit, currentDetails[year][circuit])
+        }
+    }
+    catch(err){
+        console.error(err);
+        status.textContent = 'Network error, please try again';
     }
 }
 
 async function revertDetailsCorrectedClass(year, circuit){
-    if(Object.hasOwn(currentDetails, year) &&
-        Object.hasOwn(currentDetails[year], circuit) &&
-        Object.hasOwn(currentDetails[year][circuit], 'correctedClass'))
-    {
-        delete currentDetails[year][circuit]['correctedClass'];
-        addDetails(year, circuit, currentDetails[year][circuit])
+    try{
+        if(Object.hasOwn(currentDetails, year) &&
+            Object.hasOwn(currentDetails[year], circuit) &&
+            Object.hasOwn(currentDetails[year][circuit], 'correctedClass'))
+        {
+            delete currentDetails[year][circuit]['correctedClass'];
+            addDetails(year, circuit, currentDetails[year][circuit])
+        }
+    }
+    catch(err){
+        console.error(err);
+        status.textContent = 'Network error, please try again';
     }
 }
 
 async function addDetailsShowNameSubmitPressed(event, year, circuit){
     swapSubmitToLoading(event.submitter);
     
-    currentDetails[year][circuit]['showName'] = event.target.elements.showName.value.trim();
-    await addDetails(year, circuit, currentDetails[year][circuit]);
+    try{
+        currentDetails[year][circuit]['showName'] = event.target.elements.showName.value.trim();
+        await addDetails(year, circuit, currentDetails[year][circuit]);
+    }
+    catch(err){
+        console.error(err);
+        status.textContent = 'Network error, please try again';
+    }
+    finally {
+        swapLoadingBack(event.submitter);
+    }
 
-    swapLoadingBack(event.submitter);
 }
 
 async function addDetailsCompetitionTrioSubmitPressed(event, year, circuit){
     swapSubmitToLoading(event.submitter);
     
-    currentDetails[year][circuit]['placement'] = event.target.elements.placement.value;
-    currentDetails[year][circuit]['competition'] = event.target.elements.competition.value;
-    if(event.target.elements.score.value.indexOf('.') === -1){
-        event.target.elements.score.value += '.0';
+    try{
+        currentDetails[year][circuit]['placement'] = event.target.elements.placement.value;
+        currentDetails[year][circuit]['competition'] = event.target.elements.competition.value;
+        if(event.target.elements.score.value.indexOf('.') === -1){
+            event.target.elements.score.value += '.0';
+        }
+        currentDetails[year][circuit]['score'] = event.target.elements.score.value;
+        await addDetails(year, circuit, currentDetails[year][circuit]);
     }
-    currentDetails[year][circuit]['score'] = event.target.elements.score.value;
-    await addDetails(year, circuit, currentDetails[year][circuit]);
+    catch(err){
+        console.error(err);
+        status.textContent = 'Network error, please try again';
+    }
+    finally{
+        swapLoadingBack(event.submitter);
+    }
 
-    swapLoadingBack(event.submitter);
 }
 
 async function addDetailsCorrectedClassSubmitPressed(event, year, circuit){
     swapSubmitToLoading(event.submitter);
 
-    if(event.target.elements['correctedClass'].value === event.target.closest('.DCI-cont, .WGI-cont').querySelector('[data-class]').dataset.class){
-        if(Object.hasOwn(currentDetails[year][circuit], 'correctedClass')){
-            delete currentDetails[year][circuit]['correctedClass'];
+    try{
+        if(event.target.elements['correctedClass'].value === event.target.closest('.DCI-cont, .WGI-cont').querySelector('[data-class]').dataset.class){
+            if(Object.hasOwn(currentDetails[year][circuit], 'correctedClass')){
+                delete currentDetails[year][circuit]['correctedClass'];
+            }
         }
+        else {
+            currentDetails[year][circuit]['correctedClass'] = event.target.elements['correctedClass'].value;
+        }
+        await addDetails(year, circuit, currentDetails[year][circuit]);
+    
+        resetCompetitionDetailOptions();
     }
-    else {
-        currentDetails[year][circuit]['correctedClass'] = event.target.elements['correctedClass'].value;
+    catch(err){
+        console.error(err);
+        status.textContent = 'Network error, please try again';
     }
-    await addDetails(year, circuit, currentDetails[year][circuit]);
-
-    resetCompetitionDetailOptions();
-    swapLoadingBack(event.submitter);
+    finally{
+        swapLoadingBack(event.submitter);
+    }
 }
 
 document.getElementById('experience').addEventListener('submit', async event => {
@@ -767,15 +830,21 @@ function addSingleDetailButton(groupCont){
 function closeAllReveals(){
     // Close clip adders
     if(activeClipReveal){
-        addSingleClipButton(document.getElementById('add-clip-cont').closest('.WGI-cont, .DCI-cont'));
-        document.getElementById('add-clip-cont').remove();
         activeClipReveal = false;
+        const cont = document.getElementById('add-clip-cont');
+        if(cont){
+            addSingleClipButton(cont.closest('.WGI-cont, .DCI-cont'));
+            cont.remove();
+        }
     }
 
     if(activeDetailReveal){
-        addSingleDetailButton(document.getElementById('add-detail-cont').closest('.WGI-cont, .DCI-cont'));
-        document.getElementById('add-detail-cont').remove();
         activeDetailReveal = false;
+        const cont = document.getElementById('add-detail-cont');
+        if(cont){
+            addSingleDetailButton(document.getElementById('add-detail-cont').closest('.WGI-cont, .DCI-cont'));
+            cont.remove();
+        }
     }
 
     // Close playing clips
@@ -786,12 +855,15 @@ function closeAllReveals(){
 
         // animate closed  
         const prevContainer = document.getElementById(activeContainerId);
-        prevContainer.style.maxHeight = '0px';
-        prevContainer.classList.remove('expanded');
+        if(prevContainer){
+            prevContainer.style.maxHeight = '0px';
+            prevContainer.classList.remove('expanded');
+        }
 
         activeContainerId = null;
         activeButton = null;
-        activeDelButton.remove();
+        activeDelButton?.remove();
+        activeDelButton = null;
     }
 
     // Close detail adders
