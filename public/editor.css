@@ -265,9 +265,26 @@ label[for="year-marched"], #year-marched {
     top: -1.8em;
     right: -1.5em;
     font-size: var(--font-xs);
-    padding: .5em;
-    border: none;
-    filter: drop-shadow(.4rem .8rem 2px #00000088);
+    padding: .1em .25em;
+    border: #70263288 2px solid;
+    border-radius: 50%;
+    background-color: #4e809888; /*primary with transparency*/
+    box-shadow: .4rem .8rem 2px #00000088;
+    
+    transition: background-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+    
+    animation: hover-bob 3s ease-in-out infinite;    
+}
+
+@keyframes hover-bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .make {
+        animation: none;
+    }
 }
 
 #add-detail-cont {
