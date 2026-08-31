@@ -1,4 +1,3 @@
-import { act } from 'react';
 import { exprToHtml, exprToList, swapSubmitToLoading, swapLoadingBack } from './helpers.js';
 
 const yearInput = document.getElementById('year-marched');
