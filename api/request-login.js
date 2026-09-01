@@ -43,7 +43,7 @@ async function sendEmail(email, token){
             .replaceAll('{{token}}', token);
 
         const {data, error} = await resend.emails.send({
-            from: 'marching.bio <noreply@verify.marching.bio>',
+            from: 'marching.bio <login@verify.marching.bio>',
             to: [email],
             subject: 'Login to marching.bio',
             html: htmlContent
