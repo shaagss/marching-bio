@@ -39,6 +39,9 @@ async function checkAuthStatus() {
     const data = await response.json();
     existingUser = data.loggedIn;
     makeBtn.style.pointerEvents = 'auto';
+    if(existingUser){
+        makeBtn.firstChild.textContent = 'Open Editor';
+    }
 }
 
 makeBtn.addEventListener('click', () => {

@@ -141,21 +141,23 @@ main {
     position: relative;
     display: inline-block;
     --rotation: 8deg;
-    --offset: 70%;
+    --offset: 61%;
+    width: 100%;
 }
 
 .center {
     position: relative;
-    width: min(75%, 55vw);
+    width: min(75%, 40vw);
+    /* width: 45vw; */
     margin: 0 auto;
     z-index: 3;
 }
 
 .left, .right {
     position: absolute;
-    width: min(60%, 44vw);
-    bottom: 5%;
-    opacity: 40%;
+    width: min(60%, 32vw);
+    bottom: 8%;
+    opacity: 60%;
     z-index: 1;
 }
 
@@ -169,6 +171,8 @@ main {
 
 .left, .right, .center {
     border-radius: var(--radius-sm);
+    aspect-ratio: 388 / 515;
+    object-fit: conver;
 }
 
 .example-bio-cont {

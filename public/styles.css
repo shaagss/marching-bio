@@ -317,3 +317,14 @@ button[type="submit"] {
     align-items: center;
     font-size: var(--font-xs);
 }
+
+.footer-ish {
+    font-size: var(--font-xx);
+    margin: 1rem auto;
+    color: var(--color-accent-dark);
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 10rem;
+}
