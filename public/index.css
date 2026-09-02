@@ -141,21 +141,23 @@ main {
     position: relative;
     display: inline-block;
     --rotation: 8deg;
-    --offset: 61%;
-    width: 100%;
+    --offset: 66%;
+    width: 70%;
+    max-width: 44rem;
 }
 
 .center {
     position: relative;
-    width: min(75%, 40vw);
-    /* width: 45vw; */
+    width: 70%;
+    max-width: 40rem;
     margin: 0 auto;
     z-index: 3;
 }
 
 .left, .right {
     position: absolute;
-    width: min(60%, 32vw);
+    width: 55%;
+    max-width: 31rem;
     bottom: 8%;
     opacity: 60%;
     z-index: 1;
@@ -177,7 +179,8 @@ main {
 
 .example-bio-cont {
     display: inline-block;
-    width: min(25%, 35vw);
+    width: 45%;
+    max-width: 22rem;
 }
 
 .example-bio {
@@ -186,12 +189,6 @@ main {
     aspect-ratio: 388 / 750;
     border-radius: var(--radius-md);
     margin: 0 auto;
-}
-
-@media (max-width: 800px) {
-    .example-bio-cont {
-        width: 60%;
-    }
 }
 
 /* Login dialog */
