@@ -4,13 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login here</title>
+
+    <!-- google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <style>
+        .work-sans-title, h1, .toptitle {
+            font-family: "Work Sans", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 630;
+            font-style: normal;
+        }
+
+        .work-sans-miniTitle, h2, h3, h4, h5, h6 {
+            font-family: "Work Sans", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 500;
+            font-style: normal;
+        }
+
+        .work-sans, p, li {
+            font-family: "Work Sans", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 450;
+            font-style: normal;
+        }
+    </style>
 </head>
 <body>
     <img src="https://marching.bio/img/mb-logo.svg" alt="marching.bio logo" style="width: 25%; height: auto;">
     <h1>Login to marching.bio</h1>
     <p>Please use this <a href="https://marching.bio/api/verify?token={{token}}">link</a> to login, or copy the same link here:</p>
-    <p>https://marching.bio/api/verify?token={{token}}</p>
+    <p style="font-size: smaller;">https://marching.bio/api/verify?token={{token}}</p>
 
-    <p>This email is intended for {{email}}</p>
+    <h2>How to use the editor</h2>
+    <p style="display: inline; padding: 3px; background-color: #faebd7; border: #9B6A66 2px solid; border-radius: 12px;">Add group</p>
+    <ul><li>Filter by circuit, class, and division and add a group</li></ul>
+
+    <p style="display: inline; padding: 1.8px 4.5px; background-color: rgba(78, 128, 152, 0.533); border: rgba(112, 38, 50, 0.533) 2px solid; border-radius: 50%;">✏️</p>
+    <ul><li>Add the show name, placement, and more details to a group</li></ul>
+
+    <p style="display: inline; padding: 3px; background-color: #faebd7; border: #9B6A66 2px solid; border-radius: 12px;">+🎥</p>
+    <ul><li>Add clips from a show or a lot using the YouTube URL and timestamps</li></ul>
+
+    <h3>If you enjoy marching.bio, consider sharing with your friends!</h2>
+    <p>-Jacob (<a href="https://marching.bio/fdf4">marching.bio/fdf4</a>)</p>
 </body>
 </html>
