@@ -185,13 +185,13 @@ function saveDetails(details, groupsCont, defaultDetails){
         const placement = document.createElement('p');
         switch(details.placement){
             case '1':
-                placement.textContent = '1st';
+                placement.textContent = '1st 🥇';
                 break;
             case '2':
-                placement.textContent = '2nd';
+                placement.textContent = '2nd 🥈';
                 break;
             case '3':
-                placement.textContent = '3rd';
+                placement.textContent = '3rd 🥉';
                 break;
             default:
                 placement.textContent = details.placement + 'th';

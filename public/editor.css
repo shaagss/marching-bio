@@ -96,6 +96,37 @@ header button {
     position: relative;
 }
 
+/* Add instrument form */
+
+#add-instrument-cont {
+    position: relative;
+    width: 70%;
+}
+
+#add-instrument { 
+    border: solid 2px var(--color-primary-dark);
+    padding: .5rem 1rem;
+    border-radius: var(--radius-sm);
+    font-size: var(--font-sm);
+}
+
+.inst-category-head {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    gap: 1rem;
+}
+
+.inst-category-label {
+    font-size: var(--font-sm);
+}
+
+.inst-category-label, .inst-label {
+    white-space: nowrap;
+}
+
 /* Add-experience form */
 
 #editor {
@@ -400,3 +431,4 @@ button {
 .add-clip:active {
     transform: scale(0.97);
 }
+

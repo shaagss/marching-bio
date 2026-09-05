@@ -69,6 +69,7 @@ async function checkAuth() {
         profileAnchor.href = profileAnchorLink;
 
         document.querySelector('body').hidden = false;
+        makeAddInstrument();
         await loadGroups();
         await updatePreviewExpr();
         groupButtons();
@@ -232,6 +233,133 @@ function delClipButton(){
 function updateDeleteGroup(expr){
     exprToList(expr, 'delete-select', 'Group to delete');
 }
+
+// ---Instrument--
+const allInstrumentOptions = {
+    'Brass': ['Trumpet', 'Mello', 'Bari', 'Sousa', 'Trombone', 'French horn'],
+    'Drumline': ['Snare', 'Quads', 'Bass', 'Cymbals'],
+    'Front Ensemble': ['Marimba', 'Vibes', 'Synth', 'XyloGlock', 'Rack', 'Drumset', 'Timpani', 'Guitar'],
+    'Guard+VE': ['Flag', 'Rifle', 'Saber', 'Dancer', 'VE'],
+    'Hands': ['Drum Major', 'Conductor', 'Met Runner'],
+    'Woodwinds': ['Flute', 'Clarinet', 'Saxophone', 'Oboe', 'Bassoon']
+};
+
+function makeAddInstrument(){
+    const button = document.querySelector('#add-instrument').insertAdjacentHTML('afterend', `
+        <div id="add-instrument-cont" hidden>
+            <button class="exit" id="exit-add-instrument"></button>
+            <form id="add-instrument-form">
+                <fieldset>
+                    <legend>Instrument</legend>
+                    <div id="all-instrument-options">
+                    </div>
+                    <button id="submit-add-instrument" type="submit">
+                        <span class="submit-span">Submit</span>
+                        <img class="loading clear invisible" src="img/loading.gif" alt="Loading">
+                    </button>
+                    <p id="instrument-status"></p>
+                </fieldset>
+            </form>
+        </div>
+    `);
+    const allInstCont = document.getElementById('all-instrument-options');
+    const instSectCont = document.createElement('form');
+    instSectCont.classList.add('inst-category-head');
+    instSectCont.id = 'inst-category-head';
+    allInstCont.append(instSectCont);
+    for(let [sect, instList] of Object.entries(allInstrumentOptions)){
+        const sectDuo = document.createElement('div');
+        sectDuo.classList.add('inst-category-duo');
+        const sectHead = document.createElement('label');
+        const sectInput = document.createElement('input');
+        sectInput.type = 'radio';
+        if(sect === 'Brass'){
+            sectInput.checked = true;
+        }
+        sectInput.name = 'inst-category'
+        sectInput.value = `${sect}-inst-cont`;
+        sectInput.id = 'inst-category-' + sect;
+        sectHead.htmlFor = 'inst-category-' + sect;
+        sectHead.classList.add('inst-category-label');
+        sectHead.textContent = sect;
+        sectDuo.append(sectInput, sectHead);
+        instSectCont.append(sectDuo);
+        
+        const indivInstCont = document.createElement('form');
+        indivInstCont.classList.add('inst-cont');
+        if(sect !== 'Brass'){
+            indivInstCont.hidden = true;
+        }
+        indivInstCont.id = `${sect}-inst-cont`;
+        allInstCont.append(indivInstCont);
+
+        for(let inst of instList){
+            const instDuo = document.createElement('div');
+            instDuo.classList.add('inst-opt-duo');
+            const label = document.createElement('label');
+            const input = document.createElement('input');
+
+            input.type = 'checkbox';
+            input.name = 'user-instrument';
+            input.value = inst;
+            input.id = 'inst-' + inst;
+            label.htmlFor = 'inst-' + inst;
+            label.classList.add('inst-label');
+            label.textContent = inst;
+            instDuo.append(input, label);
+            indivInstCont.append(instDuo);
+        }
+    }   
+    
+    document.getElementById('inst-category-head').addEventListener('change', event => {
+        for(let cont of document.querySelectorAll('.inst-cont')){
+            if(event.target.value !== cont.id){
+                cont.hidden = true;
+            }
+            else {
+                cont.hidden = false;
+            }
+        }
+    });
+}
+
+function openAddInstrument(button){
+    button.hidden = true;
+    document.querySelector('#add-instrument-cont').hidden = false;
+}
+
+function exitAddInstrument(exitButton){
+    document.querySelector('#add-instrument-cont').hidden = true;
+    document.querySelector('#add-instrument').hidden = false;
+}
+
+async function submitAddInstrument(button){
+    swapSubmitToLoading(button);
+}
+
+document.getElementById('user-card').addEventListener('click', async (event) => {
+    // Reveal add instrument
+    let button = event.target.closest('#add-instrument');
+    if(button){
+        openAddInstrument(button);
+        return;
+    }
+
+    // Exit add instrument
+    button = event.target.closest('#exit-add-instrument');
+    if(button){
+        exitAddInstrument(button);
+        return;
+    }
+
+    button = event.target.closest('#submit-add-instrument');
+    if(button){
+        event.preventDefault();
+        submitAddInstrument(button);
+        return;
+    }
+})
+
 
 // ---Check what user submitted---
 function getSelectedRadio(name) {
