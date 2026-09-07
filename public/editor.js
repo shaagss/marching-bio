@@ -51,15 +51,15 @@ async function checkAuth() {
         }
 
         currentDetails = profileData.details;
-        // if( Object.hasOwn(profileData.details, 'instruments') ){
-        //     const addInstrumentButton = document.getElementById('add-instrument');
-        //     for(const instrument of profileData.details.instruments){
-        //         const instrumentP = document.createElement('p');
-        //         instrumentP.classList.add('instrument');
-        //         instrumentP.textContent = instrument;
-        //         addInstrumentButton.insertAdjacentElement('beforebegin', instrumentP);
-        //     }
-        // }
+        if( Object.hasOwn(profileData.details, 'instruments') ){
+            const addInstrumentButton = document.getElementById('add-instrument');
+            for(const instrument of profileData.details.instruments){
+                const instrumentP = document.createElement('p');
+                instrumentP.classList.add('instrument');
+                instrumentP.textContent = instrument;
+                addInstrumentButton.insertAdjacentElement('beforebegin', instrumentP);
+            }
+        }
 
         document.getElementById('user-name').textContent = profileData.name;
         document.getElementById('user-email').textContent = profileData.email;
@@ -69,7 +69,7 @@ async function checkAuth() {
         profileAnchor.href = profileAnchorLink;
 
         document.querySelector('body').hidden = false;
-        makeAddInstrument();
+        makeAddInstrument(profileData.details);
         await loadGroups();
         await updatePreviewExpr();
         groupButtons();
@@ -235,16 +235,23 @@ function updateDeleteGroup(expr){
 }
 
 // ---Instrument--
-const allInstrumentOptions = {
-    'Brass': ['Trumpet', 'Mello', 'Bari', 'Sousa', 'Trombone', 'French horn'],
-    'Drumline': ['Snare', 'Quads', 'Bass', 'Cymbals'],
-    'Front Ensemble': ['Marimba', 'Vibes', 'Synth', 'XyloGlock', 'Rack', 'Drumset', 'Timpani', 'Guitar'],
-    'Guard+VE': ['Flag', 'Rifle', 'Saber', 'Dancer', 'VE'],
-    'Hands': ['Drum Major', 'Conductor', 'Met Runner'],
-    'Woodwinds': ['Flute', 'Clarinet', 'Saxophone', 'Oboe', 'Bassoon']
-};
+function makeAddInstrument(deets){
+    const allInstrumentOptions = {
+        'Brass': ['Trumpet', 'Mello', 'Bari', 'Sousa', 'Trombone', 'French horn'],
+        'Drumline': ['Snare', 'Quads', 'Bass', 'Cymbals'],
+        'Front Ensemble': ['Marimba', 'Vibes', 'Synth', 'XyloGlock', 'Rack', 'Drumset', 'Timpani', 'Guitar'],
+        'Guard+VE': ['Flag', 'Rifle', 'Saber', 'Dancer', 'VE'],
+        'Hands': ['Drum Major', 'Conductor', 'Met Runner'],
+        'Woodwinds': ['Flute', 'Clarinet', 'Saxophone', 'Oboe', 'Bassoon']
+    };
 
-function makeAddInstrument(){
+    let prevSelInst = [];
+    if(Object.hasOwn(deets, 'instruments')){
+        for(let inst of deets.instruments){
+            prevSelInst.push(inst);
+        }
+    }
+    
     const button = document.querySelector('#add-instrument').insertAdjacentHTML('afterend', `
         <div id="add-instrument-cont" hidden>
             <button class="exit" id="exit-add-instrument"></button>
@@ -253,6 +260,7 @@ function makeAddInstrument(){
                     <legend>Instrument</legend>
                     <div id="all-instrument-options">
                     </div>
+                    <p id="currently-selected"></p>
                     <button id="submit-add-instrument" type="submit">
                         <span class="submit-span">Submit</span>
                         <img class="loading clear invisible" src="img/loading.gif" alt="Loading">
@@ -262,6 +270,11 @@ function makeAddInstrument(){
             </form>
         </div>
     `);
+
+    let instCurrentSel = [];
+    let numInstCurrentSel = 0;
+    const pOfSelected = document.getElementById('currently-selected');
+    
     const allInstCont = document.getElementById('all-instrument-options');
     const instSectCont = document.createElement('form');
     instSectCont.classList.add('inst-category-head');
@@ -303,12 +316,20 @@ function makeAddInstrument(){
             input.name = 'user-instrument';
             input.value = inst;
             input.id = 'inst-' + inst;
+
+            if(prevSelInst.includes(inst)){
+                input.checked = true;
+                numInstCurrentSel++;
+                instCurrentSel.push(inst);
+            }
+
             label.htmlFor = 'inst-' + inst;
             label.classList.add('inst-label');
             label.textContent = inst;
             instDuo.append(input, label);
             indivInstCont.append(instDuo);
         }
+
     }   
     
     document.getElementById('inst-category-head').addEventListener('change', event => {
@@ -321,20 +342,92 @@ function makeAddInstrument(){
             }
         }
     });
+
+    for(let inst of instCurrentSel){
+        pOfSelected.textContent += inst + ' ';
+    }
+    if(numInstCurrentSel === 4){
+        disableAllCheckboxes(allInstCont);
+        pOfSelected.textContent += '(max 4)';
+    }
+
+    allInstCont.addEventListener('change', event => {
+        if(event.target.name !== 'user-instrument') return;
+        
+        if(event.target.checked){
+            instCurrentSel.push(event.target.value);
+            numInstCurrentSel++;
+        }
+        else {
+            const tempIndex = instCurrentSel.indexOf(event.target.value);
+            instCurrentSel.splice(tempIndex, 1);
+            if(numInstCurrentSel === 4){
+                enableAllCheckboxes(allInstCont);
+            }
+            numInstCurrentSel--;
+        }
+
+        pOfSelected.textContent = '';
+        for(let inst of instCurrentSel){
+            pOfSelected.textContent += inst + ' ';
+        }
+
+        if(numInstCurrentSel === 4){
+            disableAllCheckboxes(allInstCont);
+            pOfSelected.textContent += '(max 4)';
+        }
+    })
+}
+
+function disableAllCheckboxes(allInstCont){
+    const allChecks = allInstCont.querySelectorAll('[type="checkbox"]:not(:checked)');
+    for(let unchecked of allChecks){
+        unchecked.disabled = true;
+    }
+}
+
+function enableAllCheckboxes(allInstCont){
+    const allDisabled = allInstCont.querySelectorAll('[type="checkbox"]:disabled');
+    for(let thisDisabled of allDisabled){
+        thisDisabled.disabled = false;
+    }
 }
 
 function openAddInstrument(button){
     button.hidden = true;
+    const activeInst = document.querySelectorAll('.instrument');
+    for(let thisActiveInst of activeInst){
+        thisActiveInst.hidden = true;
+    }
     document.querySelector('#add-instrument-cont').hidden = false;
 }
 
 function exitAddInstrument(exitButton){
     document.querySelector('#add-instrument-cont').hidden = true;
     document.querySelector('#add-instrument').hidden = false;
+    const activeInst = document.querySelectorAll('.instrument');
+    for(let thisActiveInst of activeInst){
+        thisActiveInst.hidden = false;
+    }
 }
 
 async function submitAddInstrument(button){
     swapSubmitToLoading(button);
+    const allInstCont = document.getElementById('all-instrument-options');
+    const instCurrentChecked = allInstCont.querySelectorAll('[type="checkbox"]:checked');
+    if(instCurrentChecked.length === 0){
+        delete currentDetails.instruments;
+        await addInstDetails([]);
+        swapLoadingBack(button);
+        return;
+    }
+    let instVals = [];
+    for(let thisCurrentChecked of instCurrentChecked){
+        instVals.push(thisCurrentChecked.value);
+    }
+    currentDetails.instruments = instVals;
+    await addInstDetails(currentDetails.instruments);
+    swapLoadingBack(button);
 }
 
 document.getElementById('user-card').addEventListener('click', async (event) => {
@@ -723,7 +816,23 @@ async function addDetails(year, circuit, details){
     }
     detailStatus.style.color = "black";
     detailStatus.textContent = 'Reload to apply details';
+}
 
+async function addInstDetails(instDetails){
+    const instStatus = document.getElementById('instrument-status');
+
+    const response = await fetch('/api/instrument-details', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ instDetails })
+    });
+    if( !response.ok ){
+        instStatus.style.color = "red";
+        instStatus.textContent = `ERROR: Please try again`;
+        return;
+    }
+    instStatus.style.color = "black";
+    instStatus.textContent = 'Reload to apply instruments';
 }
 
 function resetCompetitionDetailOptions(){
