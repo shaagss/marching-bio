@@ -55,7 +55,7 @@ async function checkAuth() {
             const addInstrumentButton = document.getElementById('add-instrument');
             for(const instrument of profileData.details.instruments){
                 const instrumentP = document.createElement('p');
-                instrumentP.classList.add('instrument');
+                instrumentP.classList.add('instrument', 'italic');
                 instrumentP.textContent = instrument;
                 addInstrumentButton.insertAdjacentElement('beforebegin', instrumentP);
             }
@@ -239,8 +239,8 @@ function makeAddInstrument(deets){
     const allInstrumentOptions = {
         'Brass': ['Trumpet', 'Mello', 'Bari', 'Sousa', 'Trombone', 'French horn'],
         'Drumline': ['Snare', 'Quads', 'Bass', 'Cymbals'],
-        'Front Ensemble': ['Marimba', 'Vibes', 'Synth', 'XyloGlock', 'Rack', 'Drumset', 'Timpani', 'Guitar'],
-        'Guard+VE': ['Flag', 'Rifle', 'Saber', 'Dancer', 'VE'],
+        'Front Ensemble': ['Marimba', 'Vibes', 'XyloGlock', 'Synth', 'Drumset', 'Timpani', 'Guitar', 'Rack'],
+        'Guard+VE': ['Flag', 'Weapons', 'Dancer', 'VE'],
         'Hands': ['Drum Major', 'Conductor', 'Met Runner'],
         'Woodwinds': ['Flute', 'Clarinet', 'Saxophone', 'Oboe', 'Bassoon']
     };
@@ -257,15 +257,17 @@ function makeAddInstrument(deets){
             <button class="exit" id="exit-add-instrument"></button>
             <form id="add-instrument-form">
                 <fieldset>
-                    <legend>Instrument</legend>
+                    <legend>What have you marched?</legend>
                     <div id="all-instrument-options">
                     </div>
-                    <p id="currently-selected"></p>
-                    <button id="submit-add-instrument" type="submit">
-                        <span class="submit-span">Submit</span>
-                        <img class="loading clear invisible" src="img/loading.gif" alt="Loading">
-                    </button>
-                    <p id="instrument-status"></p>
+                    <div class="inst-trio">
+                        <p id="inst-currently-selected"></p>
+                        <button id="submit-add-instrument" type="submit">
+                            <span class="submit-span">Submit</span>
+                            <img class="loading clear invisible" src="img/loading.gif" alt="Loading">
+                        </button>
+                        <p id="instrument-status"></p>
+                    </div>
                 </fieldset>
             </form>
         </div>
@@ -273,7 +275,7 @@ function makeAddInstrument(deets){
 
     let instCurrentSel = [];
     let numInstCurrentSel = 0;
-    const pOfSelected = document.getElementById('currently-selected');
+    const pOfSelected = document.getElementById('inst-currently-selected');
     
     const allInstCont = document.getElementById('all-instrument-options');
     const instSectCont = document.createElement('form');

@@ -36,9 +36,10 @@ body {
 
 .user-bottom {
     display: flex;
-    flex-flow: row nowrap;
+    flex-flow: row wrap;
     justify-content: space-evenly;
     align-items: center;
+    gap: .2em;
 }
 
 header h1 {
@@ -98,17 +99,21 @@ header button {
 
 /* Add instrument form */
 
-#add-instrument-cont {
-    position: relative;
-    width: 70%;
-}
-
 #add-instrument { 
-    border: solid 2px var(--color-primary-dark);
+    border: solid 2px var(--color-primary);
     padding: .5rem 1rem;
     border-radius: var(--radius-sm);
-    font-size: var(--font-sm);
+    font-size: var(--font-xx);
 }
+
+#add-instrument-cont {
+    position: relative;
+    width: 95%;
+    max-width: 31rem;
+    border: var(--color-primary) 2px solid;
+    border-radius: var(--radius-md);
+    margin-top: 1rem;
+}    
 
 .inst-category-head {
     display: flex;
@@ -119,12 +124,68 @@ header button {
     gap: 1rem;
 }
 
-.inst-category-label {
+#add-instrument-cont fieldset {
+    padding: .5rem 1rem;
+    border: none;
+}
+
+#add-instrument-cont legend {
+    text-align: center;
+    font-size: var(--font-xs);
+}
+
+.inst-category-duo label {
+    font-size: var(--font-xs);
+    font-weight: 550;
+}
+
+.inst-category-duo input {
+    appearance: none;
+}
+
+.inst-category-duo {
+    --duo-border: 3px;
+    border: transparent var(--duo-border) solid;
+    border-radius: var(--radius-sm);
+}
+
+.inst-opt-duo {
     font-size: var(--font-sm);
+}
+
+.inst-category-duo:has(input[type="radio"]:checked) {
+    border: var(--color-secondary) var(--duo-border) solid;
 }
 
 .inst-category-label, .inst-label {
     white-space: nowrap;
+}
+
+.inst-cont {
+    margin: 1rem 0;
+}
+
+.inst-label {
+    margin-left: .5em;
+    font-size: var(--font-sm);
+}
+
+#inst-currently-selected {
+    font-size: var(--font-xs);
+    color: var(--color-secondary-dark);
+}
+
+.inst-trio {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: .5rem;
+    text-align: center;
+}
+
+.inst-trio button {
+    font-size: var(--font-xs);
 }
 
 /* Add-experience form */
