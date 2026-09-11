@@ -526,7 +526,7 @@ document.querySelectorAll('input[name="circuit"]').forEach(radio => {
 
 // ---Adds expr to profile---
 async function addExpr(group, year) {
-    const response = await fetch('/api/expr', {
+    const response = await fetch('/api/data?which=expr', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ group, year })
@@ -544,11 +544,11 @@ function addStatusElements(groupId, year, deleted = false){
     const groupName = document.querySelector(`option[value="${groupId}"]`).textContent;
 
     if(deleted){
-        status.textContent = `Successfully deleted ${groupName} ${year}. Reloading...`;
+        status.textContent = `Successfully deleted ${groupName} ${year}. Reloading Preview...`;
         resetDeleter();
     }
     else{
-        status.textContent = `Successfully added ${groupName} ${year}. Reloading...`;
+        status.textContent = `Successfully added ${groupName} ${year}. Reloading Preview...`;
         resetEditorForms();
     }
 }    
@@ -600,7 +600,7 @@ document.getElementById('add-exp').addEventListener('submit', event => {
 
 // ---Deletes expr from profile---
 async function deleteExpr(group, year) {
-    const response = await fetch('/api/expr', {
+    const response = await fetch('/api/data?which=expr', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ group, year })
@@ -649,7 +649,7 @@ document.getElementById('delete-group-form').addEventListener('submit', event =>
 
 // ---Adds clip to profile---
 async function addClip(year, group, videoId, startTime, endTime) {
-    const response = await fetch('/api/clips', {
+    const response = await fetch('/api/data?which=clips', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ year, group, videoId, startTime, endTime })
@@ -745,7 +745,7 @@ async function addClipSubmitPressed(event){
         const group = groupCont.querySelector('[data-group]').dataset.group;
         const year = groupCont.parentElement.parentElement.firstElementChild.dataset.year;
         await addClip(year, group, videoId, startTime, endTime);
-        clipStatus.textContent = 'Successfully added clip. Reloading...';
+        clipStatus.textContent = 'Successfully added clip. Reloading Preview...';
         clipStatus.style.color = 'black';
         event.submitter.parentElement.remove();
     }
@@ -766,7 +766,7 @@ document.getElementById('experience').addEventListener('submit', async event => 
 
 // ---Deletes clip from profile---
 async function deleteClip(year, group, videoId, startTime, endTime) {
-    const response = await fetch('/api/clips', {
+    const response = await fetch('/api/data?which=clips', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ year, group, videoId, startTime, endTime })
@@ -811,7 +811,7 @@ function addEditDetailsButton(){
 async function addDetails(year, circuit, details){
     const detailStatus = document.getElementById('detail-status');
 
-    const response = await fetch('/api/details', {
+    const response = await fetch('/api/data?which=details', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ year, circuit, details })
