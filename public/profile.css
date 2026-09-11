@@ -19,16 +19,70 @@ header img {
     font-size: var(--font-sm);
 }
 
-#user-photo {
+#user-photo-cont {
     width: min(80%, 30rem);
+    display: block;
+    margin: 1rem auto;
+    position: relative;
+}    
+
+#user-photo {
+    width: 100%;
     border: 2px solid var(--color-accent-dark);
     border-radius: var(--radius-md);
-    margin: 10px auto;
     display: block;
     
     aspect-ratio: 1/1;
     object-fit: cover;
 }
+
+#user-inst-cont {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+    margin: 1rem auto;
+    gap: 2rem;
+}
+
+.user-inst {
+    aspect-ratio: 1/1;
+    object-fit: contain;
+    border: 2px solid var(--color-secondary-dark);
+    background-color: var(--color-secondary);
+    border-radius: var(--radius-md);
+}
+
+.inst-noPhoto {
+    width: 7rem;
+}
+
+.inst-hasPhoto {
+    position: absolute;
+    width: 22%;
+    --out-by: -6%;
+}    
+
+#user-inst-one {
+    bottom: var(--out-by);
+    right: var(--out-by);
+}    
+
+#user-inst-two {
+    bottom: var(--out-by);
+    left: var(--out-by);
+}    
+
+#user-inst-three {
+    top: var(--out-by);
+    right: var(--out-by);
+}    
+
+#user-inst-four {
+    top: var(--out-by);
+    left: var(--out-by);
+}    
 
 .user-card h2 {
     /* font-size: min(13vw, var(--font-lg)); */

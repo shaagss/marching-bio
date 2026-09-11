@@ -24,93 +24,94 @@
     <meta property="og:type" content="website">
 
 </head>
-<body class="work-sans" hidden>
-    <header>
-        <div class="card user-card" id="user-card">
-            <div class="flexer" id="flexer">
-                <div class="user-left">
-                    <h1>marching.bio editor</h1>
-                    <h2><span id="user-name"></span> - <a id="profile-link" href=""></a></h2>
-                    <p><span id="user-email"></span></p>
-                    <button id="photo-upload-btn" type="button">Upload profile photo</button>
-                    <input type="file" id="photo-input" accept="image/*" hidden>
+<body class="work-sans">
+    <p id="nothing" class="italic">Loading Editor...</p>
+    <div id="everything" hidden>
+        <header>
+            <div class="card user-card" id="user-card">
+                <div class="flexer" id="flexer">
+                    <div class="user-left">
+                        <h1>marching.bio editor</h1>
+                        <h2><span id="user-name"></span> - <a id="profile-link" href=""></a></h2>
+                        <p id="reminder">⬆️ <span class="italic">add this to your social media bio!</span></p>
+                        <button id="photo-upload-btn" type="button">Upload profile photo</button>
+                        <input type="file" id="photo-input" accept="image/*" hidden>
+                    </div>
+                </div>
+                <div class="user-bottom">
+                    <button id="add-instrument">Add<br>Instrument</button>
                 </div>
             </div>
-            <div class="user-bottom">
-                <button id="add-instrument">Add<br>Instrument</button>
-            </div>
-        </div>
-    </header>
-
-    <div class="page-divider">
-        <div id="editor" class="card" hidden>
-            <button class="exit" id="exit-add-group"></button>
-            <form id="filter-groups">
-                <fieldset>
-                    <legend id="circuit-legend">Circuit</legend>
-                    <div class="options">
-                        <label><input type="radio" name="circuit" value="DCI"> DCI</label>
-                        <label><input type="radio" name="circuit" value="WGI"> WGI</label>
-                    </div>
-                </fieldset>
-                <fieldset id="division-section" hidden>
-                    <legend>Division</legend>
-                    <div class="options">
-                        <label><input type="radio" name="division" value="guard"> Guard</label>
-                        <label><input type="radio" name="division" value="percussion"> Percussion</label>
-                        <label><input type="radio" name="division" value="winds"> Winds</label>
-                    </div>
-                </fieldset>
-                <fieldset id="class-section" hidden>
-                    <legend>Class</legend>
-                    <div class="options">
-                        <label><input type="radio" name="class" value="World"> World</label>
-                        <label><input type="radio" name="class" value="Open"> Open</label>
-                        <label><input type="radio" name="class" value="All-Age"> All-Age</label>
-                        <label><input type="radio" name="class" value="International"> International</label>
-                        <label><input type="radio" name="class" value="A"> A</label>
-                    </div>
-                </fieldset>
-            </form>
-            <form id="add-exp">
-                <fieldset>
-                    <legend id="select-label">Corps</legend>
-                    <div class="options">
-                        <label for="group-select" hidden>Corps</label><br>
-                        <select required id="group-select" class="work-sans"></select><br><br>
-                        <div class="centered">
-                            <label for="year-marched">Year marched:</label>
-                            <input disabled required id="year-marched" class="work-sans" name="year-marched" type="number" placeholder="1972" inputmode="numeric"><br><br>
-                            <button disabled id="exp-submit" type="submit">
-                                <span class="submit-span">Submit</span>
-                                <img class="loading clear invisible" src="img/loading.gif" alt="Loading">
-                            </button>
+        </header>
+        <div class="page-divider">
+            <div id="editor" class="card" hidden>
+                <button class="exit" id="exit-add-group"></button>
+                <form id="filter-groups">
+                    <fieldset>
+                        <legend id="circuit-legend">Circuit</legend>
+                        <div class="options">
+                            <label><input type="radio" name="circuit" value="DCI"> DCI</label>
+                            <label><input type="radio" name="circuit" value="WGI"> WGI</label>
                         </div>
-                    </div>
-                </fieldset>
-            </form>
-        </div>
-
-        <div id="deleter" class="card" hidden> 
-            <button class="exit" id="exit-delete-group"></button>
-            <form id="delete-group-form">
-                <fieldset>
-                    <legend id="delete-legend">Group</legend>
-                    <select id="delete-select"></select>
-    
-                    <button id="delete-submit" type="submit">
-                        <span class="submit-span">Delete</span>
-                        <img class="loading clear invisible" src="img/loading.gif" alt="Loading">
-                    </button>
-                </fieldset>
-            </form>
-        </div>
+                    </fieldset>
+                    <fieldset id="division-section" hidden>
+                        <legend>Division</legend>
+                        <div class="options">
+                            <label><input type="radio" name="division" value="guard"> Guard</label>
+                            <label><input type="radio" name="division" value="percussion"> Percussion</label>
+                            <label><input type="radio" name="division" value="winds"> Winds</label>
+                        </div>
+                    </fieldset>
+                    <fieldset id="class-section" hidden>
+                        <legend>Class</legend>
+                        <div class="options">
+                            <label><input type="radio" name="class" value="World"> World</label>
+                            <label><input type="radio" name="class" value="Open"> Open</label>
+                            <label><input type="radio" name="class" value="All-Age"> All-Age</label>
+                            <label><input type="radio" name="class" value="International"> International</label>
+                            <label><input type="radio" name="class" value="A"> A</label>
+                        </div>
+                    </fieldset>
+                </form>
+                <form id="add-exp">
+                    <fieldset>
+                        <legend id="select-label">Corps</legend>
+                        <div class="options">
+                            <label for="group-select" hidden>Corps</label><br>
+                            <select required id="group-select" class="work-sans"></select><br><br>
+                            <div class="centered">
+                                <label for="year-marched">Year marched:</label>
+                                <input disabled required id="year-marched" class="work-sans" name="year-marched" type="number" placeholder="1972" inputmode="numeric"><br><br>
+                                <button disabled id="exp-submit" type="submit">
+                                    <span class="submit-span">Submit</span>
+                                    <img class="loading clear invisible" src="img/loading.gif" alt="Loading">
+                                </button>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+            <div id="deleter" class="card" hidden>
+                <button class="exit" id="exit-delete-group"></button>
+                <form id="delete-group-form">
+                    <fieldset>
+                        <legend id="delete-legend">Group</legend>
+                        <select id="delete-select"></select>
         
-        <div class="card expr-card" id="expr-card">
-            <p id="status"></p>
-            <h2 class="inline">Preview</h2>
-            <div id="experience">
-                <p class="italic">Loading...</p>
+                        <button id="delete-submit" type="submit">
+                            <span class="submit-span">Delete</span>
+                            <img class="loading clear invisible" src="img/loading.gif" alt="Loading">
+                        </button>
+                    </fieldset>
+                </form>
+            </div>
+        
+            <div class="card expr-card" id="expr-card">
+                <p id="status"></p>
+                <h2 class="inline">Preview</h2>
+                <div id="experience">
+                    <p class="italic">Loading...</p>
+                </div>
             </div>
         </div>
     </div>

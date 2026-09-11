@@ -169,5 +169,3 @@ async function delDetails(email, req, res){
     res.status(200).json({ success: true });
 }
 
-// also make sure details are deleted when
-// group is deleted, like clips.

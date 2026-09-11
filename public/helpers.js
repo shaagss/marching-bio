@@ -1,6 +1,5 @@
 
-export async function exprToHtml(expr, clips, details, parentId) {
-    const groupDetails = await exprToGroupInfo(expr);
+export async function exprToHtml(expr, clips, details, parentId, groupDetails) {
     // Get parent and clear children
     const parent = document.getElementById(parentId);
     parent.replaceChildren();
@@ -81,7 +80,7 @@ export async function exprToHtml(expr, clips, details, parentId) {
     }
 }
 
-async function exprToGroupInfo(expr){
+export async function exprToGroupInfo(expr){
     // every group id is added to dictionary,
     // and each value is a dict of details
     // (name, photo_url)
@@ -252,8 +251,7 @@ function classToStr(circuit, division, theClass){
     return abrv;
 }
 
-export async function exprToList(expr, selectId, defaultOptString){
-    const groupDetails = await exprToGroupInfo(expr);
+export async function exprToList(expr, selectId, defaultOptString, groupDetails){
     const select = document.getElementById(selectId);
     select.replaceChildren();
 

@@ -1,4 +1,4 @@
-import { exprToHtml, exprToList, swapSubmitToLoading, swapLoadingBack } from './helpers.js';
+import { exprToHtml, exprToList, exprToGroupInfo, swapSubmitToLoading, swapLoadingBack } from './helpers.js';
 
 const yearInput = document.getElementById('year-marched');
 const expSubmit = document.getElementById('exp-submit');
@@ -54,29 +54,27 @@ async function checkAuth() {
         if( Object.hasOwn(profileData.details, 'instruments') ){
             const addInstrumentButton = document.getElementById('add-instrument');
             for(const instrument of profileData.details.instruments){
-                const instrumentP = document.createElement('p');
-                instrumentP.classList.add('instrument', 'italic');
-                instrumentP.textContent = instrument;
-                addInstrumentButton.insertAdjacentElement('beforebegin', instrumentP);
+                let instImg = makeInstPhoto(instrument);
+                addInstrumentButton.insertAdjacentElement('beforebegin', instImg);
             }
         }
 
         document.getElementById('user-name').textContent = profileData.name;
-        document.getElementById('user-email').textContent = profileData.email;
         const profileAnchor = document.getElementById('profile-link');
         const profileAnchorLink = '/' + profileData.code;
         profileAnchor.textContent = 'marching.bio' + profileAnchorLink;
         profileAnchor.href = profileAnchorLink;
 
-        document.querySelector('body').hidden = false;
+        document.getElementById('nothing').hidden = true;
+        document.getElementById('everything').hidden = false;
         makeAddInstrument(profileData.details);
-        await loadGroups();
-        await updatePreviewExpr();
+        await Promise.all([loadGroups(), updatePreviewExpr()]);
         groupButtons();
     }
     catch(err){
         console.error(err);
-        document.querySelector('body').hidden = false;
+        document.getElementById('nothing').hidden = true;
+        document.getElementById('everything').hidden = false;
         status.textContent = 'Network error, please try again. ' + err.message;
     }
 }
@@ -156,29 +154,13 @@ document.getElementById('photo-input').addEventListener('change', async () => {
 
 // ---Updates preview from DB---
 async function updatePreviewExpr(){
-    const exprRes = await fetch(`/api/expr`);
-    if (!exprRes.ok) {
-        console.error('Failed to load expr:', exprRes.status);
-        return;
-    }
-    const expr = await exprRes.json();
+    const response = await fetch('/api/for-editor.js');
+    const data = await response.json();
+    const {expr, clips, details} = data;
 
-    const clipsRes = await fetch(`/api/clips`);
-    if (!clipsRes.ok) {
-        console.error('Failed to load clips:', clipsRes.status);
-        return;
-    }
-    const clips = await clipsRes.json();
-
-    const detailsRes = await fetch(`/api/details`);
-    if (!detailsRes.ok) {
-        console.error('Failed to load details:', detailsRes.status);
-        return;
-    }
-    const details = await detailsRes.json();
-
-    await exprToHtml(expr, clips, details, 'experience');
-    updateDeleteGroup(expr);
+    const groupDetails = await exprToGroupInfo(expr)
+    await exprToHtml(expr, clips, details, 'experience', groupDetails);
+    updateDeleteGroup(expr, groupDetails);
     addAddClipButton();
     addEditDetailsButton();
     status.textContent = '';
@@ -230,19 +212,42 @@ function delClipButton(){
     activeDelButton = button;
 }
 
-function updateDeleteGroup(expr){
-    exprToList(expr, 'delete-select', 'Group to delete');
+function updateDeleteGroup(expr, groupDetails){
+    exprToList(expr, 'delete-select', 'Group to delete', groupDetails);
 }
 
 // ---Instrument--
+function makeInstPhoto(inst){
+    let fileName;
+    if(inst === 'Drum Major'){
+        fileName = 'drum-major';
+    }
+    else if(inst === 'Met Runner'){
+        fileName = 'met-runner';
+    }
+    else if(inst === 'French horn'){
+        fileName = 'french-horn';
+    }
+    else {
+        fileName = inst.toLowerCase();
+    }
+
+    const instImg = document.createElement('img');
+    instImg.src = `img/instruments/${fileName}.png`;
+    instImg.alt = inst;
+    instImg.classList.add('user-inst');
+
+    return instImg;
+}
+
 function makeAddInstrument(deets){
     const allInstrumentOptions = {
-        'Brass': ['Trumpet', 'Mello', 'Bari', 'Sousa', 'Trombone', 'French horn'],
+        'Brass': ['Trumpet', 'Mello', 'Bari', 'Contra', 'Trombone', 'French horn'],
         'Drumline': ['Snare', 'Quads', 'Bass', 'Cymbals'],
         'Front Ensemble': ['Marimba', 'Vibes', 'XyloGlock', 'Synth', 'Drumset', 'Timpani', 'Guitar', 'Rack'],
         'Guard+VE': ['Flag', 'Weapons', 'Dancer', 'VE'],
         'Hands': ['Drum Major', 'Conductor', 'Met Runner'],
-        'Woodwinds': ['Flute', 'Clarinet', 'Saxophone', 'Oboe', 'Bassoon']
+        'Woodwinds': ['Flute', 'Clarinet', 'Saxophone']
     };
 
     let prevSelInst = [];

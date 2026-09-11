@@ -9,6 +9,16 @@ body {
     overflow-x: visible;
 }
 
+#nothing {
+    text-align: center;
+    margin-top: 30rem;
+    font-size: var(--font-lg);
+}
+
+#everything {
+    width: 100%;
+}
+
 /* Header */
 
 .user-card {
@@ -35,6 +45,7 @@ body {
 }
 
 .user-bottom {
+    margin-top: 1rem;
     display: flex;
     flex-flow: row wrap;
     justify-content: space-evenly;
@@ -55,8 +66,8 @@ header h2 {
     color: blue;
 }
 
-#user-email {
-    color: var(--color-secondary-dark);
+#reminder {
+    color: var(--color-accent-dark);
     font-size: var(--font-xx);
 }
 
@@ -68,6 +79,7 @@ header button {
 
 #user-photo {
     width: 100%;
+    min-width: 4rem;
     border: 2px solid var(--color-accent-dark);
     border-radius: var(--radius-md);
     margin: 10px auto;
@@ -98,6 +110,15 @@ header button {
 }
 
 /* Add instrument form */
+
+.user-inst {
+    aspect-ratio: 1/1;
+    object-fit: contain;
+    border: 2px solid var(--color-secondary-dark);
+    background-color: var(--color-secondary);
+    border-radius: var(--radius-md);
+    max-width: 6rem;
+}
 
 #add-instrument { 
     border: solid 2px var(--color-primary);
